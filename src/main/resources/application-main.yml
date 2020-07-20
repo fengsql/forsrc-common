@@ -1,0 +1,42 @@
+#
+application:
+  port: 8010
+  name: dblrecord
+
+datasource:
+  mysql:
+    url: jdbc:mysql://118.31.224.114:3306/dblrecord?serverTimezone=PRC&autoReconnect=true&characterEncoding=utf8&useUnicode=true&useSSL=false
+    username: root
+    password: 1QAZ2wsx
+
+log:
+  level: info
+  file: /home/record/lp/run/log/dblrecord.log
+  
+websocket:
+  enable: true
+  port: 8011
+  # minute
+  message-timeout: 30
+  #second
+  login-timeout: 30
+
+redis:
+  # 设置本项目所有缓存key的前缀，空时不设置前缀
+  cache-prefix: "local-"
+  # 设置key的前缀，默认为英文冒号:
+  key-prefix: ":"
+  # 过期时间，单位为秒，默认0不设置过期时间
+  ttl: 3600
+  # 刷新时间，second，获取缓存后判断，当缓存过期时间小于或等于这个时间时刷新过期时间
+  refresh: 3500
+  # 添加记录是否同时添加到缓存，默认为 true 添加缓存
+  cache-insert: true
+
+hbase:
+  zk-quorum: 124.70.204.115
+  zk-port: 2181
+  zk-path: '/hbase-unsecure'
+  hbase-master: ''
+  connPoolMaxSize: 10
+  connPoolCoreSize: 1
