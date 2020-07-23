@@ -6,7 +6,7 @@ import lombok.Data;
 
 @ApiModel(value = "查询的基础请求参数", description = "查询的基础和分页请求参数")
 @Data
-public class BReq {
+public class BReqPage {
 
   @ApiModelProperty(value = "每页记录数，0 (或不传)取默认值", name = "pageSize", dataType = "Integer", required = false)
   private Integer pageSize;
