@@ -8,6 +8,53 @@ import java.util.Map;
 
 public class Enum {
 
+  public enum LanguageType {
+    java_(1, "java"),
+    python_(2, "python"),
+    c_(3, "c"),
+    cplus_(4, "c++"),
+    cwell_(5, "c#"),
+    scala_(6, "scala"),
+    go_(7, "go"),
+    javascript_(8, "javascript"),
+    typescript_(9, "typescript"),
+    php_(10, "php"),
+    objectivec_(11, "objectivec"),
+    kotlin_(12, "kotlin"),
+    ;
+
+    @Getter
+    private int id;
+    @Getter
+    private String name;
+    @Getter
+    private static Map<String, LanguageType> map = new HashMap<>();
+
+    static {
+      for (LanguageType item : LanguageType.values()) {
+        Tool.putMap(map, item.getName(), item);
+      }
+    }
+
+    LanguageType(int id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public static LanguageType get(int id) {
+      for (LanguageType item : LanguageType.values()) {
+        if (id == item.getId()) {
+          return item;
+        }
+      }
+      return null;
+    }
+
+    public static LanguageType get(String name) {
+      return Tool.getValue(map, name);
+    }
+  }
+
   public enum ApplicationType {
     spring_(1, "spring"),
     socket_(2, "socket"),

@@ -33,10 +33,10 @@ redis:
   # 添加记录是否同时添加到缓存，默认为 true 添加缓存
   cache-insert: true
 
-hbase:
-  zk-quorum: 124.70.204.115
-  zk-port: 2181
-  zk-path: '/hbase-unsecure'
-  hbase-master: ''
-  connPoolMaxSize: 10
-  connPoolCoreSize: 1
+#hbase:
+#  zk-quorum: 124.70.204.115
+#  zk-port: 2181
+#  zk-path: '/hbase-unsecure'
+#  hbase-master: ''
+#  connPoolMaxSize: 10
+#  connPoolCoreSize: 1

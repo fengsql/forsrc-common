@@ -367,13 +367,13 @@ public class EncryptUtil {
     }
 
 
-    public static void main(String[] args) {
-        String primeExchEn = EncryptUtil.enVerifyId(123l);
-        System.out.println(primeExchEn);
-        System.out.println(EncryptUtil.deVerifyId(primeExchEn));
-        System.out.println(EncryptUtil.deNumber(primeExchEn, "###"));
-//        test();
-//        testHunxiao();
-    }
+//    public static void main(String[] args) {
+//        String primeExchEn = EncryptUtil.enVerifyId(123l);
+//        System.out.println(primeExchEn);
+//        System.out.println(EncryptUtil.deVerifyId(primeExchEn));
+//        System.out.println(EncryptUtil.deNumber(primeExchEn, "###"));
+////        test();
+////        testHunxiao();
+//    }
 
 }

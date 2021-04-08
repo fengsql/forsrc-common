@@ -29,8 +29,8 @@ public class ValidateUtils {
         return nickName.length() <= 20;
     }
 
-    public static void main(String[] args) {
-       boolean vali =  ValidateUtils.validatePhoneNumber("17500000000");
-        System.out.println(vali);
-    }
+//    public static void main(String[] args) {
+//       boolean vali =  ValidateUtils.validatePhoneNumber("17500000000");
+//        System.out.println(vali);
+//    }
 }

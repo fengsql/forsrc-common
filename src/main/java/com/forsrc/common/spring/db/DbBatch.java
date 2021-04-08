@@ -13,8 +13,8 @@ import java.util.List;
 @Component
 public class DbBatch<T> {
   private static final int default_batchRow = 500;//每批commit的个数
-  private static final int max_retry_times = 3;//重试次数
-  private static final int retry_interval = 10;//每次重试的间隔时间，ms
+  private static final int max_retry_times = 10;//重试次数，总次数，包含首次
+  private static final int retry_second = 10;//每次重试的间隔时间，s
 
   /**
    * 批量插入并移除。
@@ -26,28 +26,31 @@ public class DbBatch<T> {
     int count = 0;
     int size = entitys.size();
     int success = 0;
+    int fail = 0;
     while (count < size) {
       DbEntity<T> dbEntity = remove(entitys);
+      if (dbEntity == null) {
+        break;
+      }
+      if (!checkRun(entitys, dbEntity)) {
+        continue;
+      }
       boolean ok = runEntity(entitys, dbEntity);
       if (ok) {
         success++;
+      } else {
+        fail++;
       }
       count++;
       if (maxRow > 0 && count >= maxRow) {
         break;
       }
     }
-    log.info("runBatch ok. size: " + size + ". success: " + success);
+    log.info("runBatch ok. size: {}. success: {}. fail: {}", size, success, fail);
     return count;
   }
 
   private boolean runEntity(List<DbEntity<T>> entitys, DbEntity<T> dbEntity) {
-    if (dbEntity == null) {
-      return false;
-    }
-    if (!checkRun(entitys, dbEntity)) {
-      return false;
-    }
     boolean ok = false;
     try {
       int layerType = dbEntity.getLayerType();
@@ -75,9 +78,6 @@ public class DbBatch<T> {
   //<<---------------------------------------- dao ----------------------------------------
 
   private boolean runDaoEntity(DbEntity<T> dbEntity) {
-    if (dbEntity == null) {
-      return false;
-    }
     int sqlType = dbEntity.getSqlType();
     try {
       switch (sqlType) {
@@ -213,14 +213,14 @@ public class DbBatch<T> {
     long now = System.currentTimeMillis();
     long lastTime = dbEntity.getLastTime();
     int second = (int)((now - lastTime) / 1000);
-    return second >= retry_interval;
+    return second >= retry_second;
   }
 
   private void retry(List<DbEntity<T>> entitys, DbEntity<T> dbEntity) {
     int times = dbEntity.getTimes();
     times++;
     if (times >= max_retry_times) {
-      log.warn("runEntity fail! entity: " + ToolJson.toJson(dbEntity.getVo()));
+      log.warn("retry max times! entity: " + ToolJson.toJson(dbEntity.getVo()));
       return;
     }
     dbEntity.setTimes(times);

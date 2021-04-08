@@ -2,7 +2,7 @@ package com.forsrc.common.tool;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 
 import java.beans.BeanInfo;

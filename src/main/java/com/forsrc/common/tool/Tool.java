@@ -516,11 +516,31 @@ public class Tool {
     StringBuilder stringBuilder = new StringBuilder();
     for (int i = 0; i < src.length; i++) {
       int v = src[i] & 0xFF;
-      String hv = Integer.toHexString(v);
-      if (hv.length() < 2) {
+      String hex = Integer.toHexString(v);
+      if (hex.length() < 2) {
         stringBuilder.append(0);
       }
-      stringBuilder.append(hv);
+      stringBuilder.append(hex);
+    }
+    return stringBuilder.toString().toUpperCase();
+  }
+
+  public static String bytesToHex(byte[] src, int from, int length) {
+    if (isNull(src)) {
+      return null;
+    }
+    StringBuilder stringBuilder = new StringBuilder();
+    int count = from + length;
+    if (count > src.length) {
+      count = src.length;
+    }
+    for (int i = 0; i < count; i++) {
+      int v = src[i] & 0xFF;
+      String hex = Integer.toHexString(v);
+      if (hex.length() < 2) {
+        stringBuilder.append(0);
+      }
+      stringBuilder.append(hex);
     }
     return stringBuilder.toString().toUpperCase();
   }
@@ -857,6 +877,12 @@ public class Tool {
 
   public static Date toDatetime(Object value) {
     return toDatetime(toString(value));
+  }
+
+  public static String formatTimeMillis(long value) {
+    Date date = new Date();
+    date.setTime(value);
+    return toString(date, "yyyy-MM-dd HH:mm:ss.SSS");
   }
 
   public static Date toDate(String value) {
