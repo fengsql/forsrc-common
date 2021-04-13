@@ -56,14 +56,11 @@ public class Enum {
   }
 
   public enum ApplicationType {
-    spring_(1, "spring"),
-    socket_(2, "socket"),
-    iot_(3, "iot"),
-    app_(4, "app"),
-    android_(5, "android"),
-    ios_(6, "ios"),
-    wxsmall_(7, "wxsmall"),
-    zfbsmall_(8, "zfbsmall"),
+    springboot_(1, "springboot"),
+    maven_(2, "maven"),
+    socket_(3, "socket"),
+    bigdata_(4, "bigdata"),
+    app_(5, "app"),
     ;
 
     @Getter
@@ -98,17 +95,62 @@ public class Enum {
     }
   }
 
+  public enum FrameworkType {
+    //springboot
+    spring_(1, "spring"),
+    //socket
+    nettyServer_(2, "netty-server"),
+    nettyClient_(3, "netty-client"),
+    //bigdata
+    flink_(4, "flink"),
+    //app
+    android_(5, "android"),
+    ios_(7, "ios"),
+    ;
+
+    @Getter
+    private int id;
+    @Getter
+    private String name;
+    @Getter
+    private static Map<String, FrameworkType> map = new HashMap<>();
+
+    static {
+      for (FrameworkType item : FrameworkType.values()) {
+        Tool.putMap(map, item.getName(), item);
+      }
+    }
+
+    FrameworkType(int id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public static FrameworkType get(int id) {
+      for (FrameworkType item : FrameworkType.values()) {
+        if (id == item.getId()) {
+          return item;
+        }
+      }
+      return null;
+    }
+
+    public static FrameworkType get(String name) {
+      return Tool.getValue(map, name);
+    }
+  }
+
   public enum DatabaseType {
     mysql_(1, "mysql"),
     oracle_(2, "oracle"),
     sqlserver_(3, "sqlserver"),
-    postgreSQL_(4, "postgreSQL"),
+    postgresql_(4, "postgresql"),
     greenplum_(5, "greenplum"),
     db2_(6, "db2"),
     memcached_(7, "memcached"),
     redis_(8, "redis"),
     impala_(9, "impala"),
-    mongoDB_(10, "mongoDB"),
+    mongodb_(10, "mongodb"),
     hbase_(11, "hbase"),
     hive_(12, "hive"),
     access_(13, "access"),
