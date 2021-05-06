@@ -529,12 +529,18 @@ public class Tool {
     if (isNull(src)) {
       return null;
     }
+    if (from < 0) {
+      from = 0;
+    }
+    if (length <= 0) {
+      return null;
+    }
     StringBuilder stringBuilder = new StringBuilder();
     int count = from + length;
     if (count > src.length) {
       count = src.length;
     }
-    for (int i = 0; i < count; i++) {
+    for (int i = from; i < count; i++) {
       int v = src[i] & 0xFF;
       String hex = Integer.toHexString(v);
       if (hex.length() < 2) {

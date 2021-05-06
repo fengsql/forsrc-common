@@ -158,6 +158,25 @@ public class ToolFile {
     }
   }
 
+  public static String getFileSizeText(long size) {
+    if (size < 1024) {
+      return size + " B";
+    } else {
+      size = size / 1024;
+    }
+    if (size < 1024) {
+      return size + " KB";
+    } else {
+      size = size * 100 / 1024;
+    }
+    if (size < 1024 * 100) {  //因为如果以MB为单位的话，要保留最后1位小数，把此数乘以100之后再取余
+      return (size / 100) + "." + (size % 100) + " MB";
+    } else {  //否则如果要以GB为单位的，先除于1024再作同样的处理
+      size = size / 1024;
+      return (size / 100) + "." + (size % 100) + " GB";
+    }
+  }
+
   public static String getFileName(String fileName) {
     try {
       File f = new File(fileName);
