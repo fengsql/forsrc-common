@@ -1,6 +1,5 @@
 package com.forsrc.common.tool;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.forsrc.common.constant.Code;
 import com.forsrc.common.constant.Const;
 import com.forsrc.common.spring.base.BResponse;
@@ -469,8 +468,8 @@ public class Tool {
     return value == null ? "" : String.valueOf(value);
   }
 
-  public static String toString(Char value) {
-    return value == null ? "" : String.valueOf(value);
+  public static String toString(char value) {
+    return String.valueOf(value);
   }
 
   public static String toString(Object value) {

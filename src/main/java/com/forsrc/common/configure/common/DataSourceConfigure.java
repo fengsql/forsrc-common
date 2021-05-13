@@ -17,17 +17,17 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = "**.dao", sqlSessionTemplateRef = "sqlSessionTemplateOne")
+@MapperScan(basePackages = "**.dao", sqlSessionTemplateRef = "sqlSessionTemplate")
 public class DataSourceConfigure {
 
-  @Value("${spring.datasource.one.mybatis.mapper-locations:classpath*:mybatis/**/*.xml}")
+  @Value("${spring.datasource.mybatis.mapper-locations:classpath*:mybatis/**/*.xml}")
   private String mapper;
 
   /**
    * 生成数据源.
    */
-  @Bean(name = "dataSourceOne")
-  @ConfigurationProperties(prefix = "spring.datasource.one")
+  @Bean(name = "dataSource")
+  @ConfigurationProperties(prefix = "spring.datasource")
   @Primary
   public DataSource getDataSource() {
     return DataSourceBuilder.create().build();
@@ -36,9 +36,9 @@ public class DataSourceConfigure {
   /**
    * 创建 SqlSessionFactory
    */
-  @Bean(name = "sqlSessionFactoryOne")
+  @Bean(name = "sqlSessionFactory")
   @Primary
-  public SqlSessionFactory getSqlSessionFactory(@Qualifier("dataSourceOne") DataSource dataSource) throws Exception {
+  public SqlSessionFactory getSqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
     SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
     bean.setDataSource(dataSource);
     bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mapper));
@@ -48,15 +48,15 @@ public class DataSourceConfigure {
   /**
    * 配置事务管理
    */
-  @Bean(name = "transactionManagerOne")
+  @Bean(name = "transactionManager")
   @Primary
-  public DataSourceTransactionManager getTransactionManager(@Qualifier("dataSourceOne") DataSource dataSource) {
+  public DataSourceTransactionManager getTransactionManager(@Qualifier("dataSource") DataSource dataSource) {
     return new DataSourceTransactionManager(dataSource);
   }
 
-  @Bean(name = "sqlSessionTemplateOne")
+  @Bean(name = "sqlSessionTemplate")
   @Primary
-  public SqlSessionTemplate getSqlSessionTemplate(@Qualifier("sqlSessionFactoryOne") SqlSessionFactory sqlSessionFactory) throws Exception {
+  public SqlSessionTemplate getSqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws Exception {
     return new SqlSessionTemplate(sqlSessionFactory);
   }
 
