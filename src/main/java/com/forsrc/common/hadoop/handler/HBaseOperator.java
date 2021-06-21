@@ -52,7 +52,7 @@ public class HBaseOperator implements InitializingBean {
     //创建表
     admin.createTable(desc);
 
-    log.info("createTable: {},columnFamily:{} success", tableName, family);
+    log.info("createTable success. tableName: {}. columnFamily: {}", tableName, family);
   }
 
   /**
