@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,6 +14,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,8 +25,12 @@ public abstract class AbstractHBaseHandler {
   @Resource
   private HBaseOperator hBaseOperator;
 
-  protected void insertHBase(String hBaseTable, String rowKey, List<JSONObject> datas) throws IOException {
-    hBaseOperator.insert(hBaseTable, rowKey, datas);
+  protected void insert(String tableName, String rowKey, List<JSONObject> datas) throws IOException {
+    hBaseOperator.insert(tableName, rowKey, datas);
+  }
+
+  protected void insert(String tableName, String rowKey, String colFamily, Map<String, String> colValues) throws IOException {
+    hBaseOperator.insert(tableName, rowKey, colFamily, colValues);
   }
 
   protected <T> List<T> getData(String tableName, String startRow, String endRow, Class<T> clazz) throws IOException, IllegalAccessException, InstantiationException {

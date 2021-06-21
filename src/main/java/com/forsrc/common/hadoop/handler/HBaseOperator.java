@@ -18,10 +18,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Configuration
@@ -66,11 +63,30 @@ public class HBaseOperator implements InitializingBean {
     List<Put> puts = new ArrayList<>();
     for (JSONObject param : params) {
       //这里的参数依次为，列族名，列名，值
-      long ts = param.getLongValue("timeStamp") > 0 ? param.getLongValue("timeStamp") : HConstants.LATEST_TIMESTAMP;
-      put.addColumn(param.getString("family").getBytes(), param.getString("qualifier").getBytes(), ts, param.get("value") != null ? param.get("value").toString().getBytes() : null);
+      long timeStamp = param.getLongValue("timeStamp") > 0 ? param.getLongValue("timeStamp") : HConstants.LATEST_TIMESTAMP;
+      byte[] family = param.getString("family").getBytes(); //族名
+      byte[] qualifier = param.getString("qualifier").getBytes(); //列名
+      byte[] value = param.get("value") != null ? param.get("value").toString().getBytes() : null; //值
+      put.addColumn(family, qualifier, timeStamp, value);
       puts.add(put);
     }
+    table.put(puts);
+  }
 
+  public void insert(String tableName, String rowKey, String colFamily, Map<String, String> colValues) throws JSONException, IOException {
+    HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
+    Put put = new Put(rowKey.getBytes());
+    List<Put> puts = new ArrayList<>();
+    byte[] family = colFamily.getBytes();
+    for (Map.Entry<String, String> entry : colValues.entrySet()) {
+      String key = entry.getKey();
+      String val = entry.getValue();
+
+      byte[] qualifier = key.getBytes();
+      byte[] value = val.getBytes();
+      put.addColumn(family, qualifier, value);
+      puts.add(put);
+    }
     table.put(puts);
   }
 
