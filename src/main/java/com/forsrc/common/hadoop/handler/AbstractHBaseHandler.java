@@ -25,12 +25,40 @@ public abstract class AbstractHBaseHandler {
   @Resource
   private HBaseOperator hBaseOperator;
 
-  protected void insert(String tableName, String rowKey, List<JSONObject> datas) throws IOException {
+  /**
+   * 写一行数据，多个列族，多个列
+   * @param tableName
+   * @param rowKey
+   * @param datas
+   * @throws IOException
+   */
+  protected void insert(String tableName, byte[] rowKey, List<JSONObject> datas) throws IOException {
     hBaseOperator.insert(tableName, rowKey, datas);
   }
 
-  protected void insert(String tableName, String rowKey, String colFamily, Map<String, String> colValues) throws IOException {
-    hBaseOperator.insert(tableName, rowKey, colFamily, colValues);
+  /**
+   * 写一行数据，一个列族，多个列
+   * @param tableName
+   * @param rowKey
+   * @param family
+   * @param colValues
+   * @throws IOException
+   */
+  protected void insert(String tableName, byte[] rowKey, byte[] family, Map<String, String> colValues) throws IOException {
+    hBaseOperator.insert(tableName, rowKey, family, colValues);
+  }
+
+  /**
+   * 写一行数据。一个列族，一列
+   * @param tableName
+   * @param rowKey
+   * @param family
+   * @param qualifier
+   * @param value
+   * @throws IOException
+   */
+  protected void insert(String tableName, byte[] rowKey, byte[] family, byte[] qualifier, byte[] value) throws IOException {
+    hBaseOperator.insert(tableName, rowKey, family, qualifier, value);
   }
 
   protected <T> List<T> getData(String tableName, String startRow, String endRow, Class<T> clazz) throws IOException, IllegalAccessException, InstantiationException {

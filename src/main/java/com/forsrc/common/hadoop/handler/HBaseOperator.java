@@ -57,9 +57,9 @@ public class HBaseOperator implements InitializingBean {
    * 对同一个row key进行重新put同一个cell就是修改数据
    * @param params columnFamily/column/value的集合
    */
-  public void insert(String tableName, String rowKey, List<JSONObject> params) throws JSONException, IOException {
+  public void insert(String tableName, byte[] rowKey, List<JSONObject> params) throws JSONException, IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
-    Put put = new Put(rowKey.getBytes());
+    Put put = new Put(rowKey);
     List<Put> puts = new ArrayList<>();
     for (JSONObject param : params) {
       //这里的参数依次为，列族名，列名，值
@@ -73,11 +73,10 @@ public class HBaseOperator implements InitializingBean {
     table.put(puts);
   }
 
-  public void insert(String tableName, String rowKey, String colFamily, Map<String, String> colValues) throws JSONException, IOException {
+  public void insert(String tableName, byte[] rowKey, byte[] family, Map<String, String> colValues) throws IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
-    Put put = new Put(rowKey.getBytes());
+    Put put = new Put(rowKey);
     List<Put> puts = new ArrayList<>();
-    byte[] family = colFamily.getBytes();
     for (Map.Entry<String, String> entry : colValues.entrySet()) {
       String key = entry.getKey();
       String val = entry.getValue();
@@ -88,6 +87,13 @@ public class HBaseOperator implements InitializingBean {
       puts.add(put);
     }
     table.put(puts);
+  }
+
+  public void insert(String tableName, byte[] rowKey, byte[] family, byte[] qualifier, byte[] value) throws IOException {
+    HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
+    Put put = new Put(rowKey);
+    put.addColumn(family, qualifier, value);
+    table.put(put);
   }
 
   /**
