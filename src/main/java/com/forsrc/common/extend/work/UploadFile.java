@@ -35,7 +35,25 @@ public class UploadFile extends BService {
 
   // <<<----------------------- normal -----------------------
 
+  /**
+   * 上传文件，返回url
+   * @param file
+   * @param request
+   * @param response
+   * @return
+   */
   public String work(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+    return doWork(file, request, response);
+  }
+
+  /**
+   * 上传文件，返回文件在服务器的绝对路径，包含文件名。
+   * @param file
+   * @param request
+   * @param response
+   * @return
+   */
+  public String upload(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
     return doWork(file, request, response);
   }
 
@@ -60,6 +78,15 @@ public class UploadFile extends BService {
   // <<<----------------------- upload -----------------------
 
   private String doWork(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+    String saveFile = saveFile(file, request, response);
+    //获取tomcat容器目录
+    String path = request.getSession().getServletContext().getRealPath("");
+    String url = Tool.subString(saveFile, path.length());
+    url = Tool.toUrlPath(url);
+    return url;
+  }
+
+  private String saveFile(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
     if (file == null) {
       throw new CommonException(Code.PARAM_EMPTY);
     }
@@ -72,7 +99,7 @@ public class UploadFile extends BService {
     //    String path = System.getProperty("user.dir");
 
     String uploadPath = ToolFile.joinFileName(path, uploadFolder);
-//    log.info("uploadPath: " + uploadPath);
+    //    log.info("uploadPath: " + uploadPath);
     ToolFile.forcePath(uploadPath);
 
     String originFile = file.getOriginalFilename();
@@ -81,10 +108,8 @@ public class UploadFile extends BService {
     File targetFile = new File(saveFile);
     try {
       file.transferTo(targetFile);
-      String url = Tool.subString(saveFile, path.length());
-      url = Tool.toUrlPath(url);
-      log.info("upload ok. url: {}. file: {}. origin: {}", url, saveFile, originFile);
-      return url;
+      log.debug("save file ok. file: {}. origin: {}", saveFile, originFile);
+      return saveFile;
     } catch (Exception e) {
       log.error("transferTo targetFile error! originFile: " + originFile, e);
       throw new CommonException(Code.FAIL.getCode(), "保存文件出现错误.");
