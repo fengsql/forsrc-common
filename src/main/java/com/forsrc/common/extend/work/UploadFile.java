@@ -53,7 +53,7 @@ public class UploadFile extends BService {
    * @param response
    * @return
    */
-  public String upload(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+  public String save(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
     return doWork(file, request, response);
   }
 
