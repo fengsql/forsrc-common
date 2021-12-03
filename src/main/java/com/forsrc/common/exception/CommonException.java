@@ -22,6 +22,11 @@ public class CommonException extends RuntimeException {
     this.setMessage(code.getMsg());
   }
 
+  public CommonException(Code code, String message) {
+    this.setCode(code.getCode());
+    this.setMessage(message);
+  }
+
   public CommonException(int code, String message) {
     super(message);
     this.message = message;
@@ -38,20 +43,24 @@ public class CommonException extends RuntimeException {
   public CommonException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
     this.message = message;
+    this.code = Code.ERROR.getCode();
   }
 
   public CommonException(String message, Throwable cause) {
     super(message, cause);
     this.message = message;
+    this.code = Code.ERROR.getCode();
   }
 
   public CommonException(String message) {
     super(message);
     this.message = message;
+    this.code = Code.ERROR.getCode();
   }
 
   public CommonException(Throwable cause) {
     super(cause);
     this.message = cause.getMessage();
+    this.code = Code.ERROR.getCode();
   }
 }

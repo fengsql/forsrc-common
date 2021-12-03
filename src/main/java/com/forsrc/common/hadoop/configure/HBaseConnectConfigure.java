@@ -48,7 +48,7 @@ public class HBaseConnectConfigure implements InitializingBean {
     //zk port
     configuration.set("hbase.zookeeper.property.clientPort", hBasePropertiesConfiguration.getZkPort());
     //HMaster
-    configuration.set("hbase.master", hBasePropertiesConfiguration.getHbaseMaster());
+//    configuration.set("hbase.master", hBasePropertiesConfiguration.getHbaseMaster());
     configuration.set("zookeeper.znode.parent", hBasePropertiesConfiguration.getZkPath());
 
     executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(hBasePropertiesConfiguration.getConnPoolCoreSize());
@@ -59,10 +59,10 @@ public class HBaseConnectConfigure implements InitializingBean {
 
     //这个admin是管理table时使用的，比如说创建表
     admin = (HBaseAdmin) connection.getAdmin();
+    log.info("connect hbase ok. zkQuorum: {}. port: {}", hBasePropertiesConfiguration.getZkQuorum(), hBasePropertiesConfiguration.getZkPort());
   }
 
   public Connection getConnection() throws IOException {
-
     return conn == null ? conn = ConnectionFactory.createConnection(configuration, executor) : conn;
   }
 }
