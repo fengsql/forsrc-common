@@ -1,5 +1,6 @@
 package com.forsrc.common.reponse;
 
+import com.forsrc.common.spring.base.BResponse;
 import com.forsrc.common.tool.ToolResponse;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.InitializingBean;
@@ -8,7 +9,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -29,20 +29,18 @@ public class ResponseProcessor extends RequestResponseBodyMethodProcessor implem
 
   @Override
   public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
-    String reqUri = null;
-    if (webRequest instanceof ServletWebRequest) {
-      reqUri = ((ServletWebRequest) webRequest).getRequest().getRequestURI();
-    }
-    if (reqUri.contains("actuator/prometheus")) {
+    //    String reqUri = null;
+    //    if (webRequest instanceof ServletWebRequest) {
+    //      reqUri = ((ServletWebRequest) webRequest).getRequest().getRequestURI();
+    //    }
+    //    if (reqUri.contains("actuator/prometheus")) {
+    //      super.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
+    //      return;
+    //    }
+    if (returnValue instanceof BResponse) {
       super.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
       return;
     }
-
-//    HashMap<String, Object> jsonMap = new HashMap<>();
-//    jsonMap.put("code", Code.SUCCESS.getCode());
-//    jsonMap.put("success", true);
-//    jsonMap.put("message", Code.SUCCESS.getMsg());
-//    jsonMap.put("data", returnValue);
 
     ResponseBody responseBody = ToolResponse.getResponse(returnValue);
     super.handleReturnValue(responseBody, returnType, mavContainer, webRequest);

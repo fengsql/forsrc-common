@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class HandlerException {
 
   @ExceptionHandler(Exception.class)
-  private ModelAndView handleException(Exception exception) {
+  private ModelAndView handleException(Exception exception) throws Exception {
     log.error(ExceptionUtils.getStackTrace(exception));
     if (exception instanceof CommonException) {
       return getView(exception, ((CommonException) exception).getCode(), ((CommonException) exception).getMessage());
@@ -31,6 +32,9 @@ public class HandlerException {
     }
     if (exception instanceof HttpMessageNotReadableException) {
       return getView(exception, "HttpMessageNotReadableException");
+    }
+    if (exception instanceof ResponseStatusException) {
+      throw exception;
     }
     return getView(exception);
   }
@@ -58,7 +62,7 @@ public class HandlerException {
     if (message == null) {
       return exception.getMessage();
     }
-//    message += ": " + exception.getMessage();
+    //    message += ": " + exception.getMessage();
     return message;
   }
 

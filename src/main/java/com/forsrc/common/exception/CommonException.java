@@ -28,39 +28,39 @@ public class CommonException extends RuntimeException {
   }
 
   public CommonException(int code, String message) {
-    super(message);
-    this.message = message;
-    this.code = code;
+//    super(message);
+    this.setCode(code);
+    this.setMessage(message);
   }
 
   public CommonException(int code, String message, Throwable cause) {
     super(cause);
-    this.message = message;
-    this.code = code;
+    this.setCode(code);
+    this.setMessage(message);
 //    log.error(message);
   }
 
   public CommonException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
-    this.message = message;
-    this.code = Code.ERROR.getCode();
+    this.setCode(Code.FAIL.getCode());
+    this.setMessage(message);
   }
 
   public CommonException(String message, Throwable cause) {
     super(message, cause);
-    this.message = message;
-    this.code = Code.ERROR.getCode();
+    this.setCode(Code.FAIL.getCode());
+    this.setMessage(message);
   }
 
   public CommonException(String message) {
-    super(message);
-    this.message = message;
-    this.code = Code.ERROR.getCode();
+    //    super(message);
+    this.setCode(Code.FAIL.getCode());
+    this.setMessage(message);
   }
 
   public CommonException(Throwable cause) {
     super(cause);
-    this.message = cause.getMessage();
-    this.code = Code.ERROR.getCode();
+    this.setCode(Code.FAIL.getCode());
+    this.setMessage(message);
   }
 }

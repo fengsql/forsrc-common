@@ -54,7 +54,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
       .apiInfo(apiInfo()) //
       .groupName("api") //
       .select() //
-//            .apis(RequestHandlerSelectors.any()) //
+      //            .apis(RequestHandlerSelectors.any()) //
       .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class)) //
       .paths(PathSelectors.any()) //
       .paths(Predicates.not(PathSelectors.regex("/error.*"))) //

@@ -50,7 +50,7 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
       Arrays.stream(objects).forEachOrdered((param) -> {
         params.append(param).append(",");
       });
-      log.info("Thread Pool Exception message: {}, Method name: {}, bean: {}",
+      log.info("Thread Pool Exception message: {}, Method name: {}, bean: {}", //
         new Object[]{throwable.getMessage(), method.getName(), params});
     };
   }

@@ -29,7 +29,7 @@ public class WebConfigure implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")    // 允许跨域访问的路径
-//      .allowedOrigins("*")    // 允许跨域访问的源, 2.2
+      //      .allowedOrigins("*")    // 允许跨域访问的源, 2.2
       .allowedOriginPatterns("*")    // 允许跨域访问的源，2.4
       .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")    // 允许请求方法
       .maxAge(168000)    // 预检间隔时间

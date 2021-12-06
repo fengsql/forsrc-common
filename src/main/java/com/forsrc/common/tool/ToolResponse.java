@@ -74,6 +74,33 @@ public class ToolResponse {
     return getResponseSuccess(data);
   }
 
+  public static ResponseBody getResponse(boolean success, int code, String message, Object data) {
+    ResponseBody responseBody = new ResponseBody();
+    responseBody.setSuccess(success);
+    responseBody.setCode(code);
+    responseBody.setMessage(message);
+    responseBody.setData(data);
+    return responseBody;
+  }
+
+  public static ResponseBody getResponse(boolean success, int code, String message) {
+    ResponseBody responseBody = new ResponseBody();
+    responseBody.setSuccess(success);
+    responseBody.setCode(code);
+    responseBody.setMessage(message);
+    responseBody.setData(null);
+    return responseBody;
+  }
+
+  public static ResponseBody getResponseSuccess(int code, String message) {
+    ResponseBody responseBody = new ResponseBody();
+    responseBody.setSuccess(true);
+    responseBody.setCode(code);
+    responseBody.setMessage(message);
+    responseBody.setData(null);
+    return responseBody;
+  }
+
   private static ResponseBody getResponseSuccess(Object data) {
     ResponseBody responseBody = new ResponseBody();
     responseBody.setCode(Code.SUCCESS.getCode());
