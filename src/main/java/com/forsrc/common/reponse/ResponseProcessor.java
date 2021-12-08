@@ -48,17 +48,15 @@ public class ResponseProcessor extends RequestResponseBodyMethodProcessor implem
 
   public void afterPropertiesSet() {
     List<HandlerMethodReturnValueHandler> handlers = Lists.newArrayList(this.adapter.getReturnValueHandlers());
-    Iterator var2 = handlers.iterator();
-
-    while (var2.hasNext()) {
-      HandlerMethodReturnValueHandler handler = (HandlerMethodReturnValueHandler) var2.next();
+    Iterator iterator = handlers.iterator();
+    while (iterator.hasNext()) {
+      HandlerMethodReturnValueHandler handler = (HandlerMethodReturnValueHandler) iterator.next();
       if (handler instanceof RequestResponseBodyMethodProcessor) {
         int index = handlers.indexOf(handler);
         handlers.set(index, this);
         break;
       }
     }
-
     this.adapter.setReturnValueHandlers(handlers);
   }
 

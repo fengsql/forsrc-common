@@ -9,13 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class CommonException extends RuntimeException {
-  private static final long serialVersionUID = -8913379494715549864L;
   private Integer code;
   private String message;
-
-  public CommonException() {
-
-  }
 
   public CommonException(Code code) {
     this.setCode(code.getCode());
@@ -28,7 +23,6 @@ public class CommonException extends RuntimeException {
   }
 
   public CommonException(int code, String message) {
-//    super(message);
     this.setCode(code);
     this.setMessage(message);
   }
@@ -37,30 +31,29 @@ public class CommonException extends RuntimeException {
     super(cause);
     this.setCode(code);
     this.setMessage(message);
-//    log.error(message);
   }
 
   public CommonException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
-    this.setCode(Code.FAIL.getCode());
+    this.setCode(Code.COMMON_EXCEPTION.getCode());
     this.setMessage(message);
   }
 
   public CommonException(String message, Throwable cause) {
     super(message, cause);
-    this.setCode(Code.FAIL.getCode());
+    this.setCode(Code.COMMON_EXCEPTION.getCode());
     this.setMessage(message);
   }
 
   public CommonException(String message) {
     //    super(message);
-    this.setCode(Code.FAIL.getCode());
+    this.setCode(Code.COMMON_EXCEPTION.getCode());
     this.setMessage(message);
   }
 
   public CommonException(Throwable cause) {
     super(cause);
-    this.setCode(Code.FAIL.getCode());
+    this.setCode(Code.COMMON_EXCEPTION.getCode());
     this.setMessage(message);
   }
 }

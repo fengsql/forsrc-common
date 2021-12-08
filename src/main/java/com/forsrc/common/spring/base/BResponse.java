@@ -5,10 +5,10 @@ import lombok.Data;
 @Data
 public class BResponse {
 
-  private int code;
+  private Integer code;
 
   private String message;
-  
-  private boolean success;
-  
+
+  private Boolean success;
+
 }
