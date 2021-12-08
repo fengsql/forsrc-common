@@ -1139,7 +1139,7 @@ public class Tool {
   // <<<----------------------- tool -----------------------
 
   public static boolean isSuccess(BResponse response) {
-    if (response == null || !response.isSuccess()) {
+    if (response == null || !response.getSuccess()) {
       return false;
     }
     int code = response.getCode();
