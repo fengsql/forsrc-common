@@ -2,6 +2,7 @@ package com.forsrc.common.tool;
 
 import com.forsrc.common.constant.Code;
 import com.forsrc.common.constant.Const;
+import com.forsrc.common.exception.CommonException;
 import com.forsrc.common.spring.base.BResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -884,10 +885,14 @@ public class Tool {
     return toDatetime(toString(value));
   }
 
+  public static String formatDateTime(Date date) {
+    return toString(date, datetime_format);
+  }
+
   public static String formatTimeMillis(long value) {
     Date date = new Date();
     date.setTime(value);
-    return toString(date, "yyyy-MM-dd HH:mm:ss.SSS");
+    return toString(date, datetime_sss_format);
   }
 
   public static Date toDate(String value) {
@@ -1144,6 +1149,18 @@ public class Tool {
     }
     int code = response.getCode();
     return code == Code.SUCCESS.getCode() || code == Code.OK.getCode();
+  }
+
+  public static void throwNull(Object object, String name) {
+    if (object == null) {
+      throw new CommonException(Code.OBJECT_NULL, name + " is null!");
+    }
+  }
+
+  public static void throwNull(Object object) {
+    if (object == null) {
+      throw new CommonException(Code.OBJECT_NULL);
+    }
   }
 
   // >>>----------------------- tool -----------------------

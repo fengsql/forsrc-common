@@ -157,7 +157,7 @@ public class DbBatch<T> {
   private boolean runServiceInsert(DbEntity<T> dbEntity) {
     IService<T> service = dbEntity.getService();
     T t = dbEntity.getVo();
-    int count = service.insert(t);
+    int count = service.insert(null, null, t);
     if (count <= 0) {
       log.warn("runServiceInsert fail! vo: " + ToolJson.toJson(t));
     }
@@ -167,7 +167,7 @@ public class DbBatch<T> {
   private boolean runServiceUpdate(DbEntity<T> dbEntity) {
     IService<T> service = dbEntity.getService();
     T t = dbEntity.getVo();
-    int count = service.update(t);
+    int count = service.update(null, null, t);
     if (count <= 0) {
       log.warn("runServiceUpdate fail! vo: " + ToolJson.toJson(t));
     }
@@ -177,7 +177,7 @@ public class DbBatch<T> {
   private boolean runServiceDelete(DbEntity<T> dbEntity) {
     IService<T> service = dbEntity.getService();
     T t = dbEntity.getVo();
-    int count = service.delete(t);
+    int count = service.delete(null, null, t);
     if (count <= 0) {
       log.warn("runServiceDelete fail! vo: " + ToolJson.toJson(t));
     }

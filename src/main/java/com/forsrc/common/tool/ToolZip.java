@@ -172,7 +172,7 @@ public class ToolZip {
       compress(sourceFileList, zipOutputStream, KeepDirStructure);
       long end = System.currentTimeMillis();
       long ms = end - start;
-      log.info("zip ok. file: {}. cost: {} ms", outFile, ms);
+      log.debug("zip ok. file: {}. cost: {} ms", outFile, ms);
     } finally {
       if (zipOutputStream != null) {
         try {

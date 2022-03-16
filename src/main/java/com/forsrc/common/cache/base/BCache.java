@@ -1,7 +1,7 @@
 package com.forsrc.common.cache.base;
 
 import com.forsrc.common.tool.Tool;
-import com.forsrc.common.utils.RedisUtil;
+import com.forsrc.common.tool.ToolRedis;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -121,7 +121,7 @@ public class BCache {
       log.warn("key is null!");
       return;
     }
-    if (!RedisUtil.set(key, value, ttl)) {
+    if (!ToolRedis.set(key, value, ttl)) {
       log.warn("setRedis fail. key: {}", key);
     }
     log.debug("setRedis ok. key: {}.", key);
@@ -132,7 +132,7 @@ public class BCache {
       log.warn("key is null!");
       return;
     }
-    if (!RedisUtil.del(key)) {
+    if (!ToolRedis.del(key)) {
       log.warn("delRedis fail. key: {}", key);
     }
     log.debug("delRedis ok. key: {}.", key);
@@ -143,7 +143,7 @@ public class BCache {
       log.warn("key is null!");
       return null;
     }
-    Object object = RedisUtil.get(key);
+    Object object = ToolRedis.get(key);
     if (object == null) {
       return null;
     }
@@ -155,12 +155,12 @@ public class BCache {
     if (refresh <= 0) {
       return;
     }
-    long time = RedisUtil.getExpire(key);
+    long time = ToolRedis.getExpire(key);
     if (time <= 0 || time > refresh) {
       return;
     }
     synchronized (this) {
-      RedisUtil.setExpire(key, ttl);
+      ToolRedis.setExpire(key, ttl);
     }
     log.debug("refreshExpire ok. key: {}.", key);
   }

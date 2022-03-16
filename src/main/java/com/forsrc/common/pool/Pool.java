@@ -1,9 +1,6 @@
 package com.forsrc.common.pool;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -27,7 +24,7 @@ public class Pool {
 	public static <T> List<T> createArrayList() {
 		//在两个线程下 Collections.synchronizedMap 访问时间大概是 CopyOnWriteArrayList 的5倍，但在64线程的时候就变成了200倍+
 		//在线程数目增加时 CopyOnWriteArrayList 的写操作性能下降非常严重，而 Collections.synchronizedList 下降并不明显。
-		return Collections.synchronizedList(new LinkedList<>());
+		return Collections.synchronizedList(new ArrayList<>());
 	}
 
 	public static <T> List<T> createCopyOnWriteArrayList() {

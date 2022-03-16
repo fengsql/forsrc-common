@@ -2,7 +2,7 @@ package com.forsrc.common.configure.common;
 
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.forsrc.common.exception.HandlerException;
+import com.forsrc.common.exception.ExceptionAdviceHandler;
 import com.forsrc.common.reponse.ResponseProcessor;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,8 +50,8 @@ public class DependencyConfigure {
   }
 
   @Bean
-  public HandlerException restHandlerExceptionResolver() {
-    return new HandlerException();
+  public ExceptionAdviceHandler restHandlerExceptionResolver() {
+    return new ExceptionAdviceHandler();
   }
 
   @Bean
