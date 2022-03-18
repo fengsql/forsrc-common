@@ -38,7 +38,7 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
   @Value("${thread.pool.scheduler.threadNamePrefix:taskScheduler-}")
   private String schedulerThreadNamePrefix;
 
-  @Bean({"localTaskExecutor"})
+  @Bean({"localThreadPoolTaskExecutor"})
   public ThreadPoolTaskExecutor getAsyncExecutor() {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(corePoolSize);
