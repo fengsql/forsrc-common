@@ -11,8 +11,6 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 public class ParamStatis {
 
-  private Date start;
-
-  private Date end;
+  private Date[] dateTime;
 
 }

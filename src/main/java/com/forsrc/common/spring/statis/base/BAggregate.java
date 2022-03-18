@@ -5,12 +5,11 @@ import com.forsrc.common.tool.Tool;
 import com.forsrc.common.tool.ToolDateTime;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Slf4j
-public class BStatis {
+public class BAggregate {
 
   // <<----------------------- public -----------------------
 
@@ -19,60 +18,63 @@ public class BStatis {
   protected ParamStatis getParamStatisSecond(LocalDateTime dateTime, int seconds) {
     LocalDateTime startDate = dateTime.minusSeconds(seconds);
     ParamStatis paramStatis = new ParamStatis();
-    paramStatis.setStart(ToolDateTime.toDateTime(startDate));
-    paramStatis.setEnd(ToolDateTime.toDateTime(dateTime));
+    paramStatis.setDateTime(new Date[2]);
+    paramStatis.getDateTime()[0] = ToolDateTime.toDateTime(startDate);
+    paramStatis.getDateTime()[1] = ToolDateTime.toDateTime(dateTime);
     return paramStatis;
   }
 
   protected ParamStatis getParamStatisMinute(LocalDateTime dateTime, int minutes) {
     LocalDateTime startDate = dateTime.minusMinutes(minutes);
     ParamStatis paramStatis = new ParamStatis();
-    paramStatis.setStart(ToolDateTime.toDateTime(startDate));
-    paramStatis.setEnd(ToolDateTime.toDateTime(dateTime));
+    paramStatis.setDateTime(new Date[2]);
+    paramStatis.getDateTime()[0] = ToolDateTime.toDateTime(startDate);
+    paramStatis.getDateTime()[1] = ToolDateTime.toDateTime(dateTime);
     return paramStatis;
   }
 
   protected ParamStatis getParamStatisHour(LocalDateTime dateTime, int hours) {
     LocalDateTime startDate = dateTime.minusHours(hours);
     ParamStatis paramStatis = new ParamStatis();
-    paramStatis.setStart(ToolDateTime.toDateTime(startDate));
-    paramStatis.setEnd(ToolDateTime.toDateTime(dateTime));
+    paramStatis.setDateTime(new Date[2]);
+    paramStatis.getDateTime()[0] = ToolDateTime.toDateTime(startDate);
+    paramStatis.getDateTime()[1] = ToolDateTime.toDateTime(dateTime);
     return paramStatis;
   }
 
   protected ParamStatis getParamStatisDay(LocalDateTime dateTime, int days) {
-    LocalDate localDate = dateTime.toLocalDate();
-    LocalDate startDate = localDate.minusDays(days);
+    LocalDateTime startDate = dateTime.minusDays(days);
     ParamStatis paramStatis = new ParamStatis();
-    paramStatis.setStart(ToolDateTime.toDateTime(startDate));
-    paramStatis.setEnd(ToolDateTime.toDateTime(localDate));
+    paramStatis.setDateTime(new Date[2]);
+    paramStatis.getDateTime()[0] = ToolDateTime.toDateTime(startDate);
+    paramStatis.getDateTime()[1] = ToolDateTime.toDateTime(dateTime);
     return paramStatis;
   }
 
   protected ParamStatis getParamStatisWeek(LocalDateTime dateTime, int weeks) {
-    LocalDate localDate = dateTime.toLocalDate();
-    LocalDate startDate = localDate.minusWeeks(weeks);
+    LocalDateTime startDate = dateTime.minusWeeks(weeks);
     ParamStatis paramStatis = new ParamStatis();
-    paramStatis.setStart(ToolDateTime.toDateTime(startDate));
-    paramStatis.setEnd(ToolDateTime.toDateTime(localDate));
+    paramStatis.setDateTime(new Date[2]);
+    paramStatis.getDateTime()[0] = ToolDateTime.toDateTime(startDate);
+    paramStatis.getDateTime()[1] = ToolDateTime.toDateTime(dateTime);
     return paramStatis;
   }
 
   protected ParamStatis getParamStatisMonth(LocalDateTime dateTime, int months) {
-    LocalDate localDate = dateTime.toLocalDate();
-    LocalDate startDate = localDate.minusMonths(months);
+    LocalDateTime startDate = dateTime.minusMonths(months);
     ParamStatis paramStatis = new ParamStatis();
-    paramStatis.setStart(ToolDateTime.toDateTime(startDate));
-    paramStatis.setEnd(ToolDateTime.toDateTime(localDate));
+    paramStatis.setDateTime(new Date[2]);
+    paramStatis.getDateTime()[0] = ToolDateTime.toDateTime(startDate);
+    paramStatis.getDateTime()[1] = ToolDateTime.toDateTime(dateTime);
     return paramStatis;
   }
 
   protected ParamStatis getParamStatisYear(LocalDateTime dateTime, int years) {
-    LocalDate localDate = dateTime.toLocalDate();
-    LocalDate startDate = localDate.minusYears(years);
+    LocalDateTime startDate = dateTime.minusYears(years);
     ParamStatis paramStatis = new ParamStatis();
-    paramStatis.setStart(ToolDateTime.toDateTime(startDate));
-    paramStatis.setEnd(ToolDateTime.toDateTime(localDate));
+    paramStatis.setDateTime(new Date[2]);
+    paramStatis.getDateTime()[0] = ToolDateTime.toDateTime(startDate);
+    paramStatis.getDateTime()[1] = ToolDateTime.toDateTime(dateTime);
     return paramStatis;
   }
 
@@ -80,16 +82,16 @@ public class BStatis {
 
   // <<<----------------------- number -----------------------
 
-  protected Integer toNumberSecond(Date date) {
-    return Tool.toInt(Tool.toString(date, "yyyyMMddHHmmss"));
+  protected Long toNumberSecond(Date date) {
+    return Tool.toLong(Tool.toString(date, "yyyyMMddHHmmss"));
   }
 
-  protected Integer toNumberMinute(Date date) {
-    return Tool.toInt(Tool.toString(date, "yyyyMMddHHmm"));
+  protected Long toNumberMinute(Date date) {
+    return Tool.toLong(Tool.toString(date, "yyyyMMddHHmm"));
   }
 
-  protected Integer toNumberHour(Date date) {
-    return Tool.toInt(Tool.toString(date, "yyyyMMddHH"));
+  protected Long toNumberHour(Date date) {
+    return Tool.toLong(Tool.toString(date, "yyyyMMddHH"));
   }
 
   protected Integer toNumberDay(Date date) {
@@ -106,10 +108,6 @@ public class BStatis {
 
   protected Integer toNumberYear(Date date) {
     return Tool.toInt(Tool.toString(date, "yyyy"));
-  }
-
-  protected Integer toNumberManual(Date date) {
-    return Tool.toInt(Tool.toString(date, "yyyyMMdd"));
   }
 
   // >>>----------------------- number -----------------------
@@ -144,10 +142,6 @@ public class BStatis {
     return Tool.toDatetime(Tool.toString(date, "yyyy"), "yyyy");
   }
 
-  protected Date toDateTimeManual(Date date) {
-    return Tool.toDatetime(Tool.toString(date, "yyyy-MM-dd"), "yyyy-MM-dd");
-  }
-
   // >>>----------------------- datetime -----------------------
 
   // <<<----------------------- string -----------------------
@@ -178,10 +172,6 @@ public class BStatis {
 
   protected String toStringYear(Date date) {
     return Tool.toString(date, "yyyy");
-  }
-
-  protected String toStringManual(Date date) {
-    return Tool.toString(date, "yyyy-MM-dd");
   }
 
   // >>>----------------------- string -----------------------

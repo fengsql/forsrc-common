@@ -30,6 +30,7 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
   @ExceptionHandler(Exception.class)
   @org.springframework.web.bind.annotation.ResponseBody
   public ResponseBody handleException(Exception exception) throws Exception {
+    log.error(ExceptionUtils.getStackTrace(exception));
     if (exception instanceof CommonException) {
       return handleCommon(exception);
     }
@@ -50,7 +51,6 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
     if (httpStatus != null) {
       return getResponseBody(exception, httpStatus.value());
     }
-    log.error(ExceptionUtils.getStackTrace(exception));
     throw exception;
   }
 
