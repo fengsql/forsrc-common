@@ -19,8 +19,8 @@ import java.util.Map;
 public class ToolJson {
   private static final String contentType_default = "json";
   private static final int length_simple_text = 500; //
-//  private static Gson gson = new Gson();
-//  private static JsonParser jsonParser = new JsonParser();
+  //  private static Gson gson = new Gson();
+  //  private static JsonParser jsonParser = new JsonParser();
 
   //<<---------------------------------------- initialize ----------------------------------------
 
@@ -30,48 +30,54 @@ public class ToolJson {
 
   //<<<---------------------------------------- toBean ----------------------------------------
 
-  public static <T> T toBean(String param, Class<T> clazz) {
-    if (Tool.isNull(param)) {
+  public static <T> T toBean(String json, Class<T> clazz) {
+    if (Tool.isNull(json)) {
       return null;
     }
-    return JSON.parseObject(param, clazz);
+    return JSON.parseObject(json, clazz);
   }
 
-  public static <T> T toBean(String param, Type typeOfT) {
-    if (Tool.isNull(param)) {
+  public static <T> T toBean(String json, Type typeOfT) {
+    if (Tool.isNull(json)) {
       return null;
     }
-    return JSON.parseObject(param, typeOfT);
+    return JSON.parseObject(json, typeOfT);
   }
 
-  public static List toList(String param, Class<?> clazz) {
-    if (Tool.isNull(param)) {
+  public static <T> List<T> toList(String json, Class<T> clazz) {
+    if (Tool.isNull(json)) {
       return null;
     }
-    return JSON.parseArray(param, clazz);
+    return JSON.parseArray(json, clazz);
   }
 
-//  public static <T> T toBean(String bean, Class<T> clazz, String[] timeFields) {
-//    if (Tool.isNull(bean)) {
-//      return null;
-//    }
-//    if (Tool.isNull(timeFields)) {
-//      return JSON.parseObject(bean, clazz);
-//    }
-//    JsonObject jsonObject = toJsonObject(bean);
-//    for (String timeField : timeFields) {
-//      String time = jsonObject.get(timeField).getAsString();
-//      if (StringUtils.isNotBlank(time)) {
-//        jsonObject.addProperty(timeField, Tool.getSecond(time));
-//      }
-//    }
-//    return JSON.parseObject(jsonObject, clazz);
-//  }
-//
-//  public static Map<String, String> paramToMap(String bean) {
-//    Type type = new TypeToken<Map<String, String>>() {}.getType();
-//    return gson.fromJson(bean, type);
-//  }
+  //  public static <T> T toBean(String bean, Class<T> clazz, String[] timeFields) {
+  //    if (Tool.isNull(bean)) {
+  //      return null;
+  //    }
+  //    if (Tool.isNull(timeFields)) {
+  //      return JSON.parseObject(bean, clazz);
+  //    }
+  //    JsonObject jsonObject = toJsonObject(bean);
+  //    for (String timeField : timeFields) {
+  //      String time = jsonObject.get(timeField).getAsString();
+  //      if (StringUtils.isNotBlank(time)) {
+  //        jsonObject.addProperty(timeField, Tool.getSecond(time));
+  //      }
+  //    }
+  //    return JSON.parseObject(jsonObject, clazz);
+  //  }
+  //
+  //  public static Map<String, String> paramToMap(String bean) {
+  //    Type type = new TypeToken<Map<String, String>>() {}.getType();
+  //    return gson.fromJson(bean, type);
+  //  }
+  //
+  //  public static <T> List<T> toList(String jsonData, Class<T> type) {
+  //    Gson gson = new Gson();
+  //    List<T> result = JSON.fromJson(jsonData, new TypeToken<List<T>>() {}.getType());
+  //    return result;
+  //  }
 
   //>>>---------------------------------------- toBean ----------------------------------------
 
@@ -95,16 +101,15 @@ public class ToolJson {
     if (object == null) {
       return null;
     }
-    return JSON.toJSONString(object, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,
-      SerializerFeature.WriteDateUseDateFormat);
+    return JSON.toJSONString(object, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
   }
 
-//  public static JsonObject toJsonObject(String bean) {
-//    if (Tool.isNull(bean)) {
-//      return null;
-//    }
-//    return jsonParser.parse(bean).getAsJsonObject();
-//  }
+  //  public static JsonObject toJsonObject(String bean) {
+  //    if (Tool.isNull(bean)) {
+  //      return null;
+  //    }
+  //    return jsonParser.parse(bean).getAsJsonObject();
+  //  }
 
   public static String toSimpleText(Object object) {
     String source = toJson(object);
@@ -147,7 +152,7 @@ public class ToolJson {
   /**
    * 将一个 Map 对象转化为一个 JavaBean
    * @param type 要转化的类型
-   * @param map 包含属性值的 map
+   * @param map  包含属性值的 map
    * @return 转化出来的 JavaBean 对象
    */
   public static Object toBean(Map map, Class type) {
@@ -161,7 +166,7 @@ public class ToolJson {
         PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
         String propertyName = propertyDescriptor.getName();
         String propertyType = propertyDescriptor.getPropertyType().toString();
-//        System.out.println("propertyName: " + propertyName + "; type: " + propertyDescriptor.getPropertyType().toString());
+        //        System.out.println("propertyName: " + propertyName + "; type: " + propertyDescriptor.getPropertyType().toString());
         if (map.containsKey(propertyName)) {
           // 下面一句可以 try 起来，这样当一个属性赋值失败的时候就不会影响其他属性赋值。
           Object value = map.get(propertyName);
@@ -216,69 +221,69 @@ public class ToolJson {
 
   //<<<---------------------------------------- toMap ----------------------------------------
 
-//  public static <T> Map<String, Object> toMap(T object) {
-//    Map<String, Object> map = new HashMap<>();
-//    if (object == null) {
-//      return map;
-//    }
-//    JSONObject jsonObject = JSONObject.fromObject(object);
-//    Iterator iterator = jsonObject.keys();
-//    while (iterator.hasNext()) {
-//      String key = (String) iterator.next();
-//      Object obj = jsonObject.get(key);
-//      //			String value = obj == null ? "" : obj.toString();
-//      map.put(key, obj);
-//    }
-//    return map;
-//  }
-//
-//  public static <T> Map<String, Object> toMap(T object, String[] timeFields) {
-//    Map<String, Object> map = toMap(object);
-//    if (timeFields == null) {
-//      return map;
-//    }
-//    for (String key : timeFields) {
-//      String time = Tool.toString(map.get(key));
-//      if (StringUtils.isNotBlank(time)) {
-//        if (Tool.isLong(time)) {
-//          String value = Tool.getDate(Tool.toLong(time));
-//          map.put(key, value);
-//        } else if (time.indexOf(" ") > 0) {
-//          String value = Tool.toString(Tool.getDate(time));
-//          map.put(key, value);
-//        }
-//      }
-//    }
-//    return map;
-//  }
+  //  public static <T> Map<String, Object> toMap(T object) {
+  //    Map<String, Object> map = new HashMap<>();
+  //    if (object == null) {
+  //      return map;
+  //    }
+  //    JSONObject jsonObject = JSONObject.fromObject(object);
+  //    Iterator iterator = jsonObject.keys();
+  //    while (iterator.hasNext()) {
+  //      String key = (String) iterator.next();
+  //      Object obj = jsonObject.get(key);
+  //      //			String value = obj == null ? "" : obj.toString();
+  //      map.put(key, obj);
+  //    }
+  //    return map;
+  //  }
+  //
+  //  public static <T> Map<String, Object> toMap(T object, String[] timeFields) {
+  //    Map<String, Object> map = toMap(object);
+  //    if (timeFields == null) {
+  //      return map;
+  //    }
+  //    for (String key : timeFields) {
+  //      String time = Tool.toString(map.get(key));
+  //      if (StringUtils.isNotBlank(time)) {
+  //        if (Tool.isLong(time)) {
+  //          String value = Tool.getDate(Tool.toLong(time));
+  //          map.put(key, value);
+  //        } else if (time.indexOf(" ") > 0) {
+  //          String value = Tool.toString(Tool.getDate(time));
+  //          map.put(key, value);
+  //        }
+  //      }
+  //    }
+  //    return map;
+  //  }
 
-//  public static <T> List<Map<String, Object>> toMap(List<T> objects) {
-//    List<Map<String, Object>> maps = new ArrayList<>();
-//    if (objects == null) {
-//      return maps;
-//    }
-//    for (T object : objects) {
-//      Map<String, Object> map = toMap(object);
-//      maps.add(map);
-//    }
-//    return maps;
-//  }
-//
-//  public static <T> List<Map<String, Object>> toMap(List<T> objects, String[] timeFields) {
-//    List<Map<String, Object>> maps = new ArrayList<>();
-//    if (objects == null) {
-//      return maps;
-//    }
-//    for (T object : objects) {
-//      Map<String, Object> map = toMap(object, timeFields);
-//      maps.add(map);
-//    }
-//    return maps;
-//  }
+  //  public static <T> List<Map<String, Object>> toMap(List<T> objects) {
+  //    List<Map<String, Object>> maps = new ArrayList<>();
+  //    if (objects == null) {
+  //      return maps;
+  //    }
+  //    for (T object : objects) {
+  //      Map<String, Object> map = toMap(object);
+  //      maps.add(map);
+  //    }
+  //    return maps;
+  //  }
+  //
+  //  public static <T> List<Map<String, Object>> toMap(List<T> objects, String[] timeFields) {
+  //    List<Map<String, Object>> maps = new ArrayList<>();
+  //    if (objects == null) {
+  //      return maps;
+  //    }
+  //    for (T object : objects) {
+  //      Map<String, Object> map = toMap(object, timeFields);
+  //      maps.add(map);
+  //    }
+  //    return maps;
+  //  }
 
-//  public static Map<String, String> jsonToMap(String json) {
-//    return JSON.parseObject(json, new TypeToken<Map<String, String>>() {}.getType());
-//  }
+  //  public static Map<String, String> jsonToMap(String json) {
+  //    return JSON.parseObject(json, new TypeToken<Map<String, String>>() {}.getType());
+  //  }
 
   public static Map<Object, Object> jsonToMap(String json) {
     return JSON.parseObject(json, new TypeToken<Map<Object, Object>>() {}.getType());

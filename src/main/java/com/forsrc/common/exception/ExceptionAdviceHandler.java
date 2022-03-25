@@ -1,5 +1,6 @@
 package com.forsrc.common.exception;
 
+import com.forsrc.common.constant.Code;
 import com.forsrc.common.reponse.ResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -23,6 +24,8 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.sql.SQLException;
+
 @Slf4j
 @ControllerAdvice
 public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
@@ -42,6 +45,9 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
     }
     if (exception instanceof ResponseStatusException) {
       throw exception;
+    }
+    if (exception instanceof SQLException) {
+      return handleSQLException(exception);
     }
     return handleDefault(exception);
   }
@@ -67,6 +73,10 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
   private ResponseBody handleBusiness(Exception exception) {
     BusinessException businessException = (BusinessException) exception;
     return getResponseBody(exception, businessException.getCode(), businessException.getMessage(), businessException.getData());
+  }
+
+  private ResponseBody handleSQLException(Exception exception) {
+    return createResponseBody(Code.FAIL.getCode(), "SQL error!");
   }
 
   private ResponseBody getResponseBody(Exception exception, Integer code, String message, Object data) {
