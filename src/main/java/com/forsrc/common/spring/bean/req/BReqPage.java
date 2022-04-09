@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class BReqPage {
 
-  @ApiModelProperty(value = "每页记录数，0 (或不传)取默认值", name = "pageSize", dataType = "Integer", required = false)
+  @ApiModelProperty(value = "每页记录数，0 (或不传)取默认值，-1 查询所有", name = "pageSize", dataType = "Integer", required = false)
   private Integer pageSize;
 
   @ApiModelProperty(value = "分页索引号，0 (或不传)为第一页，当为 0 (或不传)时将查询总记录数，其它值不查询总记录数", name = "pageIndex", dataType = "Integer", required = false)

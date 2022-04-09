@@ -21,7 +21,7 @@ public class BeanOkHttp {
 
   private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
   private static final MediaType XML = MediaType.parse("application/xml; charset=utf-8");
-  //  private static final MediaType BIN = MediaType.parse("application/octet-stream");
+  private static final MediaType BIN = MediaType.parse("application/octet-stream");
 
   @Resource
   private OkHttpClient okHttpClient;

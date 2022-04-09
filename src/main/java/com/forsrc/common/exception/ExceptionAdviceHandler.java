@@ -32,7 +32,7 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
 
   @ExceptionHandler(Exception.class)
   @org.springframework.web.bind.annotation.ResponseBody
-  public ResponseBody handleException(Exception exception) throws Exception {
+  protected ResponseBody handleException(Exception exception) throws Exception {
     log.error(ExceptionUtils.getStackTrace(exception));
     if (exception instanceof CommonException) {
       return handleCommon(exception);
@@ -49,15 +49,19 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
     if (exception instanceof SQLException) {
       return handleSQLException(exception);
     }
-    return handleDefault(exception);
+    return handleOther(exception);
   }
 
-  private ResponseBody handleDefault(Exception exception) throws Exception {
+  private ResponseBody handleOther(Exception exception) {
     HttpStatus httpStatus = getHttpStatus(exception);
     if (httpStatus != null) {
       return getResponseBody(exception, httpStatus.value());
     }
-    throw exception;
+    return handUncaught(exception);
+  }
+
+  private ResponseBody handUncaught(Exception exception) {
+    return createResponseBody(Code.FAIL.getCode(), "Uncaught exception!");
   }
 
   private ResponseBody handleCommon(Exception exception) {
@@ -88,7 +92,7 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
     return createResponseBody(code, exception.getMessage());
   }
 
-  private ResponseBody createResponseBody(Integer code, String message, Object data) {
+  protected ResponseBody createResponseBody(Integer code, String message, Object data) {
     ResponseBody responseBody = new ResponseBody();
     responseBody.setSuccess(false);
     responseBody.setCode(code);
@@ -97,7 +101,7 @@ public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
     return responseBody;
   }
 
-  private ResponseBody createResponseBody(Integer code, String message) {
+  protected ResponseBody createResponseBody(Integer code, String message) {
     return createResponseBody(code, message, null);
   }
 

@@ -5,7 +5,7 @@ import java.util.ListIterator;
 
 public class Stack<T> {
 
-  private LinkedList<T> list = new LinkedList<>();
+  private final LinkedList<T> list = new LinkedList<>();
 
   public void push(T v) {
     list.addLast(v);
@@ -16,6 +16,22 @@ public class Stack<T> {
   }
 
   public T pop() {
+    return list.pollLast();
+  }
+
+  public T peekFirst() {
+    return list.peekFirst();
+  }
+
+  public T peekLast() {
+    return list.peekLast();
+  }
+
+  public T pollFirst() {
+    return list.pollFirst();
+  }
+
+  public T pollLast() {
     return list.pollLast();
   }
 

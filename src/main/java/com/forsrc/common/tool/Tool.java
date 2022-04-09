@@ -26,8 +26,8 @@ public class Tool {
 
   private static long randomSeedOffset = 0; // 随机数的种子，每次取随机数自动加1
 
-  private static final char offsetLower = 1 << 5;
-  private static final char offsetUpper = (char) (Character.MAX_VALUE - (1 << 5));
+  private static final char offsetCase = 1 << 5;
+  //  private static final char offsetUpper = (char) (Character.MAX_VALUE - (1 << 5));
   private static final char minUpperChar = 'A';
   private static final char maxUpperChar = 'Z';
   private static final char minLowerChar = 'a';
@@ -89,39 +89,35 @@ public class Tool {
   }
 
   public static char toLower(char ch) {
-    return (char) (ch | offsetLower);
+    return ch >= minUpperChar && ch <= maxUpperChar ? (char) (ch | offsetCase) : ch;
   }
 
   public static char toUpper(char ch) {
-    return (char) (ch & offsetUpper);
+    return ch >= minLowerChar && ch <= maxLowerChar ? (char) (ch - offsetCase) : ch;
   }
 
   public static String toUpper(String str) {
     if (isNull(str)) {
       return str;
     }
-    char[] charArray = str.toCharArray();
-    for (int i = 0; i < charArray.length; i++) {
-      char temp = charArray[i];
-      if (temp >= minLowerChar && temp <= maxLowerChar) {
-        charArray[i] = toUpper(temp);
-      }
+    char[] chars = str.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+      char temp = chars[i];
+      chars[i] = toUpper(temp);
     }
-    return new String(charArray, 0, charArray.length);
+    return new String(chars);
   }
 
   public static String toLower(String str) {
     if (isNull(str)) {
       return str;
     }
-    char[] charArray = str.toCharArray();
-    for (int i = 0; i < charArray.length; i++) {
-      char temp = charArray[i];
-      if (temp >= minUpperChar && temp <= maxUpperChar) {
-        charArray[i] = toLower(temp);
-      }
+    char[] chars = str.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+      char temp = chars[i];
+      chars[i] = toLower(temp);
     }
-    return new String(charArray, 0, charArray.length);
+    return new String(chars);
   }
 
   public static String toLowerFirst(String value) {
@@ -131,7 +127,9 @@ public class Tool {
     if (value.length() == 1) {
       return String.valueOf(toLower(value.charAt(0)));
     }
-    return toLower(value.charAt(0)) + value.substring(1);
+    char[] chars = value.toCharArray();
+    chars[0] = toLower(chars[0]);
+    return new String(chars);
   }
 
   public static String toUpperFirst(String value) {
@@ -141,7 +139,9 @@ public class Tool {
     if (value.length() == 1) {
       return String.valueOf(toUpper(value.charAt(0)));
     }
-    return toUpper(value.charAt(0)) + value.substring(1);
+    char[] chars = value.toCharArray();
+    chars[0] = toUpper(chars[0]);
+    return new String(chars);
   }
 
   public static String toCamel(String source) {

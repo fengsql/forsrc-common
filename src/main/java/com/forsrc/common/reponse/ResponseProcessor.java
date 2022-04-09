@@ -3,6 +3,7 @@ package com.forsrc.common.reponse;
 import com.forsrc.common.spring.base.BResponse;
 import com.forsrc.common.tool.ToolResponse;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,9 +16,10 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
+@Slf4j
 public class ResponseProcessor extends RequestResponseBodyMethodProcessor implements InitializingBean {
 
   private RequestMappingHandlerAdapter adapter;
@@ -37,6 +39,7 @@ public class ResponseProcessor extends RequestResponseBodyMethodProcessor implem
     //      super.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
     //      return;
     //    }
+//    log.info("handleReturnValue returnValue: {}", returnValue);
     if (returnValue instanceof BResponse) {
       super.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
       return;
@@ -47,10 +50,8 @@ public class ResponseProcessor extends RequestResponseBodyMethodProcessor implem
   }
 
   public void afterPropertiesSet() {
-    List<HandlerMethodReturnValueHandler> handlers = Lists.newArrayList(this.adapter.getReturnValueHandlers());
-    Iterator iterator = handlers.iterator();
-    while (iterator.hasNext()) {
-      HandlerMethodReturnValueHandler handler = (HandlerMethodReturnValueHandler) iterator.next();
+    List<HandlerMethodReturnValueHandler> handlers = Lists.newArrayList(Objects.requireNonNull(this.adapter.getReturnValueHandlers()));
+    for (HandlerMethodReturnValueHandler handler : handlers) {
       if (handler instanceof RequestResponseBodyMethodProcessor) {
         int index = handlers.indexOf(handler);
         handlers.set(index, this);
