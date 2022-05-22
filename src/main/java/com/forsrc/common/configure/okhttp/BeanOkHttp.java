@@ -41,7 +41,19 @@ public class BeanOkHttp {
   }
 
   /**
-   * post 请求, 请求数据为 json 的字符串
+   * post 请求, 请求数据为自定义 MediaType 类型。
+   * @param url   请求url地址
+   * @param param 请求数据, param 字符串
+   * @return string
+   */
+  public String post(MediaType mediaType, String url, String param, Map<String, String> headers) {
+    log.info("post url: {}.", url);
+    Request request = getRequest(mediaType, url, param, headers);
+    return requestBody(request);
+  }
+
+  /**
+   * post 请求, 请求数据为 json 类型。
    * @param url  请求url地址
    * @param json 请求数据, json 字符串
    * @return string
@@ -53,7 +65,7 @@ public class BeanOkHttp {
   }
 
   /**
-   * post 请求, 请求数据为 json 的字符串
+   * post 请求, 请求数据为 json 类型。
    * @param url  请求url地址
    * @param json 请求数据, json 字符串
    * @return string
@@ -65,14 +77,26 @@ public class BeanOkHttp {
   }
 
   /**
-   * post 请求, 请求数据为 xml 的字符串
-   * @param url 请求url地址
-   * @param xml 请求数据, xml 字符串
+   * post 请求, 请求数据为 xml 类型。
+   * @param url   请求url地址
+   * @param param 请求数据, param 字符串
    * @return string
    */
-  public String postXml(String url, String xml, Map<String, String> headers) {
+  public String postXml(String url, String param, Map<String, String> headers) {
     log.info("post xml url: {}.", url);
-    Request request = getRequest(XML, url, xml, headers);
+    Request request = getRequest(XML, url, param, headers);
+    return requestBody(request);
+  }
+
+  /**
+   * post 请求, 请求数据为 bin 类型。
+   * @param url   请求url地址
+   * @param param 请求数据, param 字符串
+   * @return string
+   */
+  public String postBin(String url, String param, Map<String, String> headers) {
+    log.info("post bin url: {}.", url);
+    Request request = getRequest(BIN, url, param, headers);
     return requestBody(request);
   }
 
