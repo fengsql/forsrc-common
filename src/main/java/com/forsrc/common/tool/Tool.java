@@ -989,12 +989,12 @@ public class Tool {
       return null;
     }
     if (Tool.isLong(time)) {
-      return Math.abs(Tool.toLong(time));
+      return Tool.toLong(time);
     }
     int len = time.length();
     String val = time.substring(0, len - 1);
     String unit = time.substring(len - 1, len);
-    if (Tool.isLong(val)) {
+    if (!Tool.isLong(val)) {
       throw new CommonException(Code.SETTING_ERROR, "无效时间配置! time: " + time);
     }
     long value = Tool.toLong(val);
