@@ -91,10 +91,10 @@ public class BeanOkHttp {
   /**
    * post 请求, 请求数据为 bin 类型。
    * @param url   请求url地址
-   * @param param 请求数据, param 字符串
+   * @param param 请求数据
    * @return string
    */
-  public String postBin(String url, String param, Map<String, String> headers) {
+  public String postBin(String url, byte[] param, Map<String, String> headers) {
     log.info("post bin url: {}.", url);
     Request request = getRequest(BIN, url, param, headers);
     return requestBody(request);
@@ -186,6 +186,11 @@ public class BeanOkHttp {
   // <<----------------------- getRequest -----------------------
 
   private Request getRequest(MediaType contentType, String url, String param, Map<String, String> headers) {
+    RequestBody requestBody = RequestBody.create(contentType, param);
+    return getRequest(url, requestBody, headers);
+  }
+
+  private Request getRequest(MediaType contentType, String url, byte[] param, Map<String, String> headers) {
     RequestBody requestBody = RequestBody.create(contentType, param);
     return getRequest(url, requestBody, headers);
   }
