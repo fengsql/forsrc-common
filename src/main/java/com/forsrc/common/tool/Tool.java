@@ -743,6 +743,18 @@ public class Tool {
     return value1 == value2;
   }
 
+  public static boolean isLong(String value) {
+    if (isNull(value)) {
+      return false;
+    }
+    try {
+      Long.parseLong(value);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
   public static long toLong(Long value) {
     return value == null ? 0 : value;
   }
@@ -751,7 +763,7 @@ public class Tool {
     try {
       return isNull(value) ? 0 : Long.parseLong(value);
     } catch (NumberFormatException e) {
-      return 0;
+      return 0L;
     }
   }
 
@@ -759,7 +771,7 @@ public class Tool {
     try {
       return value == null ? 0 : Long.parseLong(toString(value));
     } catch (NumberFormatException e) {
-      return 0;
+      return 0L;
     }
   }
 
@@ -771,7 +783,7 @@ public class Tool {
     try {
       return isNull(value) ? 0 : Float.parseFloat(value);
     } catch (NumberFormatException e) {
-      return 0;
+      return 0F;
     }
   }
 
@@ -785,6 +797,18 @@ public class Tool {
 
   public static boolean isNull(Double value) {
     return value == null || value <= 0;
+  }
+
+  public static boolean isDouble(String value) {
+    if (isNull(value)) {
+      return false;
+    }
+    try {
+      Double.parseDouble(value);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
   }
 
   public static double toDouble(Double value) {
