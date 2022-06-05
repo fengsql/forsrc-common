@@ -23,6 +23,11 @@ public class Tool {
   private static final String time_sss_format = "HH:mm:ss.SSS"; // 时间格式
   private static final String null_datetime = "1970-01-01 08:00:00"; //
   private static final String prefix_hex = "0X"; //
+  //时间单位
+  private static final String unit_second = "s";
+  private static final String unit_minute = "m";
+  private static final String unit_hour = "h";
+  private static final String unit_day = "d";
 
   private static long randomSeedOffset = 0; // 随机数的种子，每次取随机数自动加1
 
@@ -977,6 +982,38 @@ public class Tool {
 
   public static long getSecond() {
     return System.currentTimeMillis() / 1000;
+  }
+
+  public static Long getConfigTime(String time) {
+    if (Tool.isNull(time)) {
+      return null;
+    }
+    if (Tool.isLong(time)) {
+      return Math.abs(Tool.toLong(time));
+    }
+    int len = time.length();
+    String val = time.substring(0, len - 1);
+    String unit = time.substring(len - 1, len);
+    if (Tool.isLong(val)) {
+      throw new CommonException(Code.SETTING_ERROR, "无效时间配置! time: " + time);
+    }
+    long value = Tool.toLong(val);
+    switch (unit) {
+      case unit_second:
+        break;
+      case unit_minute:
+        value = value * 60;
+        break;
+      case unit_hour:
+        value = value * 60 * 60;
+        break;
+      case unit_day:
+        value = value * 60 * 60 * 24;
+        break;
+      default:
+        throw new CommonException(Code.SETTING_ERROR, "时间配置单位无效! 单位: " + unit);
+    }
+    return value;
   }
 
   // >>>----------------------- datetime -----------------------
