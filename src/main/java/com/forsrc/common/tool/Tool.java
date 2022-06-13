@@ -995,7 +995,7 @@ public class Tool {
     String val = time.substring(0, len - 1);
     String unit = time.substring(len - 1, len);
     if (!Tool.isLong(val)) {
-      throw new CommonException(Code.SETTING_ERROR, "无效时间配置! time: " + time);
+      throw new CommonException(Code.SETTING_ERROR, "时间配置无效! time: " + time);
     }
     long value = Tool.toLong(val);
     switch (unit) {
