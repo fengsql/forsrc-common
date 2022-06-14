@@ -19,10 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * 依赖bean配置
- * @author zhanglb
- */
 @Configuration
 public class DependencyConfigure {
 
@@ -39,7 +35,7 @@ public class DependencyConfigure {
     //fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
     fastConverter.setFastJsonConfig(fastJsonConfig);
 
-    for (HttpMessageConverter messageConverter : messageConverters) {
+    for (HttpMessageConverter<?> messageConverter : messageConverters) {
       if (messageConverter instanceof MappingJackson2HttpMessageConverter) {
         int index = messageConverters.indexOf(messageConverter);
         messageConverters.set(index, fastConverter);
