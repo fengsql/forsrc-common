@@ -133,9 +133,16 @@ public class ToolExport {
 
   private static void addField(int colIndex, Row row, Map<String, Object> map, Field field, CellStyle bodyStyle, DataFormat dataFormat) {
     String name = field.getName();
-    Object object = map.get(name);
+    Object object = getValue(map, name);
     Cell cell = row.createCell(colIndex);
     setValue(object, cell, field, bodyStyle, dataFormat);
+  }
+
+  private static Object getValue(Map<String, Object> map, String name) {
+    if (!map.containsKey(name)) {
+      name = Tool.toLower(name);
+    }
+    return map.get(name);
   }
 
   private static void setValue(Object object, Cell cell, Field field, CellStyle bodyStyle, DataFormat dataFormat) {
