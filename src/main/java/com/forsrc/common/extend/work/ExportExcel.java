@@ -160,7 +160,7 @@ public class ExportExcel extends BService {
   }
 
   private String toQueryField_datetime(String name) {
-    String value = fieldConvertor.toSqlDatetime(name);
+    String value = fieldConvertor.formatDatetime(name);
     value += " " + name;
     return value;
   }

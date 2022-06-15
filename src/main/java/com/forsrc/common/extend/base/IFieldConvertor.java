@@ -2,7 +2,7 @@ package com.forsrc.common.extend.base;
 
 public interface IFieldConvertor {
 
-   default String toSqlDatetime(String fieldName) {
+   default String formatDatetime(String fieldName) {
       return "date_format(" + fieldName + ", '%Y-%m-%d %T')";
    }
    
