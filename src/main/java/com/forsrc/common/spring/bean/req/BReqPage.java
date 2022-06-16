@@ -1,12 +1,15 @@
 package com.forsrc.common.spring.bean.req;
 
+import com.forsrc.common.spring.base.BRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @ApiModel(value = "查询的基础请求参数", description = "查询的基础和分页请求参数")
 @Data
-public class BReqPage {
+@EqualsAndHashCode(callSuper = false)
+public class BReqPage extends BRequest {
 
   @ApiModelProperty(value = "每页记录数，0 (或不传)取默认值，-1 查询所有", name = "pageSize", dataType = "Integer", required = false)
   private Integer pageSize;

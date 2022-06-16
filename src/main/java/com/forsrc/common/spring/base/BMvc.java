@@ -1,10 +1,9 @@
 package com.forsrc.common.spring.base;
 
-import com.forsrc.common.reponse.ResponseBody;
 import com.forsrc.common.constant.Code;
+import com.forsrc.common.reponse.ResponseBody;
 import com.forsrc.common.tool.ToolJson;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +12,6 @@ import java.io.PrintWriter;
 
 @Data
 @Slf4j
-@EqualsAndHashCode(callSuper = false)
 public class BMvc {
   
   private static final String contentType_default = "application/json;charset=UTF-8";

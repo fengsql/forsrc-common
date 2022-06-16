@@ -27,7 +27,6 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 @EnableKnife4j
-//@Profile({"dev", "test"}) //方式一
 @ConditionalOnProperty(name = "swagger.enable", havingValue = "true") //方式二
 public class SwaggerConfig implements WebMvcConfigurer {
 

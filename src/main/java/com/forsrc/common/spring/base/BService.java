@@ -2,9 +2,6 @@ package com.forsrc.common.spring.base;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Created by FengJianJun on 2017/5/10.
- */
 @Slf4j
 public class BService extends BMvc {
 
