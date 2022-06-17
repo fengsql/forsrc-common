@@ -33,7 +33,7 @@ public class ExportExcel extends BService {
   public ExportExcel() {
     this.fieldConvertor = new DefaultFieldConvertor();
   }
-  
+
   public ExportExcel(IFieldConvertor fieldConvertor) {
     Assert.notNull(fieldConvertor, "not init 'fieldConvertor'");
     this.fieldConvertor = fieldConvertor;
@@ -41,8 +41,8 @@ public class ExportExcel extends BService {
 
   //<<---------------------------------------- public ----------------------------------------
 
-  public void work(ReqExport reqExport, HttpServletRequest request, HttpServletResponse response) {
-    doWork(reqExport, request, response);
+  public void work(HttpServletRequest request, HttpServletResponse response, ReqExport reqExport) {
+    doWork(request, response, reqExport);
   }
 
   //>>---------------------------------------- public ----------------------------------------
@@ -51,13 +51,13 @@ public class ExportExcel extends BService {
 
   //<<<---------------------------------------- work ----------------------------------------
 
-  private void doWork(ReqExport reqExport, HttpServletRequest request, HttpServletResponse response) {
-//    String param = request.getParameter("param");
-//    log.info("export param: " + param);
-//    if (Tool.isNull(param)) {
-//      throw new CommonException(Code.PARAM_EMPTY.getCode(), "参数'param'为空");
-//    }
-//    ReqExport reqExport = ToolJson.toBean(param, ReqExport.class);
+  private void doWork(HttpServletRequest request, HttpServletResponse response, ReqExport reqExport) {
+    //    String param = request.getParameter("param");
+    //    log.info("export param: " + param);
+    //    if (Tool.isNull(param)) {
+    //      throw new CommonException(Code.PARAM_EMPTY.getCode(), "参数'param'为空");
+    //    }
+    //    ReqExport reqExport = ToolJson.toBean(param, ReqExport.class);
     checkExport(reqExport);
     export(response, reqExport);
   }

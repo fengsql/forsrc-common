@@ -36,25 +36,21 @@ public class UploadFile extends BService {
   // <<<----------------------- normal -----------------------
 
   /**
-   * 上传文件，返回url
-   * @param file
-   * @param request
-   * @param response
-   * @return
+   * 上传文件，返回保存后的路径和文件名，相对路径。
+   * @param file 上传文件。
+   * @return 返回保存后的路径和文件名，相对路径。
    */
-  public String work(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
-    return doWork(file, request, response);
+  public String work(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+    return doWork(request, response, file);
   }
 
   /**
-   * 上传文件，返回文件在服务器的绝对路径，包含文件名。
-   * @param file
-   * @param request
-   * @param response
-   * @return
+   * 上传文件，返回保存后的路径和文件名，绝对路径。
+   * @param file 上传文件。
+   * @return 返回保存后的路径和文件名，绝对路径。
    */
-  public String save(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
-    return saveFile(file, request, response);
+  public String save(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+    return saveFile(request, response, file);
   }
 
   // >>>----------------------- normal -----------------------
@@ -77,8 +73,8 @@ public class UploadFile extends BService {
 
   // <<<----------------------- upload -----------------------
 
-  private String doWork(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
-    String saveFile = saveFile(file, request, response);
+  private String doWork(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+    String saveFile = saveFile(request, response, file);
     //获取tomcat容器目录
     String path = request.getSession().getServletContext().getRealPath("");
     String url = Tool.subString(saveFile, path.length());
@@ -86,7 +82,7 @@ public class UploadFile extends BService {
     return url;
   }
 
-  private String saveFile(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+  private String saveFile(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
     if (file == null) {
       throw new CommonException(Code.PARAM_EMPTY);
     }
