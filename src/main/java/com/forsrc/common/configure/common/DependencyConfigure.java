@@ -2,7 +2,6 @@ package com.forsrc.common.configure.common;
 
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.forsrc.common.exception.ExceptionAdviceHandler;
 import com.forsrc.common.reponse.ResponseProcessor;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +26,6 @@ public class DependencyConfigure {
 
   @Bean
   public ResponseProcessor resourceResponseBodyProcessor() {
-
     List<HttpMessageConverter<?>> messageConverters = adapter.getMessageConverters();
     FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
 
@@ -45,10 +43,10 @@ public class DependencyConfigure {
     return new ResponseProcessor(adapter.getMessageConverters(), adapter);
   }
 
-  @Bean
-  public ExceptionAdviceHandler restHandlerExceptionResolver() {
-    return new ExceptionAdviceHandler();
-  }
+//  @Bean
+//  public ExceptionAdvHandler restHandlerExceptionResolver() {
+//    return new ExceptionAdvHandler();
+//  }
 
   @Bean
   public RestTemplate restTemplate() {

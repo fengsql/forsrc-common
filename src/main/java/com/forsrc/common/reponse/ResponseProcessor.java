@@ -41,11 +41,14 @@ public class ResponseProcessor extends RequestResponseBodyMethodProcessor implem
     //    }
 //    log.info("handleReturnValue returnValue: {}", returnValue);
     if (returnValue instanceof BResponse) {
-      super.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
+      ResponseBody responseBody = ToolResponse.getResponse(returnValue);
+      log.info("handleReturnValue BResponse returnValue: {}", returnValue);
+      super.handleReturnValue(responseBody, returnType, mavContainer, webRequest);
       return;
     }
 
     ResponseBody responseBody = ToolResponse.getResponse(returnValue);
+    log.info("handleReturnValue responseBody returnValue: {}", returnValue);
     super.handleReturnValue(responseBody, returnType, mavContainer, webRequest);
   }
 

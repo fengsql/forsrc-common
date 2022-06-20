@@ -235,7 +235,7 @@ public class BeanOkHttp {
     Body body = new Body();
     body.setCode(response.code());
     String message = response.message();
-    message = "http message: [" + Tool.toString(message) + "]";
+//    message = "http message: [" + Tool.toString(message) + "]";
     body.setMessage(message);
     return ToolJson.toJson(body);
   }

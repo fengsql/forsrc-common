@@ -1,12 +1,12 @@
 package com.forsrc.common.exception;
 
-import com.forsrc.common.constant.Code;
 import com.forsrc.common.reponse.ResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.BindException;
@@ -17,6 +17,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,98 +27,84 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.sql.SQLException;
 
 @Slf4j
-//@ControllerAdvice
-public class ExceptionAdviceHandler { //extends ResponseEntityExceptionHandler
+@ControllerAdvice
+public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
 
-//  @ExceptionHandler(SystemException.class)
-//  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//  @org.springframework.web.bind.annotation.ResponseBody
-//  protected ResponseEntity<?> handleSystemException(Exception exception) throws Exception {
-//    log.error(ExceptionUtils.getStackTrace(exception));
-//    if (exception instanceof SystemException) {
-////      throw exception;
-//      ResponseEntity<?> responseEntity = new ResponseEntity<>("", HttpStatus.OK);
-//      return responseEntity;
-//    }
-//    throw exception;
-//  }
-
-//  @ExceptionHandler(Exception.class)
+  @ExceptionHandler(Exception.class)
   @org.springframework.web.bind.annotation.ResponseBody
-  protected ResponseBody handleException(Exception exception) throws Exception {
+  protected ResponseEntity<?> handleException(Exception exception) throws Exception {
     log.error(ExceptionUtils.getStackTrace(exception));
     if (exception instanceof CommonException) {
-      return handleCommon(exception);
-    }
-    if (exception instanceof HttpException) {
-      return handleHttp(exception);
-    }
-    if (exception instanceof BusinessException) {
-      return handleBusiness(exception);
-    }
-    if (exception instanceof ResponseStatusException) {
-      throw exception;
+      return handleCommon(exception);  //200
     }
     if (exception instanceof SQLException) {
-      return handleSQLException(exception);
+      return handleSQLException(exception);  //500
     }
-    if (exception instanceof SystemException) {
-
+    if (exception instanceof ResponseStatusException) {
+      return handleResponseStatusException(exception);  //raw
     }
-    return handleOther(exception);
+    if (exception instanceof RawException) {
+      return handleRawException(exception);   //raw
+    }
+    return handleUncaught(exception);   //raw or 500
   }
 
-  private ResponseBody handleOther(Exception exception) {
+  private ResponseEntity<?> handleCommon(Exception exception) {
+    CommonException commonException = (CommonException) exception;
+    return createResponseBody(exception, commonException.getCode(), commonException.getMessage());
+  }
+
+  private ResponseEntity<?> handleSQLException(Exception exception) {
+    return createResponseBody("SQL error!");
+  }
+
+  private ResponseEntity<?> handleResponseStatusException(Exception exception) {
+    ResponseStatusException responseStatusException = (ResponseStatusException) exception;
+    HttpStatus httpStatus = responseStatusException.getStatus();
+    return createResponseBody(exception, httpStatus);
+  }
+
+  private ResponseEntity<?> handleRawException(Exception exception) {
+    RawException rawException = (RawException) exception;
+    HttpStatus httpStatus = rawException.getHttpStatus();
+    return createResponseBody(exception, httpStatus);
+  }
+
+  private ResponseEntity<?> handleUncaught(Exception exception) {
     HttpStatus httpStatus = getHttpStatus(exception);
     if (httpStatus != null) {
-      return getResponseBody(exception, httpStatus.value());
+      return createResponseBody(httpStatus, "Uncaught exception!");
     }
-    return handUncaught(exception);
+    return createResponseBody("Uncaught exception!");
   }
 
-  private ResponseBody handUncaught(Exception exception) {
-    return createResponseBody(Code.FAIL.getCode(), "Uncaught exception!");
-  }
-
-  private ResponseBody handleCommon(Exception exception) {
-    CommonException commonException = (CommonException) exception;
-    return getResponseBody(exception, commonException.getCode(), commonException.getMessage(), null);
-  }
-
-  private ResponseBody handleHttp(Exception exception) {
-    HttpException httpException = (HttpException) exception;
-    throw new ResponseStatusException(httpException.getHttpStatus(), httpException.getMessage(), httpException.getCause());
-  }
-
-  private ResponseBody handleBusiness(Exception exception) {
-    BusinessException businessException = (BusinessException) exception;
-    return getResponseBody(exception, businessException.getCode(), businessException.getMessage(), businessException.getData());
-  }
-
-  private ResponseBody handleSQLException(Exception exception) {
-    return createResponseBody(Code.FAIL.getCode(), "SQL error!");
-  }
-
-  private ResponseBody getResponseBody(Exception exception, Integer code, String message, Object data) {
-    message = getMessage(exception, message);
-    return createResponseBody(code, message, data);
-  }
-
-  private ResponseBody getResponseBody(Exception exception, Integer code) {
-    return createResponseBody(code, exception.getMessage());
-  }
-
-  protected ResponseBody createResponseBody(Integer code, String message, Object data) {
+  protected ResponseEntity<?> createResponseBody(HttpStatus httpStatus, Integer code, String message) {
     ResponseBody responseBody = new ResponseBody();
     responseBody.setSuccess(false);
     responseBody.setCode(code);
     responseBody.setMessage(message);
-    responseBody.setData(data);
-    return responseBody;
+    if (code == null) {
+      responseBody.setCode(httpStatus.value());
+    }
+    //    String json = ToolJson.toJson(responseBody);
+    return new ResponseEntity<>(responseBody, httpStatus);
   }
 
-  protected ResponseBody createResponseBody(Integer code, String message) {
-    return createResponseBody(code, message, null);
+  protected ResponseEntity<?> createResponseBody(Exception exception, Integer code, String message) {
+    message = getMessage(exception, message);
+    return createResponseBody(HttpStatus.OK, code, message);
+  }
+
+  protected ResponseEntity<?> createResponseBody(Exception exception, HttpStatus httpStatus) {
+    return createResponseBody(httpStatus, exception.getMessage());
+  }
+
+  protected ResponseEntity<?> createResponseBody(HttpStatus httpStatus, String message) {
+    return createResponseBody(httpStatus, null, message);
+  }
+
+  protected ResponseEntity<?> createResponseBody(String message) {
+    return createResponseBody(HttpStatus.INTERNAL_SERVER_ERROR, null, message);
   }
 
   private String getMessage(Exception exception, String message) {

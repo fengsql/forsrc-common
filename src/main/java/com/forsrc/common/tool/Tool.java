@@ -1016,6 +1016,22 @@ public class Tool {
     return value;
   }
 
+  public static String getCostTime(long start) {
+    long end = System.currentTimeMillis();
+    long cost = end - start;
+    return toCostTime(cost);
+  }
+
+  public static String toCostTime(long cost) {
+    String costTime;
+    if (cost < 1000) {
+      costTime = cost + " ms";
+    } else {
+      costTime = (cost / 1000) + " s " + (cost % 1000) + " ms";
+    }
+    return costTime;
+  }
+
   // >>>----------------------- datetime -----------------------
 
   //<<<----------------------- random -----------------------
