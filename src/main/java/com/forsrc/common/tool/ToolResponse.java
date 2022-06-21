@@ -1,33 +1,45 @@
 package com.forsrc.common.tool;
 
 import com.forsrc.common.constant.Code;
-import com.forsrc.common.reponse.ResponseBody;
+import com.forsrc.common.reponse.IResponseHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
+@Component
 @Slf4j
 public class ToolResponse {
 
   private static final String contentType_default = "application/json;charset=UTF-8";
   private static final String charset_default = "UTF-8";
 
-  public static HttpServletRequest getHttpServletRequest() {
-    return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+  private static ToolResponse toolResponse;
+  @Resource
+  private IResponseHandler<?> responseHandler;
+
+  //  public static HttpServletRequest getHttpServletRequest() {
+  //    return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+  //  }
+
+  @PostConstruct
+  private void init() {
+    toolResponse = this;
+    toolResponse.responseHandler = this.responseHandler;
   }
 
-  public static void write(HttpServletResponse response, Object data) {
-    ResponseBody responseBody = getResponseSuccess(data);
-    write(response, responseBody);
+  public static void writeData(HttpServletResponse response, Object data) {
+    Object responseBody = getResponseSuccess(data);
+    writeBody(response, responseBody);
   }
 
   @SneakyThrows
-  public static void write(HttpServletResponse response, ResponseBody responseBody) {
+  public static void writeBody(HttpServletResponse response, Object responseBody) {
     String content = ToolJson.toJson(responseBody);
     if (response == null) {
       log.warn("response is null!");
@@ -51,87 +63,51 @@ public class ToolResponse {
   }
 
   public static void error(HttpServletResponse response) {
-    ResponseBody responseBody = getResponseError();
-    write(response, responseBody);
+    Object responseBody = getResponseError();
+    writeBody(response, responseBody);
   }
 
   public static void error(HttpServletResponse response, Exception exception) {
-    ResponseBody responseBody = getResponseError(Code.FAIL.getCode(), exception.getMessage());
-    write(response, responseBody);
+    Object responseBody = getResponseError(Code.FAIL.getCode(), exception.getMessage());
+    writeBody(response, responseBody);
   }
 
   public static void error(HttpServletResponse response, int code, String message) {
-    ResponseBody responseBody = getResponseError(code, message);
-    write(response, responseBody);
+    Object responseBody = getResponseError(code, message);
+    writeBody(response, responseBody);
   }
 
   public static void error(HttpServletResponse response, Code code) {
-    ResponseBody responseBody = getResponseByCode(code);
-    write(response, responseBody);
+    Object responseBody = getResponse(false, code.getCode(), code.getMsg(), null);
+    writeBody(response, responseBody);
   }
 
-  public static ResponseBody getResponse(Object data) {
+  public static Object getResponse(Object data) {
     return getResponseSuccess(data);
   }
 
-  public static ResponseBody getResponse(boolean success, int code, String message, Object data) {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setSuccess(success);
-    responseBody.setCode(code);
-    responseBody.setMessage(message);
-    responseBody.setData(data);
-    return responseBody;
+  public static Object getResponse(boolean success, int code, String message, Object data) {
+    return toolResponse.responseHandler.createResponse(success, code, message, data);
   }
 
-  public static ResponseBody getResponse(boolean success, int code, String message) {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setSuccess(success);
-    responseBody.setCode(code);
-    responseBody.setMessage(message);
-    responseBody.setData(null);
-    return responseBody;
+  public static Object getResponse(boolean success, int code, String message) {
+    return getResponse(success, code, message, null);
   }
 
-  public static ResponseBody getResponseSuccess(int code, String message) {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setSuccess(true);
-    responseBody.setCode(code);
-    responseBody.setMessage(message);
-    responseBody.setData(null);
-    return responseBody;
+  public static Object getResponseSuccess(int code, String message) {
+    return getResponse(true, code, message, null);
   }
 
-  private static ResponseBody getResponseSuccess(Object data) {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setCode(Code.SUCCESS.getCode());
-    responseBody.setSuccess(true);
-    responseBody.setMessage(Code.SUCCESS.getMsg());
-    responseBody.setData(data);
-    return responseBody;
+  private static Object getResponseSuccess(Object data) {
+    return getResponse(true, HttpStatus.OK.value(), null, data);
   }
 
-  private static ResponseBody getResponseError() {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setCode(Code.ERROR.getCode());
-    responseBody.setSuccess(false);
-    responseBody.setMessage(Code.ERROR.getMsg());
-    return responseBody;
+  private static Object getResponseError() {
+    return getResponse(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null);
   }
 
-  private static ResponseBody getResponseError(int code, String message) {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setCode(code);
-    responseBody.setSuccess(false);
-    responseBody.setMessage(message);
-    return responseBody;
-  }
-
-  private static ResponseBody getResponseByCode(Code code) {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setCode(code.getCode());
-    responseBody.setSuccess(false);
-    responseBody.setMessage(code.getMsg());
-    return responseBody;
+  private static Object getResponseError(int code, String message) {
+    return getResponse(false, code, message, null);
   }
 
 }

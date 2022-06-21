@@ -2,6 +2,7 @@ package com.forsrc.common.configure.common;
 
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.forsrc.common.reponse.IResponseHandler;
 import com.forsrc.common.reponse.ResponseProcessor;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,8 @@ public class DependencyConfigure {
 
   @Resource
   private RequestMappingHandlerAdapter adapter;
+  @Resource
+  private IResponseHandler<?> responseHandler;
 
   @Bean
   public ResponseProcessor resourceResponseBodyProcessor() {
@@ -40,7 +43,7 @@ public class DependencyConfigure {
         break;
       }
     }
-    return new ResponseProcessor(adapter.getMessageConverters(), adapter);
+    return new ResponseProcessor(adapter.getMessageConverters(), adapter, responseHandler);
   }
 
 //  @Bean

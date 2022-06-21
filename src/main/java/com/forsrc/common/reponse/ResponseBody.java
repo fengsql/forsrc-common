@@ -8,6 +8,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class ResponseBody extends BResponse {
 
+  private Integer code;
+
+  private String message;
+
+  private Boolean success;
+
   private Object data;
 
 }

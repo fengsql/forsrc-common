@@ -1,11 +1,10 @@
 package com.forsrc.common.reponse;
 
-import com.forsrc.common.spring.base.BResponse;
-import com.forsrc.common.tool.ToolResponse;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -22,11 +21,13 @@ import java.util.Objects;
 @Slf4j
 public class ResponseProcessor extends RequestResponseBodyMethodProcessor implements InitializingBean {
 
-  private RequestMappingHandlerAdapter adapter;
+  private final RequestMappingHandlerAdapter adapter;
+  private final IResponseHandler<?> responseHandler;
 
-  public ResponseProcessor(List<HttpMessageConverter<?>> converters, RequestMappingHandlerAdapter adapter) {
+  public ResponseProcessor(List<HttpMessageConverter<?>> converters, RequestMappingHandlerAdapter adapter, IResponseHandler<?> responseHandler) {
     super(converters);
     this.adapter = adapter;
+    this.responseHandler = responseHandler;
   }
 
   @Override
@@ -39,19 +40,17 @@ public class ResponseProcessor extends RequestResponseBodyMethodProcessor implem
     //      super.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
     //      return;
     //    }
-//    log.info("handleReturnValue returnValue: {}", returnValue);
-    if (returnValue instanceof BResponse) {
-      ResponseBody responseBody = ToolResponse.getResponse(returnValue);
-      log.info("handleReturnValue BResponse returnValue: {}", returnValue);
-      super.handleReturnValue(responseBody, returnType, mavContainer, webRequest);
-      return;
-    }
-
-    ResponseBody responseBody = ToolResponse.getResponse(returnValue);
-    log.info("handleReturnValue responseBody returnValue: {}", returnValue);
+    //    log.info("handleReturnValue returnValue: {}", returnValue);
+    Object responseBody = getResposeBody(returnValue);
+    //    ResponseBody responseBody = ToolResponse.getResponse(returnValue);
     super.handleReturnValue(responseBody, returnType, mavContainer, webRequest);
   }
 
+  private Object getResposeBody(Object returnValue) {
+    return responseHandler.createResponse(true, HttpStatus.OK.value(), null, returnValue);
+  }
+
+  @Override
   public void afterPropertiesSet() {
     List<HandlerMethodReturnValueHandler> handlers = Lists.newArrayList(Objects.requireNonNull(this.adapter.getReturnValueHandlers()));
     for (HandlerMethodReturnValueHandler handler : handlers) {

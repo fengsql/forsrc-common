@@ -1,6 +1,6 @@
 package com.forsrc.common.exception;
 
-import com.forsrc.common.reponse.ResponseBody;
+import com.forsrc.common.reponse.IResponseHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -24,11 +24,15 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.annotation.Resource;
 import java.sql.SQLException;
 
 @Slf4j
 @ControllerAdvice
 public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
+
+  @Resource
+  private IResponseHandler<?> responseHandler;
 
   @ExceptionHandler(Exception.class)
   @org.springframework.web.bind.annotation.ResponseBody
@@ -79,14 +83,7 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
   }
 
   protected ResponseEntity<?> createResponseBody(HttpStatus httpStatus, Integer code, String message) {
-    ResponseBody responseBody = new ResponseBody();
-    responseBody.setSuccess(false);
-    responseBody.setCode(code);
-    responseBody.setMessage(message);
-    if (code == null) {
-      responseBody.setCode(httpStatus.value());
-    }
-    //    String json = ToolJson.toJson(responseBody);
+    Object responseBody = getResposeBody(httpStatus, code, message);
     return new ResponseEntity<>(responseBody, httpStatus);
   }
 
@@ -105,6 +102,20 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
 
   protected ResponseEntity<?> createResponseBody(String message) {
     return createResponseBody(HttpStatus.INTERNAL_SERVER_ERROR, null, message);
+  }
+
+  private Object getResposeBody(HttpStatus httpStatus, Integer code, String message) {
+    //    ResponseBody responseBody = new ResponseBody();
+    //    responseBody.setSuccess(false);
+    //    responseBody.setCode(code);
+    //    responseBody.setMessage(message);
+    //    if (code == null) {
+    //      responseBody.setCode(httpStatus.value());
+    //    }
+    if (code == null) {
+      code = httpStatus.value();
+    }
+    return responseHandler.createResponse(false, code, message, null);
   }
 
   private String getMessage(Exception exception, String message) {

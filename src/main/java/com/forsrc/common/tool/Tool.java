@@ -3,7 +3,6 @@ package com.forsrc.common.tool;
 import com.forsrc.common.constant.Code;
 import com.forsrc.common.constant.Const;
 import com.forsrc.common.exception.CommonException;
-import com.forsrc.common.spring.base.BResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
@@ -1220,13 +1219,13 @@ public class Tool {
 
   // <<<----------------------- tool -----------------------
 
-  public static boolean isSuccess(BResponse response) {
-    if (response == null || !response.getSuccess()) {
-      return false;
-    }
-    int code = response.getCode();
-    return code == Code.SUCCESS.getCode() || code == Code.OK.getCode();
-  }
+//  public static boolean isSuccess(BResponse response) {
+//    if (response == null || !response.getSuccess()) {
+//      return false;
+//    }
+//    int code = response.getCode();
+//    return code == Code.SUCCESS.getCode() || code == Code.OK.getCode();
+//  }
 
   public static void throwNull(Object object, String name) {
     if (object == null) {
