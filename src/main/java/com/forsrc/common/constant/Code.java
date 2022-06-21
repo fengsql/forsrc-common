@@ -7,8 +7,8 @@ public enum Code {
   FAIL(500, "失败"), //
 
   // common
-  COMMON_EXCEPTION(1000, "common 错误"),  //
-  BUSINESS_EXCEPTION(1001, "business 错误"), //
+  COMMON_EXCEPTION(1000, "出现错误"),  //
+  ERROR_EXCEPTION(1001, "出现错误"), //
 
   // authentication
   AUTHENTICATION_EXCEPTION(1005, "授权错误"), //
