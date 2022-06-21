@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+/**
+ * RawException 异常，HttpStatus 值为传入状态码，body 部分的 code 错误码与 HttpStatus 一致。
+ */
 @Slf4j
 @Data
 @EqualsAndHashCode(callSuper = false)

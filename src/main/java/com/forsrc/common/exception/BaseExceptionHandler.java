@@ -41,36 +41,46 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
     if (exception instanceof CommonException) {
       return handleCommon(exception);  //200
     }
-    if (exception instanceof SQLException) {
-      return handleSQLException(exception);  //500
-    }
-    if (exception instanceof ResponseStatusException) {
-      return handleResponseStatusException(exception);  //raw
+    if (exception instanceof ErrorException) {
+      return handleError(exception);  //500
     }
     if (exception instanceof RawException) {
-      return handleRawException(exception);   //raw
+      return handleRaw(exception);   //raw
+    }
+    if (exception instanceof SQLException) {
+      return handleSQL(exception);  //500
+    }
+    if (exception instanceof ResponseStatusException) {
+      return handleResponseStatus(exception);  //raw
     }
     return handleUncaught(exception);   //raw or 500
   }
 
   private ResponseEntity<?> handleCommon(Exception exception) {
     CommonException commonException = (CommonException) exception;
-    return createResponseBody(exception, commonException.getCode(), commonException.getMessage());
+    String message = getMessage(exception, commonException.getMessage());
+    return createResponseBody(HttpStatus.OK, commonException.getCode(), message);
   }
 
-  private ResponseEntity<?> handleSQLException(Exception exception) {
-    return createResponseBody("SQL error!");
+  private ResponseEntity<?> handleError(Exception exception) {
+    ErrorException errorException = (ErrorException) exception;
+    String message = getMessage(exception, errorException.getMessage());
+    return createResponseBody(HttpStatus.INTERNAL_SERVER_ERROR, errorException.getCode(), message);
   }
 
-  private ResponseEntity<?> handleResponseStatusException(Exception exception) {
-    ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-    HttpStatus httpStatus = responseStatusException.getStatus();
+  private ResponseEntity<?> handleRaw(Exception exception) {
+    RawException rawException = (RawException) exception;
+    HttpStatus httpStatus = rawException.getHttpStatus();
     return createResponseBody(exception, httpStatus);
   }
 
-  private ResponseEntity<?> handleRawException(Exception exception) {
-    RawException rawException = (RawException) exception;
-    HttpStatus httpStatus = rawException.getHttpStatus();
+  private ResponseEntity<?> handleSQL(Exception exception) {
+    return createResponseBody("SQL error!");
+  }
+
+  private ResponseEntity<?> handleResponseStatus(Exception exception) {
+    ResponseStatusException responseStatusException = (ResponseStatusException) exception;
+    HttpStatus httpStatus = responseStatusException.getStatus();
     return createResponseBody(exception, httpStatus);
   }
 
@@ -87,11 +97,6 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
     return new ResponseEntity<>(responseBody, httpStatus);
   }
 
-  protected ResponseEntity<?> createResponseBody(Exception exception, Integer code, String message) {
-    message = getMessage(exception, message);
-    return createResponseBody(HttpStatus.OK, code, message);
-  }
-
   protected ResponseEntity<?> createResponseBody(Exception exception, HttpStatus httpStatus) {
     return createResponseBody(httpStatus, exception.getMessage());
   }
@@ -105,13 +110,6 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
   }
 
   private Object getResposeBody(HttpStatus httpStatus, Integer code, String message) {
-    //    ResponseBody responseBody = new ResponseBody();
-    //    responseBody.setSuccess(false);
-    //    responseBody.setCode(code);
-    //    responseBody.setMessage(message);
-    //    if (code == null) {
-    //      responseBody.setCode(httpStatus.value());
-    //    }
     if (code == null) {
       code = httpStatus.value();
     }
@@ -120,7 +118,7 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
 
   private String getMessage(Exception exception, String message) {
     if (message == null) {
-      return exception.getMessage();
+      return "error";  //exception.getMessage();
     }
     return message;
   }
