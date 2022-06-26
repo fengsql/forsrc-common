@@ -62,6 +62,38 @@ public class ToolCipher {
 
   // <<------------------ AES 加密 -------------------------
 
+  public static byte[] encryptAes(byte[] plainText, byte[] password) {
+    return Aes.encrypt(plainText, password);
+  }
+
+  public static byte[] decryptAes(byte[] cripherText, byte[] password) {
+    return Aes.decrypt(cripherText, password);
+  }
+
+  public static byte[] encryptAes_cbc(byte[] plainText, byte[] password) {
+    return Aes.encrypt_cbc(plainText, password);
+  }
+
+  public static byte[] decryptAes_cbc(byte[] cripherText, byte[] password) {
+    return Aes.decrypt_cbc(cripherText, password);
+  }
+
+  public static byte[] encryptAes_ctr(byte[] plainText, byte[] password) {
+    return Aes.encrypt_ctr(plainText, password);
+  }
+
+  public static byte[] decryptAes_ctr(byte[] cripherText, byte[] password) {
+    return Aes.decrypt_ctr(cripherText, password);
+  }
+
+  public static byte[] encryptAes_gcm(byte[] plainText, byte[] password) {
+    return Aes.encrypt_gcm(plainText, password);
+  }
+
+  public static byte[] decryptAes_gcm(byte[] cripherText, byte[] password) {
+    return Aes.decrypt_gcm(cripherText, password);
+  }
+
   public static String encryptAes(String plainText, String password) {
     return Aes.encrypt(plainText, password);
   }
@@ -121,9 +153,9 @@ public class ToolCipher {
 
   /**
    * md5或者sha-1加密
-   * @param inputText 要加密的内容
+   * @param inputText   要加密的内容
    * @param encryptName 加密算法名称：md5或者sha-1，不区分大小写
-   * @param charset 字符集：默认为 utf-8
+   * @param charset     字符集：默认为 utf-8
    * @return
    */
   private static String encrypt(String inputText, String encryptName, String charset) {
@@ -136,7 +168,7 @@ public class ToolCipher {
 
   /**
    * md5或者sha-1加密, 字符集默认为 utf-8
-   * @param inputText 要加密的内容
+   * @param inputText   要加密的内容
    * @param encryptName 加密算法名称：md5或者sha-1，不区分大小写
    * @return
    */
