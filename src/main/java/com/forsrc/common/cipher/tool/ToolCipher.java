@@ -86,6 +86,14 @@ public class ToolCipher {
     return Aes.decrypt_ctr(cripherText, password);
   }
 
+  public static String encryptAes_gcm(String plainText, String password) {
+    return Aes.encrypt_gcm(plainText, password);
+  }
+
+  public static String decryptAes_gcm(String cripherText, String password) {
+    return Aes.decrypt_gcm(cripherText, password);
+  }
+
   // >>------------------ AES 加密 -------------------------
 
   /**

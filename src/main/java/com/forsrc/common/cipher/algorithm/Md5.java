@@ -344,7 +344,7 @@ public class Md5 {
   /*
    * b2iu是我写的一个把byte按照不考虑正负号的原则的＂升位＂程序，因为java没有unsigned运算
    */
-  public static long b2iu(byte b) {
+  private static long b2iu(byte b) {
     return b < 0 ? b & 0x7F + 128 : b;
   }
 
@@ -352,7 +352,7 @@ public class Md5 {
    * byteHEX()，用来把一个byte类型的数转换成十六进制的ASCII表示，
    * 　因为java中的byte的toString无法实现这一点，我们又没有C语言中的 sprintf(outbuf,"%02X",ib)
    */
-  public static String byteHEX(byte ib) {
+  private static String byteHEX(byte ib) {
     char[] Digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     char[] ob = new char[2];
     ob[0] = Digit[(ib >>> 4) & 0X0F];

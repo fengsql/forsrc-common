@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * ErrorException 异常，HttpStatus 值为 500，body 部分的 code 为错误码。
+ * @Description ErrorException 异常，HttpStatus 值为 500，body 部分的 code 为错误码。
  */
 @Slf4j
 @Data

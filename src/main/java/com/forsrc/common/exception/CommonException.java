@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * CommonException 异常，HttpStatus 值为 200，body 部分的 code 为错误码。
+ * @Description CommonException 异常，HttpStatus 值为 200，body 部分的 code 为错误码。
  */
 @Slf4j
 @Data
