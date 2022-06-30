@@ -23,6 +23,7 @@ import java.security.spec.AlgorithmParameterSpec;
 @SuppressWarnings("unused")
 @Slf4j
 public class Aes {
+  private static final boolean enableDebug = false;
   private static final Charset charset_utf8 = StandardCharsets.UTF_8;
   // 加密模式，对于顺序流使用CBC（和其他顺序模式），对随机访问使用ECB，并行使用CTR
   // 如果数据通过非对称签名进行身份验证,则使用CBC,否则使用GCM
@@ -61,23 +62,40 @@ public class Aes {
   // <<------------------------- default -----------------------------
 
   /**
-   * 无填充，需要引入IV参数，同明文不同密文，每个块单独运算，适合并行运算
+   * 使用 gcm 方式，适合并行运算
    */
-  public static byte[] encrypt(byte[] input, byte[] password) {
-    return encrypt_ctr(input, password);
+  public static byte[] encrypt(byte[] plainInput, byte[] password) {
+    return encrypt_gcm(plainInput, password);
   }
 
-  public static byte[] decrypt(byte[] input, byte[] password) {
-    return decrypt_ctr(input, password);
+  /**
+   * 使用 gcm 方式，适合并行运算
+   */
+  public static byte[] decrypt(byte[] cripherInput, byte[] password) {
+    return decrypt_gcm(cripherInput, password);
   }
 
+  /**
+   * 使用 gcm 方式，适合并行运算，密文转换为 hex 字符串
+   */
   public static String encrypt(String plainText, String password) {
-    return encrypt_ctr(plainText, password);
+    return encrypt_gcm(plainText, password);
   }
 
+  /**
+   * 使用 gcm 方式，适合并行运算，密文转换为 hex 字符串
+   */
   public static String decrypt(String cripherText, String password) {
-    return decrypt_ctr(cripherText, password);
+    return decrypt_gcm(cripherText, password);
   }
+
+  //  public static String encryptHex(String plainText, String password) {
+  //    return encrypt_hex(plainText, password);
+  //  }
+  //
+  //  public static String decryptHex(String cripherText, String password) {
+  //    return decrypt_hex(cripherText, password);
+  //  }
 
   // >>------------------------- default -----------------------------
 
@@ -190,15 +208,35 @@ public class Aes {
 
   // >>------------------------- gcm -----------------------------
 
+  // <<------------------------- hex -----------------------------
+
+  //  public static String encrypt_hex(String input, String password) {
+  //    byte[] bytes = toBytes(input);
+  //    byte[] pwd = toBytes(password);
+  //    byte[] val = encryptAes_ivParameter(cipherType_ctr, bytes, pwd);
+  //    return bytesToHex(val);
+  //  }
+  //
+  //  public static String decrypt_hex(String input, String password) {
+  //    byte[] bytes = hexToBytes(input);
+  //    byte[] pwd = toBytes(password);
+  //    byte[] val = decryptAes_ivParameter(cipherType_ctr, bytes, pwd);
+  //    return bytesToHex(val);
+  //  }
+
+  // >>------------------------- hex -----------------------------
+
   // <<------------------------- cipher -----------------------------
   // bytes
   private static byte[] encryptAes_noiv(String cipherType, byte[] input, byte[] password) {
     byte[] result = null;
     try {
+      logDebug("encryptAes_noiv", "input", input);
       Key key = generateKey(password);
       Cipher cipher = Cipher.getInstance(cipherType);
       cipher.init(Cipher.ENCRYPT_MODE, key);
       result = cipher.doFinal(input);
+      logDebug("encryptAes_noiv", "ouput", result);
     } catch (Exception e) {
       log.error("encrypt error!", e);
     }
@@ -208,10 +246,12 @@ public class Aes {
   private static byte[] decryptAes_noiv(String cipherType, byte[] input, byte[] password) {
     byte[] result = null;
     try {
+      logDebug("decryptAes_noiv", "input", input);
       Key key = generateKey(password);
       Cipher cipher = Cipher.getInstance(cipherType);
       cipher.init(Cipher.DECRYPT_MODE, key);
       result = cipher.doFinal(input);
+      logDebug("decryptAes_noiv", "ouput", result);
     } catch (Exception e) {
       log.error("decrypt error!", e);
     }
@@ -226,13 +266,12 @@ public class Aes {
     if (Tool.isNull(password)) {
       return inputText;
     }
-    byte[] input = strToBytes(inputText);
-    if (input == null) {
-      return inputText;
-    }
+    byte[] input = toBytes(inputText);
+    logDebug("encryptAes_noiv", "input", input);
     byte[] pwd = toBytes(password);
-    byte[] encrypt = encryptAes_noiv(cipherType, input, pwd);
-    return bytesToStr(encrypt);
+    byte[] result = encryptAes_noiv(cipherType, input, pwd);
+    logDebug("encryptAes_noiv", "ouput", result);
+    return bytesToStr(result);
   }
 
   public static String decryptAes_noiv(String cipherType, String inputText, String password) {
@@ -246,20 +285,24 @@ public class Aes {
     if (input == null) {
       return null;
     }
+    logDebug("decryptAes_noiv", "input", input);
     byte[] pwd = toBytes(password);
-    byte[] decrypt = decryptAes_noiv(cipherType, input, pwd);
-    return bytesToStr(decrypt);
+    byte[] result = decryptAes_noiv(cipherType, input, pwd);
+    logDebug("decryptAes_noiv", "ouput", result);
+    return toStr(result);
   }
 
   // bytes
   private static byte[] encryptAes_ivParameter(String cipherType, byte[] input, byte[] password) {
     byte[] result = null;
     try {
+      logDebug("encryptAes_ivParameter", "input", input);
       Key key = generateKey(password);
       IvParameterSpec ivParameterSpec = createIvParameter(); // 使用CBC模式，需要一个向量iv，可增加加密算法的强度
       Cipher cipher = Cipher.getInstance(cipherType);
       cipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
       result = cipher.doFinal(input);
+      logDebug("encryptAes_ivParameter", "ouput", result);
     } catch (Exception e) {
       log.error("encrypt error!", e);
     }
@@ -269,11 +312,13 @@ public class Aes {
   private static byte[] decryptAes_ivParameter(String cipherType, byte[] input, byte[] password) {
     byte[] result = null;
     try {
+      logDebug("decryptAes_ivParameter", "input", input);
       Key key = generateKey(password);
       IvParameterSpec ivParameterSpec = createIvParameter(); // 使用CBC模式，需要一个向量iv，可增加加密算法的强度
       Cipher cipher = Cipher.getInstance(cipherType);
       cipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
       result = cipher.doFinal(input);
+      logDebug("decryptAes_ivParameter", "ouput", result);
     } catch (Exception e) {
       log.error("decrypt error!", e);
     }
@@ -287,13 +332,12 @@ public class Aes {
     if (Tool.isNull(password)) {
       return inputText;
     }
-    byte[] input = strToBytes(inputText);
-    if (input == null) {
-      return inputText;
-    }
+    byte[] input = toBytes(inputText);
+    logDebug("encryptAes_ivParameter", "input", input);
     byte[] pwd = toBytes(password);
-    byte[] encrypt = encryptAes_ivParameter(cipherType, input, pwd);
-    return bytesToStr(encrypt);
+    byte[] result = encryptAes_ivParameter(cipherType, input, pwd);
+    logDebug("encryptAes_ivParameter", "ouput", result);
+    return bytesToStr(result);
   }
 
   private static String decryptAes_ivParameter(String cipherType, String inputText, String password) {
@@ -304,12 +348,11 @@ public class Aes {
       return inputText;
     }
     byte[] input = strToBytes(inputText);
-    if (input == null) {
-      return null;
-    }
+    logDebug("decryptAes_ivParameter", "input", input);
     byte[] pwd = toBytes(password);
-    byte[] decrypt = decryptAes_ivParameter(cipherType, input, pwd);
-    return bytesToStr(decrypt);
+    byte[] result = decryptAes_ivParameter(cipherType, input, pwd);
+    logDebug("decryptAes_ivParameter", "ouput", result);
+    return toStr(result);
   }
 
   /**
@@ -318,6 +361,7 @@ public class Aes {
   private static byte[] encryptAes_aad(String cipherType, byte[] input, byte[] password, byte[] aad) {
     byte[] result = null;
     try {
+      logDebug("encryptAes_aad", "input", input);
       Key key = generateKey(password);
       IvParameterSpec ivParameterSpec = createIvParameter();
       AlgorithmParameterSpec parameter = getGCMParameterSpec(gcm_taglength);
@@ -327,6 +371,7 @@ public class Aes {
         cipher.updateAAD(aad);
       }
       result = cipher.doFinal(input);
+      logDebug("encryptAes_aad", "ouput", result);
     } catch (Exception e) {
       log.error("encrypt error!", e);
     }
@@ -336,6 +381,7 @@ public class Aes {
   private static byte[] decryptAes_aad(String cipherType, byte[] input, byte[] password, byte[] aad) {
     byte[] result = null;
     try {
+      logDebug("decryptAes_aad", "input", input);
       Key key = generateKey(password);
       IvParameterSpec ivParameterSpec = createIvParameter();
       AlgorithmParameterSpec parameter = getGCMParameterSpec(gcm_taglength);
@@ -345,6 +391,7 @@ public class Aes {
         cipher.updateAAD(aad);
       }
       result = cipher.doFinal(input);
+      logDebug("decryptAes_aad", "ouput", result);
     } catch (Exception e) {
       log.error("decrypt error!", e);
     }
@@ -358,14 +405,13 @@ public class Aes {
     if (Tool.isNull(password)) {
       return inputText;
     }
-    byte[] input = strToBytes(inputText);
-    if (input == null) {
-      return inputText;
-    }
+    byte[] input = toBytes(inputText);
+    logDebug("encryptAes_aad", "input", input);
     byte[] pwd = toBytes(password);
     byte[] aad = toBytes(aadText);
-    byte[] encrypt = encryptAes_aad(cipherType, input, pwd, aad);
-    return bytesToStr(encrypt);
+    byte[] result = encryptAes_aad(cipherType, input, pwd, aad);
+    logDebug("encryptAes_aad", "ouput", result);
+    return bytesToStr(result);
   }
 
   private static String decryptAes_aad(String cipherType, String inputText, String password, String aadText) {
@@ -376,13 +422,12 @@ public class Aes {
       return inputText;
     }
     byte[] input = strToBytes(inputText);
-    if (input == null) {
-      return null;
-    }
+    logDebug("decryptAes_aad", "input", input);
     byte[] pwd = toBytes(password);
     byte[] aad = toBytes(aadText);
-    byte[] decrypt = decryptAes_aad(cipherType, input, pwd, aad);
-    return bytesToStr(decrypt);
+    byte[] result = decryptAes_aad(cipherType, input, pwd, aad);
+    logDebug("decryptAes_aad", "ouput", result);
+    return toStr(result);
   }
 
   // >>------------------------- cipher -----------------------------
@@ -422,12 +467,31 @@ public class Aes {
     return source.getBytes(charset_utf8);
   }
 
+  private static String toStr(byte[] source) {
+    return source == null ? null : new String(source, charset_utf8);
+  }
+
+  //  private static byte[] hexToBytes(String source) {
+  //    return Tool.hexToBytes(source);
+  //  }
+  //
+  //  private static String bytesToHex(byte[] source) {
+  //    return Tool.bytesToHex(source);
+  //  }
+
   private static byte[] strToBytes(String source) {
     return Tool.hexToBytes(source);
   }
 
   private static String bytesToStr(byte[] source) {
     return Tool.bytesToHex(source);
+  }
+
+  private static void logDebug(String func, String type, Object data) {
+    if (!enableDebug) {
+      return;
+    }
+    log.info("{} {}. data: {}", func, type, data);
   }
 
 }

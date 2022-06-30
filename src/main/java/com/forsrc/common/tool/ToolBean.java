@@ -1,5 +1,6 @@
 package com.forsrc.common.tool;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -15,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 @Component
+@Slf4j
 public class ToolBean implements ApplicationContextAware {
   
   private static ConfigurableApplicationContext applicationContext;
@@ -22,6 +24,7 @@ public class ToolBean implements ApplicationContextAware {
   @Override
   public void setApplicationContext(ApplicationContext context) throws BeansException {
     applicationContext = (ConfigurableApplicationContext) context;
+    log.info("init applicationContext ok.");
   }
 
   //  public static void setApplicationContext(ApplicationContext context) {

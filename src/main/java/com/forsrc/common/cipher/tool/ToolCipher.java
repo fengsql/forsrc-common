@@ -25,29 +25,32 @@ public class ToolCipher {
   }
 
   // md5加密
-  public static String md5(byte[] source) {
+  public static byte[] md5(byte[] source) {
     return encrypt(source, algorithm_md5);
+  }
+
+  // md5加密
+  public static String md5Str(byte[] source) {
+    byte[] bytes = encrypt(source, algorithm_md5);
+    return toHex(bytes);
   }
 
   // 16位md5加密
   public static String md5_16(String inputText) {
     String source = md5(inputText);
-    String result = Tool.subString(source, 0, 16);
-    return result;
+    return Tool.subString(source, 0, 16);
   }
 
   // 16位md5加密
   public static String md5_16(byte[] source) {
-    String target = md5(source);
-    String result = Tool.subString(target, 0, 16);
-    return result;
+    String target = md5Str(source);
+    return Tool.subString(target, 0, 16);
   }
 
   // 16位md5加密
   public static String md5_15(String inputText) {
     String source = md5(inputText);
-    String result = Tool.subString(source, 0, 15);
-    return result;
+    return Tool.subString(source, 0, 15);
   }
 
   // sha加密
@@ -68,6 +71,22 @@ public class ToolCipher {
 
   public static byte[] decryptAes(byte[] cripherText, byte[] password) {
     return Aes.decrypt(cripherText, password);
+  }
+
+  public static byte[] encryptAes_ecb(byte[] plainText, byte[] password) {
+    return Aes.encrypt_ecb(plainText, password);
+  }
+
+  public static byte[] decryptAes_ecb(byte[] cripherText, byte[] password) {
+    return Aes.decrypt_ecb(cripherText, password);
+  }
+
+  public static byte[] encryptAes_ecb_no(byte[] plainText, byte[] password) {
+    return Aes.encrypt_ecb_no(plainText, password);
+  }
+
+  public static byte[] decryptAes_ecb_no(byte[] cripherText, byte[] password) {
+    return Aes.decrypt_ecb_no(cripherText, password);
   }
 
   public static byte[] encryptAes_cbc(byte[] plainText, byte[] password) {
@@ -94,12 +113,29 @@ public class ToolCipher {
     return Aes.decrypt_gcm(cripherText, password);
   }
 
+  //
   public static String encryptAes(String plainText, String password) {
     return Aes.encrypt(plainText, password);
   }
 
   public static String decryptAes(String cripherText, String password) {
     return Aes.decrypt(cripherText, password);
+  }
+
+  public static String encryptAes_ecb(String plainText, String password) {
+    return Aes.encrypt_ecb(plainText, password);
+  }
+
+  public static String decryptAes_ecb(String cripherText, String password) {
+    return Aes.decrypt_ecb(cripherText, password);
+  }
+
+  public static String encryptAes_ecb_no(String plainText, String password) {
+    return Aes.encrypt_ecb_no(plainText, password);
+  }
+
+  public static String decryptAes_ecb_no(String cripherText, String password) {
+    return Aes.decrypt_ecb_no(cripherText, password);
   }
 
   public static String encryptAes_cbc(String plainText, String password) {
@@ -131,9 +167,8 @@ public class ToolCipher {
   /**
    * md5或者sha-1加密
    * @param encryptName 加密算法名称：md5或者sha-1，不区分大小写
-   * @return
    */
-  private static String encrypt(byte[] source, String encryptName) {
+  private static byte[] encrypt(byte[] source, String encryptName) {
     if (source == null) {
       return null;
     }
@@ -143,8 +178,7 @@ public class ToolCipher {
     try {
       MessageDigest messageDigest = MessageDigest.getInstance(encryptName);
       messageDigest.update(source);
-      byte[] bytes = messageDigest.digest();
-      return toHex(bytes);
+      return messageDigest.digest();
     } catch (Exception e) {
       log.error(ExceptionUtils.getStackTrace(e));
     }
@@ -163,7 +197,8 @@ public class ToolCipher {
       return inputText;
     }
     byte[] source = Tool.toBytes(inputText, charset);
-    return encrypt(source, encryptName);
+    byte[] bytes = encrypt(source, encryptName);
+    return toHex(bytes);
   }
 
   /**

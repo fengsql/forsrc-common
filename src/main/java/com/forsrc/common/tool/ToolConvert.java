@@ -3,9 +3,13 @@ package com.forsrc.common.tool;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public class ToolConvert {
+  private static final Charset charset_utf8 = StandardCharsets.UTF_8;
 
   private static final int length_byte = 1;
   private static final int length_char = 1;
@@ -226,6 +230,49 @@ public class ToolConvert {
     return Tool.toBytes(value);
   }
 
+  /**
+   * 字节转char数组，此方法转换后无法通过 toBytes 恢复。
+   * @param bytes 字节数组
+   * @return chars
+   */
+  public static char[] toChars(byte[] bytes) {
+    if (bytes == null) {
+      return null;
+    }
+    Charset cs = charset_utf8;
+    ByteBuffer bb = ByteBuffer.allocate(bytes.length);
+    bb.put(bytes);
+    bb.flip();
+    CharBuffer cb = cs.decode(bb);
+    return cb.array();
+  }
+
+  /**
+   * 字符数组转成字节数组，此方法转换后无法通过 toChars 恢复。
+   * @param chars 字符数组
+   * @return 字节数组
+   */
+  public static byte[] toBytes(char[] chars) {
+    if (chars == null) {
+      return null;
+    }
+    Charset cs = charset_utf8;
+    CharBuffer cb = CharBuffer.allocate(chars.length);
+    cb.put(chars);
+    cb.flip();
+    ByteBuffer bb = cs.encode(cb);
+    return bb.array();
+    
+//    char[] chars0 = new char[chars.length];
+//    System.arraycopy(chars, 0, chars0, 0, chars.length);
+//    CharBuffer charBuffer = CharBuffer.wrap(chars0);
+//    ByteBuffer byteBuffer = charset_utf8.encode(charBuffer);
+//    byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
+//    Arrays.fill(charBuffer.array(), '\u0000'); // clear sensitive data
+//    Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
+//    return bytes;
+  }
+
   //>>>---------------------------------------- toBytes ----------------------------------------
 
   //<<<---------------------------------------- toHex ----------------------------------------
@@ -259,6 +306,42 @@ public class ToolConvert {
     int index = bytes.length - size;
     ToolByte.copyArray(bytes, index, target, 0, size);
     return Tool.bytesToHex(target);
+  }
+
+  public static String bytesToHex(byte[] src) {
+    StringBuilder stringBuilder = new StringBuilder("");
+    if (src == null || src.length <= 0) {
+      return null;
+    }
+    for (int i = 0; i < src.length; i++) {
+      int val = src[i] & 0xFF;
+      String hex = Integer.toHexString(val);
+      if (hex.length() < 2) {
+        stringBuilder.append(0);
+      }
+      stringBuilder.append(hex);
+    }
+    return stringBuilder.toString();
+  }
+
+  /**
+   * Convert hex string to byte[]
+   * @param hexString the hex string
+   * @return byte[]
+   */
+  public static byte[] hexToBytes(String hexString) {
+    if (Tool.isNull(hexString)) {
+      return null;
+    }
+    hexString = hexString.toUpperCase();
+    int length = hexString.length() / 2;
+    char[] hexChars = hexString.toCharArray();
+    byte[] d = new byte[length];
+    for (int i = 0; i < length; i++) {
+      int pos = i * 2;
+      d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
+    }
+    return d;
   }
 
   //>>>---------------------------------------- toHex ----------------------------------------
@@ -312,15 +395,7 @@ public class ToolConvert {
 
   //>>---------------------------------------- public ----------------------------------------
 
-  //<<---------------------------------------- protected ----------------------------------------
-
-  //>>---------------------------------------- protected ----------------------------------------
-
   //<<---------------------------------------- private ----------------------------------------
-
-  //<<<---------------------------------------- inner ----------------------------------------
-
-  //>>>---------------------------------------- inner ----------------------------------------
 
   //<<<---------------------------------------- getAry ----------------------------------------
 
@@ -519,42 +594,6 @@ public class ToolConvert {
     return target;
   }
 
-  public static String bytesToHex(byte[] src) {
-    StringBuilder stringBuilder = new StringBuilder("");
-    if (src == null || src.length <= 0) {
-      return null;
-    }
-    for (int i = 0; i < src.length; i++) {
-      int val = src[i] & 0xFF;
-      String hex = Integer.toHexString(val);
-      if (hex.length() < 2) {
-        stringBuilder.append(0);
-      }
-      stringBuilder.append(hex);
-    }
-    return stringBuilder.toString();
-  }
-
-  /**
-   * Convert hex string to byte[]
-   * @param hexString the hex string
-   * @return byte[]
-   */
-  public static byte[] hexToBytes(String hexString) {
-    if (Tool.isNull(hexString)) {
-      return null;
-    }
-    hexString = hexString.toUpperCase();
-    int length = hexString.length() / 2;
-    char[] hexChars = hexString.toCharArray();
-    byte[] d = new byte[length];
-    for (int i = 0; i < length; i++) {
-      int pos = i * 2;
-      d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
-    }
-    return d;
-  }
-
   /**
    * Convert char to byte
    * @param c char
@@ -567,17 +606,5 @@ public class ToolConvert {
   //>>>---------------------------------------- tool ----------------------------------------
 
   //>>---------------------------------------- private ----------------------------------------
-
-  //<<---------------------------------------- get ----------------------------------------
-
-  //>>---------------------------------------- get ----------------------------------------
-
-  //<<---------------------------------------- set ----------------------------------------
-
-  //>>---------------------------------------- set ----------------------------------------
-
-  //<<---------------------------------------- get set ----------------------------------------
-
-  //>>---------------------------------------- get set ----------------------------------------
 
 }

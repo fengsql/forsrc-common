@@ -1,8 +1,8 @@
 package com.forsrc.common.configure.okhttp;
 
+import com.forsrc.common.reponse.IResponseHandler;
 import com.forsrc.common.tool.Tool;
 import com.forsrc.common.tool.ToolJson;
-import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -25,6 +25,8 @@ public class BeanOkHttp {
 
   @Resource
   private OkHttpClient okHttpClient;
+  @Resource
+  private IResponseHandler responseHandler;
 
   // <<----------------------- public -----------------------
 
@@ -228,16 +230,18 @@ public class BeanOkHttp {
     return getResponseFail(response);
   }
 
+  @SneakyThrows
   private String getResponseFail(Response response) {
     if (response == null) {
       return null;
     }
-    Body body = new Body();
-    body.setCode(response.code());
-    String message = response.message();
-//    message = "http message: [" + Tool.toString(message) + "]";
-    body.setMessage(message);
-    return ToolJson.toJson(body);
+    int code = response.code();
+    String msg = Tool.toString(response.body().string());
+    if (Tool.isNull(msg)) {
+      msg = response.message();
+    }
+    Object object = responseHandler.createResponse(false, code, msg, null);
+    return ToolJson.toJson(object);
   }
 
   @SneakyThrows
@@ -314,12 +318,6 @@ public class BeanOkHttp {
       String val = entry.getValue();
       builder.add(key, val);
     }
-  }
-
-  @Data
-  public static class Body {
-    private Integer code;
-    private String message;
   }
 
   // >>----------------------- tool -----------------------

@@ -3,11 +3,14 @@ package com.forsrc.common.tool;
 import com.forsrc.common.constant.Code;
 import com.forsrc.common.constant.Const;
 import com.forsrc.common.exception.CommonException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -28,7 +31,7 @@ public class Tool {
   private static final String unit_hour = "h";
   private static final String unit_day = "d";
 
-  private static long randomSeedOffset = 0; // 随机数的种子，每次取随机数自动加1
+  //  private static long randomSeedOffset = 0; // 随机数的种子，每次取随机数自动加1
 
   private static final char offsetCase = 1 << 5;
   //  private static final char offsetUpper = (char) (Character.MAX_VALUE - (1 << 5));
@@ -1035,19 +1038,13 @@ public class Tool {
 
   //<<<----------------------- random -----------------------
 
-  private static long getRandomSeed() {
-    long currMillis = System.currentTimeMillis();
-    long result = currMillis + randomSeedOffset;
-    randomSeedOffset++;
-    return result;
-  }
-
   /**
    * 取两值之间的随机整数Value, minValue <= Value < maxValue;
    */
+  @SneakyThrows
   public static int getRandom(int minValue, int maxValue) {
-    long randomSeed = getRandomSeed();
-    Random random = new Random(randomSeed);
+    Random random = getRandomInstance();
+    RandomStringUtils.random(10);
     int value = random.nextInt();
     value = Math.abs(value % (maxValue - minValue)) + minValue;
     return value;
@@ -1057,8 +1054,7 @@ public class Tool {
    * 取两值之间的随机整数Value, minValue <= Value < maxValue;
    */
   public static long getRandom(long minValue, long maxValue) {
-    long randomSeed = getRandomSeed();
-    Random random = new Random(randomSeed);
+    Random random = getRandomInstance();
     long value = random.nextLong();
     value = Math.abs(value % (maxValue - minValue)) + minValue;
     return value;
@@ -1101,8 +1097,7 @@ public class Tool {
       seed[i] = i;
     }
     int[] result = new int[count];
-    long randomSeed = getRandomSeed();
-    Random random = new Random(randomSeed);
+    Random random = getRandomInstance();
     for (int i = 0; i < count; i++) {
       int j = random.nextInt(maxValue - i);
       result[i] = seed[j];
@@ -1110,6 +1105,19 @@ public class Tool {
     }
     return result;
   }
+
+  @SneakyThrows
+  private static Random getRandomInstance() {
+    //    return ThreadLocalRandom.current();
+    return SecureRandom.getInstance("SHA1PRNG");
+  }
+
+  //  private static long getRandomSeed() {
+  //    long currMillis = System.currentTimeMillis();
+  //    long result = currMillis + randomSeedOffset;
+  //    randomSeedOffset++;
+  //    return result;
+  //  }
 
   //>>>----------------------- random -----------------------
 
@@ -1219,13 +1227,13 @@ public class Tool {
 
   // <<<----------------------- tool -----------------------
 
-//  public static boolean isSuccess(BResponse response) {
-//    if (response == null || !response.getSuccess()) {
-//      return false;
-//    }
-//    int code = response.getCode();
-//    return code == Code.SUCCESS.getCode() || code == Code.OK.getCode();
-//  }
+  //  public static boolean isSuccess(BResponse response) {
+  //    if (response == null || !response.getSuccess()) {
+  //      return false;
+  //    }
+  //    int code = response.getCode();
+  //    return code == Code.SUCCESS.getCode() || code == Code.OK.getCode();
+  //  }
 
   public static void throwNull(Object object, String name) {
     if (object == null) {

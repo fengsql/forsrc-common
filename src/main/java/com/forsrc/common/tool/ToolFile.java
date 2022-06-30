@@ -1,5 +1,6 @@
 package com.forsrc.common.tool;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -1125,6 +1126,7 @@ public class ToolFile {
    * @param lines    存放读取的内容，null 将返回 false。
    * @return true: 成功；false: 失败。
    */
+  @SneakyThrows
   public static boolean readFileByLine(String fileName, List<String> lines) {
     if (lines == null) {
       return false;
@@ -1133,10 +1135,18 @@ public class ToolFile {
     if (!existFile(fileName)) {
       return false;
     }
+    InputStream inputStream = new FileInputStream(fileName);
+    return readFileByLine(inputStream, lines);
+  }
+
+  public static boolean readFileByLine(InputStream inputStream, List<String> lines) {
+    if (lines == null) {
+      return false;
+    }
+    lines.clear();
     BufferedReader reader = null;
     try {
-      // reader = new BufferedReader(new FileReader(fileName));
-      InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(fileName), DEFAULT_CHARSET);
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream, DEFAULT_CHARSET);
       reader = new BufferedReader(inputStreamReader);
       int index = 0;
       String line = null;
