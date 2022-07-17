@@ -19,15 +19,7 @@ public class ToolFile {
   private static final String fileSeparator_win = "\\";
   private static final String fileSeparator_linux = "/";
 
-  private static String fileSeparator = File.separator;
-
-  //  static {
-  //    try {
-  //      fileSeparator = System.getProperty("file.separator").trim();
-  //    } catch (Exception e) {
-  //      fileSeparator = "/";
-  //    }
-  //  }
+  private static final String fileSeparator = File.separator;
 
   public static String getFileSeparator() {
     return fileSeparator;
@@ -44,6 +36,154 @@ public class ToolFile {
 
   public static String readFile(String fileName) {
     return readFile(fileName, null);
+  }
+
+  /**
+   * 读取文件内容
+   * @param fileName 文件名
+   * @return byte[]
+   */
+  public static byte[] readBytes(String fileName) {
+    return readBytes(fileName, 0, -1);
+  }
+
+  /**
+   * 读取文件内容
+   * @param fileName 文件名
+   * @param startPos 起始位置
+   * @param length   长度
+   * @return byte[]
+   */
+  public static byte[] readBytes(String fileName, long startPos, long length) {
+    if (Tool.isNull(fileName)) {
+      log.warn("fileName is null!");
+      return null;
+    }
+    File file = new File(fileName); // 建立一个文件对象
+    if (!file.exists()) {
+      log.warn("file not exist! fileName: " + fileName);
+      return null;
+    }
+    long fileSize = file.length();
+    startPos = startPos < 0 ? 0 : startPos;
+    length = length > 0 ? length : fileSize;
+    if (length > fileSize - startPos) {
+      length = fileSize - startPos;
+    }
+    byte[] fileContent = new byte[(int) length];
+    try {
+      BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
+      if (startPos > 0) {
+        bufferedInputStream.skip(startPos);
+      }
+      bufferedInputStream.read(fileContent);
+      bufferedInputStream.close();
+    } catch (Exception e) {
+      log.error("readBytes error! fileName: " + fileName, e);
+      return null;
+    }
+    return fileContent;
+  }
+
+  public static char[] getChars(String sourceFile) {
+    char[] result = null;
+    FileInputStream is = null;
+    try {
+      is = new FileInputStream(sourceFile);
+      Reader reader = new BufferedReader(new InputStreamReader(is, DEFAULT_CHARSET));
+      if (reader != null) {
+        char[] chars = new char[8192];
+        StringBuffer buf = new StringBuffer();
+        int count;
+        while ((count = reader.read(chars, 0, chars.length)) > 0) {
+          buf.append(chars, 0, count);
+        }
+        result = new char[buf.length()];
+        buf.getChars(0, result.length, result, 0);
+      }
+    } catch (IOException e) {
+      log.error("Compilation error", e);
+    } finally {
+      if (is != null) {
+        try {
+          is.close();
+        } catch (IOException exc) {
+          // Ignore
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * 按行读取文件。
+   * @param fileName 文件名，空或文件不存在时，返回 false；
+   * @param lines    存放读取的内容，null 将返回 false。
+   * @return true: 成功；false: 失败。
+   */
+  @SneakyThrows
+  public static boolean readFileByLine(String fileName, List<String> lines) {
+    if (lines == null) {
+      return false;
+    }
+    lines.clear();
+    if (!existFile(fileName)) {
+      return false;
+    }
+    InputStream inputStream = new FileInputStream(fileName);
+    return readFileByLine(inputStream, lines);
+  }
+
+  public static boolean readFileByLine(InputStream inputStream, List<String> lines) {
+    if (lines == null) {
+      return false;
+    }
+    lines.clear();
+    BufferedReader reader = null;
+    try {
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream, DEFAULT_CHARSET);
+      reader = new BufferedReader(inputStreamReader);
+      int index = 0;
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (index <= 0) {
+          line = ridBomUtf8(line); // 去掉带有BOM的UTF8的开头字符，无BOM时无此值
+        }
+        lines.add(line);
+        index++;
+      }
+      reader.close();
+      return true;
+    } catch (Exception e) {
+      log.error(ExceptionUtils.getStackTrace(e));
+    } finally {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (Exception e) {
+        }
+      }
+    }
+    return false;
+  }
+
+  private static String doReadFile(String fileName, String charset) {
+    StringWriter writer = new StringWriter();
+    try {
+      Reader reader = new InputStreamReader(new FileInputStream(fileName), DEFAULT_CHARSET);
+      try {
+        char[] chars = new char[8 * 1024];
+        int len;
+        while ((len = reader.read(chars)) > 0) {
+          writer.write(chars, 0, len);
+        }
+      } finally {
+        reader.close();
+      }
+    } catch (IOException e) {
+      log.error(ExceptionUtils.getStackTrace(e));
+    }
+    return writer.toString();
   }
 
   // >>------------------------------------ 读文件操作 ------------------------------------
@@ -66,6 +206,129 @@ public class ToolFile {
    */
   public static boolean appendFile(String fileName, String content) {
     return saveToFile(fileName, content, false);
+  }
+
+  /**
+   * 写入文件内容
+   * @param fileName   文件名
+   * @param startIndex content 的起始位置
+   * @param content    起始位置
+   * @return -1 错误；>=0 写入的字节数
+   */
+  public static int writeFile(String fileName, long startIndex, byte[] content) {
+    if (Tool.isNull(fileName)) {
+      log.warn("fileName is null!");
+      return -1;
+    }
+    if (content == null) {
+      log.warn("content is null!");
+      return -1;
+    }
+    int length = content.length;
+    if (startIndex >= length) {
+      log.warn("startIndex out of content.length!");
+      return -1;
+    }
+    File file = new File(fileName);
+    if (!file.exists()) {
+      try {
+        file.createNewFile();
+      } catch (IOException e) {
+        log.error("create file error!", e);
+        return -1;
+      }
+    }
+    try {
+      FileOutputStream fileOutputStream = new FileOutputStream(file);
+      BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+      bufferedOutputStream.write(content, (int) startIndex, length);
+      bufferedOutputStream.close();
+    } catch (Exception e) {
+      log.error("writeFile error! fileName: " + fileName, e);
+      return -1;
+    }
+    return length;
+  }
+
+  /**
+   * 写入文件内容
+   * @param fileName 文件名
+   * @param content  起始位置
+   * @return -1 错误；>=0 写入的字节数
+   */
+  public static int writeFile(String fileName, byte[] content) {
+    return writeFile(fileName, 0, content);
+  }
+
+  /**
+   * 按行保存文件，如果文件已存在将覆盖。
+   * @param fileName 文件名，为空或文件不存在将返回 false；
+   * @param lines    保存的内容，null 将返回 false。
+   * @return true: 成功；false: 失败。
+   */
+  public static boolean writeFileByLine(String fileName, List<String> lines) {
+    if (lines == null) {
+      return false;
+    }
+    BufferedWriter writer = null;
+    try {
+      // writer = new BufferedWriter(new FileWriter(fileName));
+      FileOutputStream fileOutputStream = new FileOutputStream(fileName, false);
+      writer = new BufferedWriter(new OutputStreamWriter(fileOutputStream, DEFAULT_CHARSET));
+      int count = lines.size();
+      for (int i = 0; i < count; i++) {
+        String line = lines.get(i);
+        writer.write(line);
+        writer.newLine();
+      }
+      writer.close();
+      return true;
+    } catch (Exception e) {
+      log.error(ExceptionUtils.getStackTrace(e));
+    } finally {
+      if (writer != null) {
+        try {
+          writer.close();
+        } catch (Exception e) {
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean saveToFile(String fileName, String content, boolean isOverWrite) {
+    if (Tool.isNull(fileName)) {
+      return false;
+    }
+    if (!forceFilePath(fileName)) {
+      log.warn("saveToFile error! forceFilePath fail. fileName = " + fileName);
+      return false;
+    }
+    content = Tool.toString(content);
+    try {
+      File file = new File(fileName);
+      if (!(file.exists())) {
+        boolean success = file.createNewFile();
+        if (!success) {
+          log.warn("saveToFile error! createNewFile fail. fileName = " + fileName);
+          return false;
+        }
+      }
+      RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+      if (isOverWrite) {
+        randomAccessFile.setLength(0);
+        randomAccessFile.seek(0);
+      } else {
+        randomAccessFile.seek(randomAccessFile.length());
+      }
+      byte[] bytes = Tool.toBytes(content);
+      randomAccessFile.write(bytes);
+      randomAccessFile.close();
+      return true;
+    } catch (Exception e) {
+      log.error(ExceptionUtils.getStackTrace(e));
+      return false;
+    }
   }
 
   // >>------------------------------------ 写文件操作 ------------------------------------
@@ -125,7 +388,6 @@ public class ToolFile {
   /**
    * 强制创建路径，如果文件路径不存在时，创建文件路径，路径可以是多级
    * @param filePath 文件路径，直接创建。
-   * @return
    */
   public static boolean forcePath(String filePath) {
     if (existPath(filePath)) {
@@ -138,7 +400,6 @@ public class ToolFile {
   /**
    * 强制创建文件所在的路径，如果文件路径不存在时，创建文件路径，路径可以是多级。
    * @param fileName 文件名称，创建的路径为文件的上一级路径。
-   * @return
    */
   public static boolean forceFilePath(String fileName) {
     String filePath = getFilePath(fileName);
@@ -326,120 +587,6 @@ public class ToolFile {
   // return result;
   // }
 
-  private static boolean saveToFile(String fileName, String content, boolean isOverWrite) {
-    if (Tool.isNull(fileName)) {
-      return false;
-    }
-    if (!forceFilePath(fileName)) {
-      log.warn("saveToFile error! forceFilePath fail. fileName = " + fileName);
-      return false;
-    }
-    content = Tool.toString(content);
-    try {
-      File file = new File(fileName);
-      if (!(file.exists())) {
-        boolean success = file.createNewFile();
-        if (!success) {
-          log.warn("saveToFile error! createNewFile fail. fileName = " + fileName);
-          return false;
-        }
-      }
-      RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-      if (isOverWrite) {
-        randomAccessFile.setLength(0);
-        randomAccessFile.seek(0);
-      } else {
-        randomAccessFile.seek(randomAccessFile.length());
-      }
-      byte[] bytes = Tool.toBytes(content);
-      randomAccessFile.write(bytes);
-      randomAccessFile.close();
-      return true;
-    } catch (Exception e) {
-      log.error(ExceptionUtils.getStackTrace(e));
-      return false;
-    }
-  }
-
-  private static String doReadFile(String fileName, String charset) {
-    //    File file = new File(fileName);
-    //    Long fileLength = file.length();
-    //    int size = fileLength.intValue();
-    //    if (size <= 0) {
-    //      return "";
-    //    }
-    //    byte[] fileContent = new byte[size];
-    //    try {
-    //      FileInputStream inputStream = new FileInputStream(file);
-    //      inputStream.read(fileContent);
-    //      inputStream.close();
-    //    } catch (Exception e) {
-    //      log.error("readFile error", e);
-    //      return null;
-    //    }
-    //    if (Tool.isNull(charset)) {
-    //      charset = DEFAULT_CHARSET;
-    //    }
-    //
-    //    String result = Tool.toString(fileContent, charset);
-    //    // <<当文本中含有中文时，读取后第一个字符的值，会造成第一个字符为乱码，暂时不知道原因，处理方式为去掉这个字符
-    //    // byte b = fileContent[0];
-    //    if (fileContent.length > 0) {
-    //      if (fileContent[0] == UTF8_HEAD_CODE) {
-    //        result = adjustFileContent(result);
-    //      }
-    //    }
-    //    // >>
-    //    return result;
-
-    StringWriter writer = new StringWriter();
-    try {
-      Reader reader = new InputStreamReader(new FileInputStream(fileName), DEFAULT_CHARSET);
-      try {
-        char[] chars = new char[8 * 1024];
-        int len;
-        while ((len = reader.read(chars)) > 0) {
-          writer.write(chars, 0, len);
-        }
-      } finally {
-        reader.close();
-      }
-    } catch (IOException e) {
-      log.error(ExceptionUtils.getStackTrace(e));
-    }
-    return writer.toString();
-  }
-
-  public static char[] getContents(String sourceFile) {
-    char[] result = null;
-    FileInputStream is = null;
-    try {
-      is = new FileInputStream(sourceFile);
-      Reader reader = new BufferedReader(new InputStreamReader(is, DEFAULT_CHARSET));
-      if (reader != null) {
-        char[] chars = new char[8192];
-        StringBuffer buf = new StringBuffer();
-        int count;
-        while ((count = reader.read(chars, 0, chars.length)) > 0) {
-          buf.append(chars, 0, count);
-        }
-        result = new char[buf.length()];
-        buf.getChars(0, result.length, result, 0);
-      }
-    } catch (IOException e) {
-      log.error("Compilation error", e);
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (IOException exc) {
-          // Ignore
-        }
-      }
-    }
-    return result;
-  }
-
   // 当文本中含有中文时，读取后第一个字符的值，会造成第一个字符为乱码，暂时不知道原因，处理方式为去掉这个字符
   private static String adjustFileContent(String source) {
     String firstString = Tool.subString(source, 0, 1);
@@ -606,7 +753,9 @@ public class ToolFile {
     }
   }
 
-  // <<<------------------------------------ 文件复制 ------------------------------------
+  // >>------------------------------------ 文件操作 ------------------------------------
+
+  // <<------------------------------------ 文件复制 ------------------------------------
   // 复制文件
   public static boolean copyFile(File sourceFile, File targetFile) {
     boolean ok = deleteFile(targetFile);
@@ -715,33 +864,32 @@ public class ToolFile {
     }
   }
 
-  // >>>------------------------------------ 文件复制 ------------------------------------
-  // >>------------------------------------ 文件操作 ------------------------------------
+  // >>------------------------------------ 文件复制 ------------------------------------
 
-  /**
-   * 读取文件并得到文件内容
-   * @param fileName 文件名
-   * @param startPos 起始位置
-   * @param length   长度
-   * @return
-   */
-  public static byte[] readBytes(String fileName, int startPos, int length) {
-    if (Tool.isNull(fileName)) {
-      return null;
-    }
-    File file = new File(fileName); // 建立一个文件对象
-    byte[] fileContent = new byte[(length)];
-    try {
-      RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-      randomAccessFile.seek(startPos);
-      randomAccessFile.read(fileContent);
-      randomAccessFile.close();
-    } catch (Exception e) {
-      log.error("readBytes error! fileName: " + fileName + "; startPos: " + startPos, e);
-      return null;
-    }
-    return fileContent;
-  }
+  //  /**
+  //   * 读取文件并得到文件内容
+  //   * @param fileName 文件名
+  //   * @param startPos 起始位置
+  //   * @param length   长度
+  //   * @return
+  //   */
+  //  public static byte[] readBytes(String fileName, int startPos, int length) {
+  //    if (Tool.isNull(fileName)) {
+  //      return null;
+  //    }
+  //    File file = new File(fileName); // 建立一个文件对象
+  //    byte[] fileContent = new byte[(length)];
+  //    try {
+  //      RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+  //      randomAccessFile.seek(startPos);
+  //      randomAccessFile.read(fileContent);
+  //      randomAccessFile.close();
+  //    } catch (Exception e) {
+  //      log.error("readBytes error! fileName: " + fileName + "; startPos: " + startPos, e);
+  //      return null;
+  //    }
+  //    return fileContent;
+  //  }
 
   public static void closeFile(BufferedInputStream bufferedInputStream) {
     if (bufferedInputStream == null) {
@@ -754,118 +902,6 @@ public class ToolFile {
       log.error("closeFile error!", e);
       return;
     }
-  }
-
-  /**
-   * 读取文件内容
-   * @param fileName 文件名
-   * @param startPos 起始位置
-   * @param length   长度
-   * @return byte[]
-   */
-  public static byte[] readFile(String fileName, long startPos, long length) {
-    if (Tool.isNull(fileName)) {
-      log.warn("fileName is null!");
-      return null;
-    }
-    File file = new File(fileName); // 建立一个文件对象
-    if (!file.exists()) {
-      log.warn("file not exist! fileName: " + fileName);
-      return null;
-    }
-    long fileSize = file.length();
-    length = length > 0 ? length : fileSize;
-    if (length > fileSize - startPos) {
-      length = fileSize - startPos;
-    }
-    byte[] fileContent = new byte[(int) length];
-    try {
-      BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
-      if (startPos > 0) {
-        bufferedInputStream.skip(startPos);
-      }
-      bufferedInputStream.read(fileContent);
-      bufferedInputStream.close();
-    } catch (Exception e) {
-      log.error("readBytes error! fileName: " + fileName, e);
-      return null;
-    }
-    return fileContent;
-  }
-
-  /**
-   * 写入文件内容
-   * @param fileName   文件名
-   * @param startIndex content 的起始位置
-   * @param content    起始位置
-   * @return -1 错误；>=0 写入的字节数
-   */
-  public static int writeFile(String fileName, long startIndex, byte[] content) {
-    if (Tool.isNull(fileName)) {
-      log.warn("fileName is null!");
-      return -1;
-    }
-    if (content == null) {
-      log.warn("content is null!");
-      return -1;
-    }
-    int length = content.length;
-    if (startIndex >= length) {
-      log.warn("startIndex out of content.length!");
-      return -1;
-    }
-    File file = new File(fileName); // 建立一个文件对象
-    if (!file.exists()) {
-      try {
-        file.createNewFile();
-      } catch (IOException e) {
-        log.error("create file error!", e);
-        return -1;
-      }
-    }
-    try {
-      FileOutputStream fileOutputStream = new FileOutputStream(file);
-      BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-      bufferedOutputStream.write(content, (int) startIndex, length);
-      bufferedOutputStream.close();
-    } catch (Exception e) {
-      log.error("writeFile error! fileName: " + fileName, e);
-      return -1;
-    }
-    return length;
-  }
-
-  /**
-   * 写入文件内容
-   * @param fileName 文件名
-   * @param content  起始位置
-   * @return -1 错误；>=0 写入的字节数
-   */
-  public static int writeFile(String fileName, byte[] content) {
-    return writeFile(fileName, 0, content);
-  }
-
-  /**
-   * 读整个文件内容
-   * @param fileName
-   * @return byte[]
-   */
-  public static byte[] readBytes(String fileName) {
-    //    if (Tool.isNull(fileName)) {
-    //      return null;
-    //    }
-    //    File file = new File(fileName); // 建立一个文件对象
-    //    byte[] fileContent = new byte[(int) file.length()];
-    //    BufferedInputStream bufferedInputStream;
-    //    try {
-    //      bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
-    //      bufferedInputStream.read(fileContent);
-    //      bufferedInputStream.close();
-    //    } catch (Exception e) {
-    //      log.error("readBytes error! fileName: " + fileName, e);
-    //      return null;
-    //    }
-    return readBytes(fileName, -1, -1);
   }
 
   /**
@@ -1019,32 +1055,6 @@ public class ToolFile {
   }
 
   /**
-   * 以追加方式写文本文件
-   * @param fileName 文件名
-   * @param content 文件内容
-   */
-  // public static void appendTextFile(String fileName, String content) {
-  // if (Tool.isNull(fileName)) {
-  // return;
-  // }
-  // if (Tool.isNull(content)) {
-  // return;
-  // }
-  // try {
-  // File f = new File(fileName);
-  // if (!f.exists()) { // 如果文件不存在
-  // f.createNewFile(); // 生成这个文件
-  // }
-  // RandomAccessFile rf = new RandomAccessFile(f, "rw");
-  // rf.seek(rf.length());
-  // rf.writeBytes(content);
-  // rf.close();
-  // } catch (Exception e) {
-  // log.error("appendTextFile error! fileName = " + fileName, e);
-  // }
-  // }
-
-  /**
    * 以追加方式写文件
    * @param fileName 文件名
    * @param file     文件内容
@@ -1066,152 +1076,6 @@ public class ToolFile {
       log.error("appendTextFile error! fileName = " + fileName, e);
     }
   }
-
-  // /**
-  // * 以清除后重写(覆盖)方式写文本文件。
-  // * @bean fileName 文件名；
-  // * @bean content 文件内容。
-  // */
-  // public static void rewriteTextFile(String fileName, String content) {
-  // if (Tool.isNull(fileName)) {
-  // return;
-  // }
-  // if (content == null) {
-  // content = "";
-  // }
-  // try {
-  // File f = new File(fileName);
-  // if (!(f.exists())) { // 如果文件不存在
-  // f.createNewFile(); // 生成这个文件
-  // }
-  // RandomAccessFile rf = new RandomAccessFile(f, "rw");
-  // rf.seek(0);
-  // rf.setLength(0);
-  // rf.writeBytes(content);
-  // rf.close();
-  // } catch (Exception e) {
-  // log.error("rewriteTextFile error! fileName = " + fileName, e);
-  // }
-  // }
-  //
-  // /**
-  // * 以清除后重写(覆盖)方式写文本文件。
-  // * @bean fileName 文件名；
-  // * @bean file 文件内容。
-  // */
-  // public static void rewriteTextFile(String fileName, byte[] file) {
-  // if (Tool.isNull(fileName)) {
-  // return;
-  // }
-  // try {
-  // File f = new File(fileName);
-  // if (!(f.exists())) { // 如果文件不存在
-  // f.createNewFile(); // 生成这个文件
-  // }
-  // RandomAccessFile rf = new RandomAccessFile(f, "rw");
-  // rf.seek(0);
-  // rf.setLength(0);
-  // rf.write(file);
-  // rf.close();
-  // } catch (Exception e) {
-  // log.error("rewriteTextFile error! fileName = " + fileName, e);
-  // }
-  // }
-
-  // <<----------------------------- 按 line 读写文件 -----------------------------
-
-  /**
-   * 按行读取文件。
-   * @param fileName 文件名，空或文件不存在时，返回 false；
-   * @param lines    存放读取的内容，null 将返回 false。
-   * @return true: 成功；false: 失败。
-   */
-  @SneakyThrows
-  public static boolean readFileByLine(String fileName, List<String> lines) {
-    if (lines == null) {
-      return false;
-    }
-    lines.clear();
-    if (!existFile(fileName)) {
-      return false;
-    }
-    InputStream inputStream = new FileInputStream(fileName);
-    return readFileByLine(inputStream, lines);
-  }
-
-  public static boolean readFileByLine(InputStream inputStream, List<String> lines) {
-    if (lines == null) {
-      return false;
-    }
-    lines.clear();
-    BufferedReader reader = null;
-    try {
-      InputStreamReader inputStreamReader = new InputStreamReader(inputStream, DEFAULT_CHARSET);
-      reader = new BufferedReader(inputStreamReader);
-      int index = 0;
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (index <= 0) {
-          line = ridBomUtf8(line); // 去掉带有BOM的UTF8的开头字符，无BOM时无此值
-        }
-        lines.add(line);
-        index++;
-      }
-      reader.close();
-      return true;
-    } catch (Exception e) {
-      log.error(ExceptionUtils.getStackTrace(e));
-    } finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        } catch (Exception e) {
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * 按行保存文件，如果文件已存在将覆盖。
-   * @param fileName 文件名，为空或文件不存在将返回 false；
-   * @param lines    保存的内容，null 将返回 false。
-   * @return true: 成功；false: 失败。
-   */
-  public static boolean writeFileByLine(String fileName, List<String> lines) {
-    if (lines == null) {
-      return false;
-    }
-    if (!existFile(fileName)) {
-      return false;
-    }
-    BufferedWriter writer = null;
-    try {
-      // writer = new BufferedWriter(new FileWriter(fileName));
-      FileOutputStream fileOutputStream = new FileOutputStream(fileName, false);
-      writer = new BufferedWriter(new OutputStreamWriter(fileOutputStream, DEFAULT_CHARSET));
-      int count = lines.size();
-      for (int i = 0; i < count; i++) {
-        String line = lines.get(i);
-        writer.write(line);
-        writer.newLine();
-      }
-      writer.close();
-      return true;
-    } catch (Exception e) {
-      log.error(ExceptionUtils.getStackTrace(e));
-    } finally {
-      if (writer != null) {
-        try {
-          writer.close();
-        } catch (Exception e) {
-        }
-      }
-    }
-    return false;
-  }
-
-  // >>----------------------------- 按 line 读写文件 -----------------------------
 
   // 去掉带有BOM的UTF8的开头字符，无BOM时无此值
   private static String ridBomUtf8(String line) {

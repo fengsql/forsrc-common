@@ -6,7 +6,6 @@ import com.forsrc.common.tool.ToolJson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -155,6 +154,9 @@ public class BeanOkHttp {
     try {
       response = execute(request);
       return getResponseBody(response);
+    } catch (Exception e) {
+      log.error("requestBody fail", e);
+      return null;
     } finally {
       if (response != null) {
         response.close();
@@ -167,6 +169,9 @@ public class BeanOkHttp {
     try {
       response = execute(request);
       return getResponseBytes(response);
+    } catch (Exception e) {
+      log.error("requestBytes fail", e);
+      return null;
     } finally {
       if (response != null) {
         response.close();
@@ -178,7 +183,7 @@ public class BeanOkHttp {
     try {
       return okHttpClient.newCall(request).execute();
     } catch (Exception e) {
-      log.error(ExceptionUtils.getStackTrace(e));
+      log.error("execute error!", e);
     }
     return null;
   }
@@ -224,10 +229,16 @@ public class BeanOkHttp {
     if (response == null) {
       return null;
     }
+//    String body = Tool.toString(response.body().string());
+//    String fail = getResponseFail(response);
+//    log.info("body: {}", body);
+//    log.info("fail: {}", fail);
     if (response.isSuccessful()) {
       return Tool.toString(response.body().string());
+//      return body;
     }
     return getResponseFail(response);
+//    return fail;
   }
 
   @SneakyThrows
@@ -239,6 +250,7 @@ public class BeanOkHttp {
     String msg = Tool.toString(response.body().string());
     if (Tool.isNull(msg)) {
       msg = response.message();
+      log.info("response.message: {}", msg);
     }
     Object object = responseHandler.createResponse(false, code, msg, null);
     return ToolJson.toJson(object);
