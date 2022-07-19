@@ -22,6 +22,8 @@ public class BeanOkHttp {
   private static final MediaType XML = MediaType.parse("application/xml; charset=utf-8");
   private static final MediaType BIN = MediaType.parse("application/octet-stream");
 
+  private static final String head_message = "message";  // head 中 message 名称，由于 body 中不能正常发送 message，所以暂时把 message 放入 head 中
+
   @Resource
   private OkHttpClient okHttpClient;
   @Resource
@@ -229,16 +231,16 @@ public class BeanOkHttp {
     if (response == null) {
       return null;
     }
-//    String body = Tool.toString(response.body().string());
-//    String fail = getResponseFail(response);
-//    log.info("body: {}", body);
-//    log.info("fail: {}", fail);
+    String msg = getHeadMessage(response);
+    if (!Tool.isNull(msg)) {
+      log.warn("error: {}", Tool.getSimpleText(msg));
+    }
     if (response.isSuccessful()) {
-      return Tool.toString(response.body().string());
-//      return body;
+      String body = Tool.toString(response.body().string());
+      //      log.info("getResponseBody body: {}", Tool.getSimpleText(body));
+      return body;
     }
     return getResponseFail(response);
-//    return fail;
   }
 
   @SneakyThrows
@@ -247,12 +249,16 @@ public class BeanOkHttp {
       return null;
     }
     int code = response.code();
-    String msg = Tool.toString(response.body().string());
-    if (Tool.isNull(msg)) {
-      msg = response.message();
-      log.info("response.message: {}", msg);
+    String body = Tool.toString(response.body().string());
+    //    log.info("getResponseFail body: {}", Tool.getSimpleText(body));
+    if (Tool.isNull(body)) {
+      body = response.message();
+      //      log.info("response.message: {}", Tool.getSimpleText(body));
     }
-    Object object = responseHandler.createResponse(false, code, msg, null);
+    if (Tool.isNull(body)) {
+      body = getHeadMessage(response);
+    }
+    Object object = responseHandler.createResponse(false, code, body, null);
     return ToolJson.toJson(object);
   }
 
@@ -285,6 +291,10 @@ public class BeanOkHttp {
       } catch (Exception e) {
       }
     }
+  }
+
+  private String getHeadMessage(Response response) {
+    return response.header(head_message);
   }
 
   // >>----------------------- getResponse -----------------------

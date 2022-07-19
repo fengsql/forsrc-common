@@ -62,7 +62,14 @@ public class WebConfigure implements WebMvcConfigurer {
     converter.setDefaultCharset(StandardCharsets.UTF_8);
     FastJsonConfig config = new FastJsonConfig();
     JSON.DEFFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    config.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat);//格式化时间
+    config.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat  //格式化时间
+      //      SerializerFeature.WriteNullBooleanAsFalse,  //
+      //      SerializerFeature.WriteNullNumberAsZero,  //
+      //      SerializerFeature.WriteNullStringAsEmpty,  //
+      //      SerializerFeature.WriteMapNullValue,  //
+      //      SerializerFeature.WriteNullListAsEmpty,  //
+      //      SerializerFeature.WriteBigDecimalAsPlain   //
+    );
     converter.setFastJsonConfig(config);
     converters.add(converter);
   }

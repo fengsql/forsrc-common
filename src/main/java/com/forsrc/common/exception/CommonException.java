@@ -16,16 +16,19 @@ public class CommonException extends RuntimeException {
   private String message;
 
   public CommonException(Code code) {
+    super(code.getMsg());
     this.setCode(code.getCode());
     this.setMessage(code.getMsg());
   }
 
   public CommonException(Code code, String message) {
+    super(message);
     this.setCode(code.getCode());
     this.setMessage(message);
   }
 
   public CommonException(int code, String message) {
+    super(message);
     this.setCode(code);
     this.setMessage(message);
   }
@@ -49,7 +52,7 @@ public class CommonException extends RuntimeException {
   }
 
   public CommonException(String message) {
-    //    super(message);
+    super(message);
     this.setCode(Code.COMMON_EXCEPTION.getCode());
     this.setMessage(message);
   }

@@ -1,12 +1,15 @@
 package com.forsrc.common.configure.common;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.LinkedHashMap;
 
 @Configuration
+@Slf4j
 public class RestTemplateConfigure {
 
   @Resource
@@ -39,17 +42,20 @@ public class RestTemplateConfigure {
     headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     HttpEntity<String> requestEntity = new HttpEntity(params, headers);
     ResponseEntity<T> response = this.restTemplate.postForEntity(url, requestEntity, returnType, new Object[0]);
-    return response.getBody();
+    T t = response.getBody();
+    log.info("post body: {}", t);
+    return t;
   }
 
-  //  public <T> ResponseEntity<T> post(String url, String params, LinkedHashMap<String, String> headMap, Class<T> returnType) {
-  //    HttpHeaders headers = new HttpHeaders();
-  //    headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-  //    headMap.forEach(headers::add);
-  //    HttpEntity<String> requestEntity = new HttpEntity(params, headers);
-  //    ResponseEntity<T> response = this.restTemplate.postForEntity(url, requestEntity, returnType, new Object[0]);
-  //    return response;
-  //  }
+  public <T> ResponseEntity<T> post(String url, String params, LinkedHashMap<String, String> headMap, Class<T> returnType) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+    headMap.forEach(headers::add);
+    HttpEntity<String> requestEntity = new HttpEntity(params, headers);
+    ResponseEntity<T> response = this.restTemplate.postForEntity(url, requestEntity, returnType, new Object[0]);
+    log.info("post response: {}", response);
+    return response;
+  }
 
   //  public <T> ResponseEntity<T> uploadFile(String url, File file, LinkedHashMap<String, String> headMap, Class<T> returnType) throws IOException {
   //    HttpHeaders headers = new HttpHeaders();
