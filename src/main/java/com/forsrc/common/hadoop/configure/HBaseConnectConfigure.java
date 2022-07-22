@@ -17,10 +17,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * hbase 链接初始化
+ * hbase 连接初始化
  */
 @Slf4j
-@org.springframework.context.annotation.Configuration
+//@org.springframework.context.annotation.Configuration
 public class HBaseConnectConfigure implements InitializingBean {
 
   @Resource

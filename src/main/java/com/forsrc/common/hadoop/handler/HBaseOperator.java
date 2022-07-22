@@ -14,14 +14,13 @@ import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
 @Slf4j
-@Configuration
+//@Configuration
 public class HBaseOperator implements InitializingBean {
 
   @Resource

@@ -9,11 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import javax.annotation.Resource;
@@ -51,18 +48,18 @@ public class DependencyConfigure {
 //    return new ExceptionAdvHandler();
 //  }
 
-  @Bean
-  public RestTemplate restTemplate() {
-    return new RestTemplate(httpClientFactory());
-  }
-
-  @Bean
-  public ClientHttpRequestFactory httpClientFactory() {
-    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-    requestFactory.setConnectTimeout(5000);
-    requestFactory.setReadTimeout(5000);
-    return requestFactory;
-  }
+//  @Bean
+//  public RestTemplate restTemplate() {
+//    return new RestTemplate(httpClientFactory());
+//  }
+//
+//  @Bean
+//  public ClientHttpRequestFactory httpClientFactory() {
+//    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+//    requestFactory.setConnectTimeout(5000);
+//    requestFactory.setReadTimeout(5000);
+//    return requestFactory;
+//  }
 
   @Bean
   MeterRegistryCustomizer<MeterRegistry> configurer(@Value("${spring.application.name:}") String applicationName) {
