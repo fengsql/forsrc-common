@@ -1,17 +1,17 @@
 #
 application:
   port: 8010
-  name: dblrecord
+  name: forsrc-common
 
 datasource:
   mysql:
-    url: jdbc:mysql://118.31.224.114:3306/dblrecord?serverTimezone=PRC&autoReconnect=true&characterEncoding=utf8&useUnicode=true&useSSL=false
-    username: root
-    password: 1QAZ2wsx
+    url: jdbc:mysql://localhost:3306/dblrecord?serverTimezone=PRC&autoReconnect=true&characterEncoding=utf8&useUnicode=true&useSSL=false
+    username: ''
+    password: ''
 
 log:
   level: info
-  file: /home/record/lp/run/log/dblrecord.log
+  file: log/log.log
   
 websocket:
   enable: true
@@ -33,10 +33,3 @@ redis:
   # 添加记录是否同时添加到缓存，默认为 true 添加缓存
   cache-insert: true
 
-#hbase:
-#  zk-quorum: 124.70.204.115
-#  zk-port: 2181
-#  zk-path: '/hbase-unsecure'
-#  hbase-master: ''
-#  connPoolMaxSize: 10
-#  connPoolCoreSize: 1
