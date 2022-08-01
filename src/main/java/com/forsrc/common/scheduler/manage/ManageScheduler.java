@@ -33,7 +33,9 @@ public class ManageScheduler {
       log.warn("task exists! name: {}", taskName);
       return null;
     }
-    return addTask(task, cron);
+    schedulerTask = addTask(task, cron);
+    log.info("add task ok. name: {}", taskName);
+    return schedulerTask;
   }
 
   public void stop(ITask task) {
@@ -49,6 +51,7 @@ public class ManageScheduler {
       return;
     }
     removeSchedulerTask(schedulerTask);
+    log.info("stop task ok. name: {}", taskName);
   }
 
   public SchedulerTask restart(ITask task, String cron) {
