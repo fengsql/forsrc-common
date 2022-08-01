@@ -19,7 +19,7 @@ public class DbBatch<T> {
   /**
    * 批量插入并移除。
    * @param entitys 插入的数据，插入后将数据移除。
-   * @param maxRow 最大插入记录数，0全部，否则仅插入此记录后退出。
+   * @param maxRow  最大插入记录数，0全部，否则仅插入此记录后退出。
    * @return 返回插入的记录数。
    */
   public int runBatch(List<DbEntity<T>> entitys, int maxRow) {
@@ -157,11 +157,11 @@ public class DbBatch<T> {
   private boolean runServiceInsert(DbEntity<T> dbEntity) {
     IService<T> service = dbEntity.getService();
     T t = dbEntity.getVo();
-    int count = service.insert(null, null, t);
-    if (count <= 0) {
+    T result = service.insert(null, null, t);
+    if (result == null) {
       log.warn("runServiceInsert fail! vo: " + ToolJson.toJson(t));
     }
-    return count > 0;
+    return result != null;
   }
 
   private boolean runServiceUpdate(DbEntity<T> dbEntity) {
@@ -212,7 +212,7 @@ public class DbBatch<T> {
   private boolean isTimeRun(DbEntity<T> dbEntity) {
     long now = System.currentTimeMillis();
     long lastTime = dbEntity.getLastTime();
-    int second = (int)((now - lastTime) / 1000);
+    int second = (int) ((now - lastTime) / 1000);
     return second >= retry_second;
   }
 
