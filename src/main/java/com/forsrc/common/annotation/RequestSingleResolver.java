@@ -24,7 +24,7 @@ public class RequestSingleResolver implements HandlerMethodArgumentResolver {
     HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
     BufferedReader reader = request.getReader();
     StringBuilder sb = new StringBuilder();
-    char[] buf = new char[1024];
+    char[] buf = new char[2048];
     int rd;
     while ((rd = reader.read(buf)) != -1) {
       sb.append(buf, 0, rd);
