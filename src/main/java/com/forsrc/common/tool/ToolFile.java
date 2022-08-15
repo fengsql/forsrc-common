@@ -350,16 +350,30 @@ public class ToolFile {
     }
   }
 
+  public static boolean existPath(String filePath) {
+    if (Tool.isNull(filePath)) {
+      return false;
+    }
+    try {
+      File file = new File(filePath);
+      if (!file.exists()) {
+        return false;
+      }
+      if (!file.isDirectory()) {
+        return false;
+      }
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
   public static boolean isExist(String fileName) {
     if (fileName == null) {
       return false;
     }
     File file = new File(fileName);
     return file.exists();
-  }
-
-  public static boolean existPath(String filePath) {
-    return existFile(filePath);
   }
 
   public static boolean hasFiles(String filePath) {
