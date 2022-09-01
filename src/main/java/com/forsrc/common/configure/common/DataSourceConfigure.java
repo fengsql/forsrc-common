@@ -18,7 +18,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-@ConditionalOnProperty(name = "datasource.enable", havingValue = "true") //
+@ConditionalOnProperty(name = "spring.datasource.enable", havingValue = "true", matchIfMissing = true) //
 @MapperScan(basePackages = "**.dao", sqlSessionTemplateRef = "sqlSessionTemplate")
 public class DataSourceConfigure {
 

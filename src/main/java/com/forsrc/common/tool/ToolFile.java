@@ -350,6 +350,10 @@ public class ToolFile {
     }
   }
 
+  /**
+   * 判断文件夹是否存在
+   * @param filePath 文件夹
+   */
   public static boolean existPath(String filePath) {
     if (Tool.isNull(filePath)) {
       return false;

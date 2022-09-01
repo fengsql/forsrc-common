@@ -27,7 +27,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 @EnableKnife4j
-@ConditionalOnProperty(name = "swagger.enable", havingValue = "true") //方式二
+@ConditionalOnProperty(name = "swagger.enable", havingValue = "true", matchIfMissing = true) //方式二
 public class SwaggerConfig implements WebMvcConfigurer {
 
   @Override

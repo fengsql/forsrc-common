@@ -3,6 +3,7 @@ package com.forsrc.common.tool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * Redis工具类
  */
 @Component
+@ConditionalOnProperty(name = "spring.redis.enable", havingValue = "true", matchIfMissing = true) //
 @Slf4j
 public final class ToolRedis {
 

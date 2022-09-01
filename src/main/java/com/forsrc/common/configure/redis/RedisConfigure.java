@@ -3,6 +3,7 @@ package com.forsrc.common.configure.redis;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.time.Duration;
 
 @Configuration
+@ConditionalOnProperty(name = "spring.redis.enable", havingValue = "true", matchIfMissing = true)
 @EnableCaching
 //@ConditionalOnExpression("#{!'${spring.redis.host}'.equals('')}")
 @Slf4j
