@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = "**.dao", sqlSessionTemplateRef = "sqlSessionTemplate")
 public class DataSourceConfigure {
 
-  @Value("${spring.datasource.mybatis.mapper-locations:classpath*:mybatis/**/*.xml}")
+  @Value("${mybatis.mapper-locations:classpath*:mybatis/**/*.xml}")
   private String mapper;
 
   /**
