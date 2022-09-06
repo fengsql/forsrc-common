@@ -97,17 +97,17 @@ public class ToolExport {
     try {
       Sheet sheet = workbook.createSheet(tableName);
       //      autoSizeColumns(sheet, fields.size());
-      setSheet(workbook, sheet, fields);
+      setSheet(sheet);
       addTitle(workbook, sheet, title);
       addHeader(workbook, sheet, fields);
       addBody(workbook, sheet, fields, data);
-      mergeRegion(workbook, sheet, fields);
+      mergeRegion(sheet, fields);
     } catch (Exception e) {
       throw new CommonException(Code.FAIL.getCode(), "填充数据错误");
     }
   }
 
-  private static void setSheet(SXSSFWorkbook workbook, Sheet sheet, List<Field> fields) {
+  private static void setSheet(Sheet sheet) {
     sheet.setDefaultColumnWidth(sheet_width_default);
 
   }
@@ -253,7 +253,7 @@ public class ToolExport {
     }
   }
 
-  private static void mergeRegion(SXSSFWorkbook workbook, Sheet sheet, List<Field> fields) {
+  private static void mergeRegion(Sheet sheet, List<Field> fields) {
     sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, (fields.size() - 1)));
   }
 
