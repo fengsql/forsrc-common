@@ -1,5 +1,6 @@
 package com.forsrc.common.configure.common;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -32,7 +32,10 @@ public class DataSourceConfigure {
   @ConfigurationProperties(prefix = "spring.datasource")
   @Primary
   public DataSource getDataSource() {
-    return DataSourceBuilder.create().build();
+    //hikari
+    //    return DataSourceBuilder.create().build();
+    //druid
+    return DruidDataSourceBuilder.create().build();
   }
 
   /**
