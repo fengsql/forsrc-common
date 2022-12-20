@@ -1073,6 +1073,34 @@ public class ToolFile {
   }
 
   /**
+   * 获取文件夹下的所有子文件夹。
+   * @param path 路径。
+   * @param folderNames 只有文件夹名称，不包含路径。
+   */
+  public static void getFolders(String path, List<String> folderNames) { //
+    if (Tool.isNull(path) || folderNames == null) {
+      return;
+    }
+    File file = new File(path);
+    if (!file.exists()) {
+      log.warn("Not find path! path = " + path);
+    } else {
+      File[] files = file.listFiles();
+      if (files.length == 0) {
+        log.info("Path is empty. path = " + path);
+        return;
+      } else {
+        for (File one : files) {
+          if (one.isDirectory()) {
+            String name = one.getName();
+            folderNames.add(name);
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * 以追加方式写文件
    * @param fileName 文件名
    * @param file     文件内容

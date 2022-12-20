@@ -25,6 +25,11 @@ public class ToolPath extends BObject {
     return classPath;
   }
 
+  public static String getPathJar() {
+    String jarFile = ToolPath.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    return ToolFile.getFilePath(jarFile);
+  }
+
   // >>----------------------- path -----------------------
 
   // <<----------------------- private -----------------------

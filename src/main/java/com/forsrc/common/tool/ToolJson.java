@@ -1,6 +1,7 @@
 package com.forsrc.common.tool;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,13 @@ public class ToolJson {
       return null;
     }
     return JSON.parseObject(json, typeOfT);
+  }
+
+  public static <T> T toBean(String json, TypeReference<T> typeRef) {
+    if (Tool.isNull(json)) {
+      return null;
+    }
+    return JSON.parseObject(json, typeRef);
   }
 
   public static <T> List<T> toList(String json, Class<T> clazz) {
