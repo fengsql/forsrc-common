@@ -12,4 +12,6 @@ public interface Const {
 
   char _underline = '_';
 
+  String param_verifyCode = "verify_code";  //验证码参数名称
+
 }

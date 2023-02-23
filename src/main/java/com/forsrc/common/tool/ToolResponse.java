@@ -39,7 +39,7 @@ public class ToolResponse {
   }
 
   @SneakyThrows
-  public static void writeBody(HttpServletResponse response, Object responseBody) {
+  public static void writeBody(HttpServletResponse response, int status, Object responseBody) {
     String content = ToolJson.toJson(responseBody);
     if (response == null) {
       log.warn("response is null!");
@@ -48,7 +48,9 @@ public class ToolResponse {
     //    log.info("response content: " + content);
     PrintWriter printWriter = null;
     try {
+      response.setStatus(status);
       response.setHeader("Cache-Control", "no-cache");
+      response.setHeader("content-type", "text/html;charset=UTF-8");
       response.setContentType(contentType_default);
       response.setCharacterEncoding(charset_default);
       printWriter = response.getWriter();
@@ -62,24 +64,28 @@ public class ToolResponse {
     }
   }
 
+  public static void writeBody(HttpServletResponse response, Object responseBody) {
+    writeBody(response, HttpStatus.OK.value(), responseBody);
+  }
+
   public static void error(HttpServletResponse response) {
     Object responseBody = getResponseError();
-    writeBody(response, responseBody);
+    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static void error(HttpServletResponse response, Exception exception) {
     Object responseBody = getResponseError(Code.FAIL.getCode(), exception.getMessage());
-    writeBody(response, responseBody);
+    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static void error(HttpServletResponse response, int code, String message) {
     Object responseBody = getResponseError(code, message);
-    writeBody(response, responseBody);
+    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static void error(HttpServletResponse response, Code code) {
     Object responseBody = getResponse(false, code.getCode(), code.getMsg(), null);
-    writeBody(response, responseBody);
+    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static Object getResponse(Object data) {

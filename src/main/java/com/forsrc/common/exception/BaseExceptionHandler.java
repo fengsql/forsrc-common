@@ -34,7 +34,7 @@ import java.sql.SQLException;
 public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
   private static final int msg_length = 400;  //如果异常信息在 400 以内，直接显示为异常消息
   private static final String msg_error = "error";  // 当异常信息长度超过 msg_length 时，显示这个信息
-  private static final String head_message = "message";  // head 中 message 名称，由于 body 中不能正常发送 message，所以暂时使用把 message 放入 head 中
+  private static final String head_status = "status";  // head 中 message 名称，由于 body 中不能正常发送 message，所以暂时使用把 message 放入 head 中
 
   @Resource
   private IResponseHandler<?> responseHandler;
@@ -65,45 +65,46 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
   }
 
   private ResponseEntity<?> handleCommon(Exception exception) {
-    //    log.info("handleCommon.");
+    log.info("handleCommon.");
     CommonException commonException = (CommonException) exception;
     String message = getMessage(exception, commonException.getMessage());
     return createResponseBody(HttpStatus.OK, commonException.getCode(), message);
   }
 
   private ResponseEntity<?> handleError(Exception exception) {
-    //    log.info("handleError.");
+    log.info("handleError.");
     ErrorException errorException = (ErrorException) exception;
     String message = getMessage(exception, errorException.getMessage());
     return createResponseBody(HttpStatus.INTERNAL_SERVER_ERROR, errorException.getCode(), message);
   }
 
   private ResponseEntity<?> handleRaw(Exception exception) {
-    //    log.info("handleRaw.");
+    log.info("handleRaw.");
     RawException rawException = (RawException) exception;
     HttpStatus httpStatus = rawException.getHttpStatus();
     return createResponseBody(exception, httpStatus);
   }
 
   private ResponseEntity<?> handleSQL(Exception exception) {
-    //    log.info("handleSQL.");
+    log.info("handleSQL.");
     return createResponseBody("SQL error!");
   }
 
   private ResponseEntity<?> handleIllegalArgument(Exception exception) {
+    log.info("handleIllegalArgument.");
     String message = getMessage(exception);
     return createResponseBody(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), message);
   }
 
   private ResponseEntity<?> handleResponseStatus(Exception exception) {
-    //    log.info("handleResponseStatus.");
+    log.info("handleResponseStatus.");
     ResponseStatusException responseStatusException = (ResponseStatusException) exception;
     HttpStatus httpStatus = responseStatusException.getStatus();
     return createResponseBody(exception, httpStatus);
   }
 
   private ResponseEntity<?> handleUncaught(Exception exception) {
-    //    log.info("handleUncaught.");
+    log.info("handleUncaught.");
     String msg = getMessage(exception);
     HttpStatus httpStatus = getHttpStatus(exception);
     if (httpStatus != null) {
@@ -114,14 +115,14 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
 
   protected ResponseEntity<?> createResponseBody(HttpStatus httpStatus, Integer code, String message) {
     Object responseBody = getResposeBody(httpStatus, code, message);
-    HttpHeaders responseHeaders = getHttpHeaders(message);
+    HttpHeaders responseHeaders = getHttpHeaders(code);
     //    log.info("createResponseBody. msg: {}. body: {}", message, responseBody);
     return new ResponseEntity<>(responseBody, responseHeaders, httpStatus);
   }
 
-  private HttpHeaders getHttpHeaders(String message) {
+  private HttpHeaders getHttpHeaders(Integer code) {
     HttpHeaders responseHeaders = new HttpHeaders();
-    responseHeaders.add(head_message, message);
+    responseHeaders.add(head_status, String.valueOf(code));
     return responseHeaders;
   }
 
