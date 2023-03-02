@@ -16,15 +16,16 @@ public enum Code {
   AUTHENTICATION_EMPTY(1007, "没有凭证"), //
   // user
   USER_EXCEPTION(1010, "用户异常"), //
-  USER_NOT_LOGIN(1011, "用户未登录"), //
-  USER_ACCOUNT_EXPIRED(1012, "账号已过期"), //
-  USER_CREDENTIALS_ERROR(1013, "密码错误"), //
-  USER_CREDENTIALS_EXPIRED(1014, "密码过期"), //
-  USER_ACCOUNT_DISABLE(1015, "账号不可用"), //
-  USER_ACCOUNT_LOCKED(1016, "账号被锁定"), //
-  USER_ACCOUNT_NOT_EXIST(1017, "账号不存在"), //
-  USER_ACCOUNT_ALREADY_EXIST(1018, "账号已存在"), //
-  USER_ACCOUNT_USE_BY_OTHERS(1019, "账号下线"), //
+  USER_LOGIN_FAIL(1011, "登录失败"), //
+  USER_NOT_LOGIN(1012, "用户未登录"), //
+  USER_ACCOUNT_EXPIRED(1013, "账号已过期"), //
+  USER_CREDENTIALS_ERROR(1014, "密码错误"), //
+  USER_CREDENTIALS_EXPIRED(1015, "密码过期"), //
+  USER_ACCOUNT_DISABLE(1016, "账号不可用"), //
+  USER_ACCOUNT_LOCKED(1017, "账号被锁定"), //
+  USER_ACCOUNT_NOT_EXIST(1018, "账号不存在"), //
+  USER_ACCOUNT_ALREADY_EXIST(1019, "账号已存在"), //
+  USER_ACCOUNT_USE_BY_OTHERS(1020, "账号下线"), //
 
   // object
   OBJECT_NULL(1100, "对象为空"), //
