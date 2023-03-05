@@ -45,6 +45,10 @@ public class Tool {
   private static final int length_short_text = 500; //
   private static final int protected_length = 5120000;// 输入流保护 5000KB
 
+  private static final String upperStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  private static final String lowerStr = "abcdefghijklmnopqrstuvwxyz";
+  private static final String numStr = "1234567890";
+
   // <<----------------------- public -----------------------
 
   // <<----------------------- String -----------------------
@@ -716,6 +720,10 @@ public class Tool {
     return toInt(value);
   }
 
+  public static int toInteger(Object value) {
+    return toInt(value);
+  }
+
   public static int toInt(Object value) {
     try {
       return value == null ? 0 : Integer.parseInt(toString(value));
@@ -1062,8 +1070,7 @@ public class Tool {
 
   /**
    * 取随机整数 Value, 0 <= Value < maxValue;
-   * @param maxValue
-   * @return
+   * @param maxValue 最大值，不包含这个值
    */
   public static int getRandom(int maxValue) {
     int minValue = 0;
@@ -1077,6 +1084,24 @@ public class Tool {
     int minValue = 0;
     int maxValue = 1000000000;
     return getRandom(minValue, maxValue);
+  }
+
+  /**
+   * 随机生成字符串，包含大小写，数字。
+   * @param length 长度
+   */
+  public static String getRandomString(int length) {
+    String source = upperStr + lowerStr + numStr;
+    if (length < 1) {
+      length = 1;
+    }
+    final StringBuilder sb = new StringBuilder(length);
+    int size = source.length();
+    for (int i = 0; i < length; i++) {
+      int number = getRandom(size);
+      sb.append(source.charAt(number));
+    }
+    return sb.toString();
   }
 
   /**
