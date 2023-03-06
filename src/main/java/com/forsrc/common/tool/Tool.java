@@ -1081,7 +1081,6 @@ public class Tool {
    * 取随机整数 Value, 0 <= Value < 1000000000;
    */
   public static int getRandom() {
-    
     int minValue = 0;
     int maxValue = 1000000000;
     return getRandom(minValue, maxValue);
