@@ -1091,6 +1091,7 @@ public class Tool {
    * @param length 长度
    */
   public static String getRandomString(int length) {
+    
     String source = upperStr + lowerStr + numStr;
     if (length < 1) {
       length = 1;
