@@ -268,7 +268,7 @@ public class Tool {
    * 从索引位置截取指定长度的字符串。
    * @param source     源字符串。
    * @param beginIndex 开始索引位置，从 0 开始，包含这个位置的字符。
-   * @param count      截取的指定长度，<0 时截取到结尾。
+   * @param count      截取的指定长度，小于 0 时截取到结尾。
    * @return null 出现错误；非null 返回结果字符串。
    */
   public static String subString(String source, int beginIndex, int count) {
@@ -559,7 +559,7 @@ public class Tool {
   /**
    * 将hex字符串转换为字节数组。
    * @param hexString hex 字符串。
-   * @param size 长度。
+   * @param size      长度。
    * @return 返回字节数组。
    */
   public static byte[] hexToBytes(String hexString, int size) {
@@ -1042,7 +1042,7 @@ public class Tool {
   //<<<----------------------- random -----------------------
 
   /**
-   * 取两值之间的随机整数Value, minValue <= Value < maxValue。
+   * 取两值之间的随机整数Value, 在 minValue(包含) 至 maxValue(不包含)之间。
    * @param minValue 最小值，包含这个值。
    * @param maxValue 最大值，不包含这个值。
    * @return 返回随机整数。
@@ -1056,7 +1056,7 @@ public class Tool {
   }
 
   /**
-   * 取两值之间的随机整数Value, minValue <= Value < maxValue。
+   * 取两值之间的随机整数Value, 在 minValue(包含) 至 maxValue(不包含)之间。
    * @param minValue 最小值，包含这个值。
    * @param maxValue 最大值，不包含这个值。
    * @return 返回随机长整数。
@@ -1069,7 +1069,7 @@ public class Tool {
   }
 
   /**
-   * 取随机整数 Value, 0 <= Value < maxValue。
+   * 取随机整数 Value, 在 0(包含) 至 maxValue(不包含)之间。
    * @param maxValue 最大值，不包含这个值。
    * @return 返回随机整数。
    */
@@ -1079,7 +1079,7 @@ public class Tool {
   }
 
   /**
-   * 取随机整数 Value, 0 <= Value < 1000000000。
+   * 取随机整数 Value, 在 0(包含) 至 1000000000(不包含)之间。
    * @return 返回随机整数。
    */
   public static int getRandom() {

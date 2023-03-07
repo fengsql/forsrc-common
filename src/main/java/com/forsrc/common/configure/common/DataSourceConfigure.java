@@ -26,7 +26,8 @@ public class DataSourceConfigure {
   private String mapper;
 
   /**
-   * 生成数据源.
+   * 生成数据源。
+   * @return 返回bean。
    */
   @Bean(name = "dataSource")
   @ConfigurationProperties(prefix = "spring.datasource")
@@ -40,6 +41,8 @@ public class DataSourceConfigure {
 
   /**
    * 创建 SqlSessionFactory
+   * @param dataSource 数据源。
+   * @return 返回bean。
    */
   @Bean(name = "sqlSessionFactory")
   @Primary
@@ -52,6 +55,8 @@ public class DataSourceConfigure {
 
   /**
    * 配置事务管理
+   * @param dataSource 数据源。
+   * @return 返回bean。
    */
   @Bean(name = "transactionManager")
   @Primary

@@ -62,28 +62,40 @@ public class Aes {
   // <<------------------------- default -----------------------------
 
   /**
-   * 使用 gcm 方式，适合并行运算
+   * 使用 gcm 方式，适合并行运算。
+   * @param plainInput 明文。
+   * @param password   密码。
+   * @return 加密后的字符串。
    */
   public static byte[] encrypt(byte[] plainInput, byte[] password) {
     return encrypt_gcm(plainInput, password);
   }
 
   /**
-   * 使用 gcm 方式，适合并行运算
+   * 使用 gcm 方式，适合并行运算。
+   * @param cripherInput 密文。
+   * @param password     密码。
+   * @return 解密后的字节。
    */
   public static byte[] decrypt(byte[] cripherInput, byte[] password) {
     return decrypt_gcm(cripherInput, password);
   }
 
   /**
-   * 使用 gcm 方式，适合并行运算，密文转换为 hex 字符串
+   * 使用 gcm 方式，适合并行运算，密文转换为 hex 字符串。
+   * @param plainText 明文。
+   * @param password  密码。
+   * @return 加密后的字符串。
    */
   public static String encrypt(String plainText, String password) {
     return encrypt_gcm(plainText, password);
   }
 
   /**
-   * 使用 gcm 方式，适合并行运算，密文转换为 hex 字符串
+   * 使用 gcm 方式，适合并行运算，密文转换为 hex 字符串。
+   * @param cripherText 密文。
+   * @param password    密码。
+   * @return 解密后的字符串。
    */
   public static String decrypt(String cripherText, String password) {
     return decrypt_gcm(cripherText, password);
@@ -102,7 +114,10 @@ public class Aes {
   // <<------------------------- ecb -----------------------------
 
   /**
-   * 基础的加密方式，同明文同密文，其余模式都是同明文不同密文，有利于并行计算，适于加密小消息，不适合随机加密，不能隐藏明文的模式
+   * 基础的加密方式，同明文同密文，其余模式都是同明文不同密文，有利于并行计算，适于加密小消息，不适合随机加密，不能隐藏明文的模式。
+   * @param input    输入值。
+   * @param password 密码。
+   * @return 加密后的字节。
    */
   public static byte[] encrypt_ecb(byte[] input, byte[] password) {
     return encryptAes_noiv(cipherType_ecb, input, password);
@@ -125,7 +140,10 @@ public class Aes {
   // <<------------------------- ecb_no -----------------------------
 
   /**
-   * 不加盐，明文与密文长度一致，但明文长度必须16倍数，有利于并行计算，适于加密小消息，不适合随机加密，不能隐藏明文的模式
+   * 不加盐，明文与密文长度一致，但明文长度必须16倍数，有利于并行计算，适于加密小消息，不适合随机加密，不能隐藏明文的模式。
+   * @param input    输入值。
+   * @param password 密码。
+   * @return 加密后的字节。
    */
   public static byte[] encrypt_ecb_no(byte[] input, byte[] password) {
     return encryptAes_noiv(cipherType_ecb_no, input, password);
@@ -148,7 +166,10 @@ public class Aes {
   // <<------------------------- cbc -----------------------------
 
   /**
-   * 安全性好于ECB，适合传输长度长的报文，需要引入IV参数，不适合并行
+   * 安全性好于ECB，适合传输长度长的报文，需要引入IV参数，不适合并行。
+   * @param input    输入值。
+   * @param password 密码。
+   * @return 加密后的字节。
    */
   public static byte[] encrypt_cbc(byte[] input, byte[] password) {
     return encryptAes_ivParameter(cipherType_cbc, input, password);

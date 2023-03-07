@@ -38,7 +38,8 @@ public class ToolBean implements ApplicationContextAware {
 
   /**
    * 通过class获取Bean。
-   * @param clazz 类。
+   * @param clazz clazz 类。
+   * @param <T>   泛型。
    * @return 返回Bean。
    */
   public static <T> T getBean(Class<T> clazz) {
@@ -49,6 +50,7 @@ public class ToolBean implements ApplicationContextAware {
    * 通过name,以及Clazz返回指定的Bean。
    * @param name  名称。
    * @param clazz 类。
+   * @param <T>   泛型。
    * @return 返回Bean。
    */
   public static <T> T getBean(String name, Class<T> clazz) {

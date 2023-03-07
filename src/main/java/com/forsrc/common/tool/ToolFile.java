@@ -1021,6 +1021,7 @@ public class ToolFile {
    * 获取文件夹下的所有文件。
    * @param path      路径。
    * @param fileNames 返回文件列表。
+   * @param ext       扩展名。
    */
   public static void getFiles(String path, List<String> fileNames, String ext) { //
     if (Tool.isNull(path) || fileNames == null) {
@@ -1057,6 +1058,7 @@ public class ToolFile {
    * 获取文件夹下的所有文件。
    * @param path      路径。
    * @param fileNames 返回文件列表。
+   * @param ext       扩展名。
    */
   public static void getFiles(File path, List<File> fileNames, String ext) { //
     if (path == null || fileNames == null) {

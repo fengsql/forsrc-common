@@ -45,9 +45,11 @@ public class BeanOkHttp {
 
   /**
    * post 请求, 请求数据为自定义 MediaType 类型。
-   * @param url   请求url地址
-   * @param param 请求数据, param 字符串
-   * @return string
+   * @param mediaType 媒介类型
+   * @param url       请求url地址
+   * @param param     请求数据, param 字符串
+   * @param headers   请求头参数
+   * @return 返回响应内容。
    */
   public String post(MediaType mediaType, String url, String param, Map<String, String> headers) {
     log.info("post url: {}.", url);
@@ -57,9 +59,10 @@ public class BeanOkHttp {
 
   /**
    * post 请求, 请求数据为 json 类型。
-   * @param url  请求url地址
-   * @param json 请求数据, json 字符串
-   * @return string
+   * @param url     请求url地址
+   * @param json    请求数据, json 字符串
+   * @param headers 请求头参数
+   * @return 返回响应内容。
    */
   public String postJson(String url, String json, Map<String, String> headers) {
     log.info("post json url: {}.", url);
@@ -81,9 +84,10 @@ public class BeanOkHttp {
 
   /**
    * post 请求, 请求数据为 xml 类型。
-   * @param url   请求url地址
-   * @param param 请求数据, param 字符串
-   * @return string
+   * @param url     请求url地址
+   * @param param   请求数据, param 字符串
+   * @param headers 请求头参数
+   * @return 返回响应内容。
    */
   public String postXml(String url, String param, Map<String, String> headers) {
     log.info("post xml url: {}.", url);
@@ -93,9 +97,10 @@ public class BeanOkHttp {
 
   /**
    * post 请求, 请求数据为 bin 类型。
-   * @param url   请求url地址
-   * @param param 请求数据
-   * @return string
+   * @param url     请求url地址
+   * @param param   请求数据
+   * @param headers 请求头参数
+   * @return 返回响应内容。
    */
   public String postBin(String url, byte[] param, Map<String, String> headers) {
     log.info("post bin url: {}.", url);

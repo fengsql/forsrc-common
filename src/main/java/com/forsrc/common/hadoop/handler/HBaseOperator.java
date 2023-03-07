@@ -35,7 +35,9 @@ public class HBaseOperator implements InitializingBean {
 
   /**
    * 创建表，创建表只需要指定列族，不需要指定列
-   * 其实用命令真的会更快，create 'user','info1','info2'
+   * @param tableName 表名。
+   * @param family    簇。
+   * @throws IOException 异常。
    */
   public void createTable(String tableName, String... family) throws IOException {
     HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(tableName));
@@ -52,9 +54,16 @@ public class HBaseOperator implements InitializingBean {
   }
 
   /**
-   * 添加数据
-   * 对同一个row key进行重新put同一个cell就是修改数据
+   * 添加数据，对同一个row key进行重新put同一个cell就是修改数据
    * @param params columnFamily/column/value的集合
+   */
+  /**
+   * 添加数据，对同一个row key进行重新put同一个cell就是修改数据。
+   * @param tableName 表名。
+   * @param rowKey    行键。
+   * @param params    columnFamily/column/value的集合。
+   * @throws JSONException 异常。
+   * @throws IOException   异常。
    */
   public void insert(String tableName, byte[] rowKey, List<JSONObject> params) throws JSONException, IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
@@ -72,6 +81,14 @@ public class HBaseOperator implements InitializingBean {
     table.put(puts);
   }
 
+  /**
+   * 添加数据
+   * @param tableName 表名。
+   * @param rowKey    行键。
+   * @param family    簇。
+   * @param colValues 列值。
+   * @throws IOException 异常。
+   */
   public void insert(String tableName, byte[] rowKey, byte[] family, Map<String, String> colValues) throws IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
     Put put = new Put(rowKey);
@@ -88,6 +105,15 @@ public class HBaseOperator implements InitializingBean {
     table.put(puts);
   }
 
+  /**
+   * 添加数据
+   * @param tableName 表名。
+   * @param rowKey    行键。
+   * @param family    簇。
+   * @param qualifier 指定列。
+   * @param value     值
+   * @throws IOException 异常。
+   */
   public void insert(String tableName, byte[] rowKey, byte[] family, byte[] qualifier, byte[] value) throws IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
     Put put = new Put(rowKey);
@@ -97,6 +123,9 @@ public class HBaseOperator implements InitializingBean {
 
   /**
    * 删除一行数据
+   * @param tableName 表名。
+   * @param rowKey    行键。
+   * @throws IOException 异常。
    */
   public void deleteByRowKey(String tableName, String rowKey) throws IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
@@ -107,6 +136,10 @@ public class HBaseOperator implements InitializingBean {
 
   /**
    * 查询单条数据
+   * @param tableName 表名。
+   * @param rowKey    行键。
+   * @return 返回数据。
+   * @throws IOException 异常。
    */
   public Result getData(String tableName, String rowKey) throws IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
@@ -117,6 +150,8 @@ public class HBaseOperator implements InitializingBean {
 
   /**
    * 全表扫描
+   * @param tableName 表名。
+   * @throws IOException 异常。
    */
   public void scanAll(String tableName) throws IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
@@ -127,6 +162,11 @@ public class HBaseOperator implements InitializingBean {
 
   /**
    * 区间扫描
+   * @param tableName 表名。
+   * @param startRow  起始行。
+   * @param endRow    结束行。
+   * @return 返回数据。
+   * @throws IOException 异常。
    */
   public Iterator<Result> getData(String tableName, String startRow, String endRow) throws IOException {
     HTable table = (HTable) hBaseConnectConfigure.getConnection().getTable(TableName.valueOf(tableName));
@@ -142,6 +182,11 @@ public class HBaseOperator implements InitializingBean {
 
   /**
    * 通过传入页码数和每一页的记录条数来获取当页的数据, pageIndex 从 0 开始
+   * @param tableName 表名称。
+   * @param pageIndex 页码序号，从 0 开始。
+   * @param pageSize  每页大小。
+   * @return 返回查询的数据。
+   * @throws IOException 异常。
    */
   public Iterator<Result> getData(String tableName, int pageIndex, int pageSize) throws IOException {
     String startRowkey = getStartRowKey(tableName, pageIndex, pageSize);
@@ -149,9 +194,6 @@ public class HBaseOperator implements InitializingBean {
     return resultScanner.iterator();
   }
 
-  /**
-   * 获取指定页的startRowKey
-   */
   private String getStartRowKey(String tableName, int pageIndex, int pageSize) throws IOException {
     if (pageIndex <= 0) {
       return null;
@@ -170,9 +212,6 @@ public class HBaseOperator implements InitializingBean {
     return startRowKey;
   }
 
-  /**
-   * 通过pageFilter获取指定页的数据
-   */
   private ResultScanner getDate(String tableName, String startRowKey, int pageSize) throws IOException {
     Scan scan = new Scan();
     if (!StringUtils.isBlank(startRowKey)) {
