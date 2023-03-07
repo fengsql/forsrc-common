@@ -41,8 +41,9 @@ public class DataSourceConfigure {
 
   /**
    * 创建 SqlSessionFactory
-   * @param dataSource 数据源。
+   * @param dataSource dataSource 数据源。
    * @return 返回bean。
+   * @throws Exception 异常。
    */
   @Bean(name = "sqlSessionFactory")
   @Primary
