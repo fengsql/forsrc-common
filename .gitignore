@@ -30,5 +30,5 @@ out/
 
 ### VS Code ###
 .vscode/
-gradle.properties
-publish.gradle
+/gradle.properties
+/publish.gradle
