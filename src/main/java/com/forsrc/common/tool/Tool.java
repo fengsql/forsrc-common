@@ -6,7 +6,6 @@ import com.forsrc.common.exception.CommonException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -320,6 +319,7 @@ public class Tool {
    * @param text         : 要进行替换操作的字符串
    * @param searchString : 被替换的子字符串
    * @param replacement  : 替换成的子字符串
+   * @return 返回替换后的字符串。
    */
   public static String replace(String text, String searchString, String replacement) {
     if (isNull(text)) {
@@ -557,9 +557,10 @@ public class Tool {
   }
 
   /**
-   * Convert hex string to byte[]
-   * @param hexString the hex string
-   * @return byte[]
+   * 将hex字符串转换为字节数组。
+   * @param hexString hex 字符串。
+   * @param size 长度。
+   * @return 返回字节数组。
    */
   public static byte[] hexToBytes(String hexString, int size) {
     if (isNull(hexString)) {
@@ -1041,19 +1042,24 @@ public class Tool {
   //<<<----------------------- random -----------------------
 
   /**
-   * 取两值之间的随机整数Value, minValue <= Value < maxValue;
+   * 取两值之间的随机整数Value, minValue <= Value < maxValue。
+   * @param minValue 最小值，包含这个值。
+   * @param maxValue 最大值，不包含这个值。
+   * @return 返回随机整数。
    */
   @SneakyThrows
   public static int getRandom(int minValue, int maxValue) {
     Random random = getRandomInstance();
-    RandomStringUtils.random(10);
     int value = random.nextInt();
     value = Math.abs(value % (maxValue - minValue)) + minValue;
     return value;
   }
 
   /**
-   * 取两值之间的随机整数Value, minValue <= Value < maxValue;
+   * 取两值之间的随机整数Value, minValue <= Value < maxValue。
+   * @param minValue 最小值，包含这个值。
+   * @param maxValue 最大值，不包含这个值。
+   * @return 返回随机长整数。
    */
   public static long getRandom(long minValue, long maxValue) {
     Random random = getRandomInstance();
@@ -1063,8 +1069,9 @@ public class Tool {
   }
 
   /**
-   * 取随机整数 Value, 0 <= Value < maxValue;
-   * @param maxValue 最大值，不包含这个值
+   * 取随机整数 Value, 0 <= Value < maxValue。
+   * @param maxValue 最大值，不包含这个值。
+   * @return 返回随机整数。
    */
   public static int getRandom(int maxValue) {
     int minValue = 0;
@@ -1072,7 +1079,8 @@ public class Tool {
   }
 
   /**
-   * 取随机整数 Value, 0 <= Value < 1000000000;
+   * 取随机整数 Value, 0 <= Value < 1000000000。
+   * @return 返回随机整数。
    */
   public static int getRandom() {
     int minValue = 0;
@@ -1082,7 +1090,8 @@ public class Tool {
 
   /**
    * 随机生成字符串，包含大小写，数字。
-   * @param length 长度
+   * @param length 长度。
+   * @return 返回随机字符串。
    */
   public static String getRandomString(int length) {
     String source = upperStr + lowerStr + numStr;

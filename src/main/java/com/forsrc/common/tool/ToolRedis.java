@@ -40,6 +40,7 @@ public final class ToolRedis {
    * 指定缓存失效时间
    * @param key  键
    * @param time 时间(秒)
+   * @return true 成功，false 失败。
    */
   public static boolean setExpire(String key, long time) {
     try {
@@ -79,6 +80,7 @@ public final class ToolRedis {
   /**
    * 删除缓存
    * @param key 可以传一个值 或多个
+   * @return true 成功，false 失败。
    */
   @SuppressWarnings("unchecked")
   public static boolean del(String... key) {
@@ -155,6 +157,7 @@ public final class ToolRedis {
    * 递增
    * @param key   键
    * @param delta 要增加几(大于0)
+   * @return 返回值。
    */
   public static long inc(String key, long delta) {
     if (delta < 0) {
@@ -167,6 +170,7 @@ public final class ToolRedis {
    * 递减
    * @param key   键
    * @param delta 要减少几(小于0)
+   * @return 返回值。
    */
   public static long dec(String key, long delta) {
     if (delta < 0) {
@@ -292,6 +296,7 @@ public final class ToolRedis {
    * @param key  键
    * @param item 项
    * @param by   要增加几(大于0)
+   * @return 返回值。
    */
   public static double incHash(String key, String item, double by) {
     return toolRedis.redisTemplate.opsForHash().increment(key, item, by);
@@ -302,6 +307,7 @@ public final class ToolRedis {
    * @param key  键
    * @param item 项
    * @param by   要减少记(小于0)
+   * @return 返回值。
    */
   public static double decHash(String key, String item, double by) {
     return toolRedis.redisTemplate.opsForHash().increment(key, item, -by);
@@ -310,6 +316,7 @@ public final class ToolRedis {
   /**
    * 获取set缓存的长度
    * @param key 键
+   * @return 返回长度。
    */
   public static long getHashSize(String key) {
     try {
@@ -324,8 +331,8 @@ public final class ToolRedis {
    * 删除hash表中的值
    * @param key  键 不能为null
    * @param item 项 可以使多个 不能为null
+   * @return 0失败，其它为成功。
    */
-
   public static long delHash(String key, Object... item) {
     try {
       return toLong(toolRedis.redisTemplate.opsForHash().delete(key, item));
@@ -342,6 +349,7 @@ public final class ToolRedis {
   /**
    * 根据key获取Set中的所有值
    * @param key 键
+   * @return 返回值。
    */
   public static Set<Object> getSet(String key) {
     try {
@@ -405,6 +413,7 @@ public final class ToolRedis {
   /**
    * 获取set缓存的长度
    * @param key 键
+   * @return 返回长度。
    */
   public static long getSetSize(String key) {
     try {
@@ -439,6 +448,7 @@ public final class ToolRedis {
    * @param key   键
    * @param start 开始
    * @param end   结束 0 到 -1代表所有值
+   * @return 返回值。
    */
   public static List<Object> getList(String key, long start, long end) {
     try {
@@ -453,6 +463,7 @@ public final class ToolRedis {
    * 通过索引 获取list中的值
    * @param key   键
    * @param index 索引 index>=0时， 0 表头，1 第二个元素，依次类推；index<0时，-1，表尾，-2倒数第二个元素，依次类推
+   * @return 返回值。
    */
   public static Object getList(String key, long index) {
     try {
@@ -467,6 +478,7 @@ public final class ToolRedis {
    * 将list放入缓存
    * @param key   键
    * @param value 值
+   * @return true 成功，false 失败。
    */
   public static boolean setList(String key, Object value) {
     try {
@@ -483,6 +495,7 @@ public final class ToolRedis {
    * @param key   键
    * @param value 值
    * @param time  时间(秒)
+   * @return true 成功，false 失败。
    */
   public static boolean setList(String key, Object value, long time) {
     try {
@@ -500,6 +513,7 @@ public final class ToolRedis {
    * 将list放入缓存
    * @param key   键
    * @param value 值
+   * @return true 成功，false 失败。
    */
   public static boolean setList(String key, List<Object> value) {
     try {
@@ -516,6 +530,7 @@ public final class ToolRedis {
    * @param key   键
    * @param value 值
    * @param time  时间(秒)
+   * @return true 成功，false 失败。
    */
   public static boolean setList(String key, List<Object> value, long time) {
     try {
@@ -534,6 +549,7 @@ public final class ToolRedis {
    * @param key   键
    * @param index 索引
    * @param value 值
+   * @return true 成功，false 失败。
    */
   public static boolean setList(String key, long index, Object value) {
     try {
@@ -547,8 +563,9 @@ public final class ToolRedis {
   }
 
   /**
-   * 获取list缓存的长度
-   * @param key 键
+   * 获取list缓存的长度。
+   * @param key 键。
+   * @return 返回长度。
    */
   public static long getListSize(String key) {
     try {
@@ -560,11 +577,11 @@ public final class ToolRedis {
   }
 
   /**
-   * 移除N个值为value
-   * @param key   键
-   * @param count 移除多少个
-   * @param value 值
-   * @return 移除的个数
+   * 移除N个值为value。
+   * @param key   键。
+   * @param count 移除多少个。
+   * @param value 值。
+   * @return 移除的个数。
    */
   public static long removeList(String key, long count, Object value) {
     try {

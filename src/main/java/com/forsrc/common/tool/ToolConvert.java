@@ -262,15 +262,15 @@ public class ToolConvert {
     cb.flip();
     ByteBuffer bb = cs.encode(cb);
     return bb.array();
-    
-//    char[] chars0 = new char[chars.length];
-//    System.arraycopy(chars, 0, chars0, 0, chars.length);
-//    CharBuffer charBuffer = CharBuffer.wrap(chars0);
-//    ByteBuffer byteBuffer = charset_utf8.encode(charBuffer);
-//    byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
-//    Arrays.fill(charBuffer.array(), '\u0000'); // clear sensitive data
-//    Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
-//    return bytes;
+
+    //    char[] chars0 = new char[chars.length];
+    //    System.arraycopy(chars, 0, chars0, 0, chars.length);
+    //    CharBuffer charBuffer = CharBuffer.wrap(chars0);
+    //    ByteBuffer byteBuffer = charset_utf8.encode(charBuffer);
+    //    byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
+    //    Arrays.fill(charBuffer.array(), '\u0000'); // clear sensitive data
+    //    Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
+    //    return bytes;
   }
 
   //>>>---------------------------------------- toBytes ----------------------------------------
@@ -350,6 +350,8 @@ public class ToolConvert {
 
   /**
    * 将data字节型数据转换为0~255 (0xFF 即BYTE)。
+   * @param data 值。
+   * @return 返回无符号整型。
    */
   public static int getUnsigned(byte data) { //
     return data & 0xFF;
@@ -357,6 +359,8 @@ public class ToolConvert {
 
   /**
    * 将data字节型数据转换为0~65535 (0xFFFF 即 WORD)。
+   * @param data 值。
+   * @return 返回无符号整型。
    */
   public static int getUnsigned(short data) { //
     return data & 0xFFFF;
@@ -364,9 +368,11 @@ public class ToolConvert {
 
   /**
    * 将int数据转换为0~4294967295 (0xFFFFFFFF即DWORD)。
+   * @param data 值。
+   * @return 返回无符号长整型。
    */
   public static long getUnsigned(int data) { //
-    return data & 0xFFFFFFFFl;
+    return data & 0xFFFFFFFFL;
   }
 
   /**

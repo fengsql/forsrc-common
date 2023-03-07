@@ -26,10 +26,10 @@ public abstract class AbstractHBaseHandler {
 
   /**
    * 写一行数据，多个列族，多个列
-   * @param tableName
-   * @param rowKey
-   * @param datas
-   * @throws IOException
+   * @param tableName 表名。
+   * @param rowKey    row键。
+   * @param datas     数据。
+   * @throws IOException 异常。
    */
   protected void insert(String tableName, byte[] rowKey, List<JSONObject> datas) throws IOException {
     hBaseOperator.insert(tableName, rowKey, datas);
@@ -37,11 +37,11 @@ public abstract class AbstractHBaseHandler {
 
   /**
    * 写一行数据，一个列族，多个列
-   * @param tableName
-   * @param rowKey
-   * @param family
-   * @param colValues
-   * @throws IOException
+   * @param tableName 表名。
+   * @param rowKey    row键。
+   * @param family    簇。
+   * @param colValues 列值。
+   * @throws IOException 异常。
    */
   protected void insert(String tableName, byte[] rowKey, byte[] family, Map<String, String> colValues) throws IOException {
     hBaseOperator.insert(tableName, rowKey, family, colValues);
@@ -49,12 +49,12 @@ public abstract class AbstractHBaseHandler {
 
   /**
    * 写一行数据。一个列族，一列
-   * @param tableName
-   * @param rowKey
-   * @param family
-   * @param qualifier
-   * @param value
-   * @throws IOException
+   * @param tableName 表名。
+   * @param rowKey    row键。
+   * @param family    簇。
+   * @param qualifier 限定。
+   * @param value     值。
+   * @throws IOException 异常。
    */
   protected void insert(String tableName, byte[] rowKey, byte[] family, byte[] qualifier, byte[] value) throws IOException {
     hBaseOperator.insert(tableName, rowKey, family, qualifier, value);
@@ -128,8 +128,8 @@ public abstract class AbstractHBaseHandler {
 
   /**
    * 下划线转驼峰
-   * @param str
-   * @return
+   * @param str 字符串。
+   * @return 返回转换后的字符串。
    */
   public static StringBuffer camel(StringBuffer str) {
     Pattern pattern = Pattern.compile("_(\\w)");

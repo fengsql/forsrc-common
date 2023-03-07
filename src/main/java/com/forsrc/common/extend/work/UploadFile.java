@@ -38,6 +38,8 @@ public class UploadFile extends BService {
   /**
    * 上传文件，返回保存后的路径和文件名，相对路径。
    * @param file 上传文件。
+   * @param request 请求。
+   * @param response 响应。
    * @return 返回保存后的路径和文件名，相对路径。
    */
   public String work(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
@@ -47,6 +49,8 @@ public class UploadFile extends BService {
   /**
    * 上传文件，返回保存后的路径和文件名，绝对路径。
    * @param file 上传文件。
+   * @param request 请求。
+   * @param response 响应。
    * @return 返回保存后的路径和文件名，绝对路径。
    */
   public String save(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {

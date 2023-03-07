@@ -28,12 +28,20 @@ public class ToolFile {
   // <<------------------------------------ 读文件操作 ------------------------------------
 
   /**
-   * 读取文件内容
+   * 读取文件内容。
+   * @param fileName 文件名。
+   * @param charset  字符集。
+   * @return 返回文件内容。
    */
   public static String readFile(String fileName, String charset) {
     return doReadFile(fileName, charset);
   }
 
+  /**
+   * 读取文件内容。
+   * @param fileName 文件名。
+   * @return 返回文件内容。
+   */
   public static String readFile(String fileName) {
     return readFile(fileName, null);
   }
@@ -41,7 +49,7 @@ public class ToolFile {
   /**
    * 读取文件内容
    * @param fileName 文件名
-   * @return byte[]
+   * @return 返回文件内容。
    */
   public static byte[] readBytes(String fileName) {
     return readBytes(fileName, 0, -1);
@@ -194,6 +202,7 @@ public class ToolFile {
    * 将数据写入到文本文件，如果文件已经存在，覆盖原有文件。
    * @param fileName 绝对路径。
    * @param content  文件内容。
+   * @return true: 成功；false: 失败。
    */
   public static boolean writeFile(String fileName, String content) {
     return saveToFile(fileName, content, true);
@@ -203,17 +212,18 @@ public class ToolFile {
    * 将数据写入到文本文件，如果文件已经存在，在原有文件后面追加。
    * @param fileName 绝对路径。
    * @param content  文件内容。
+   * @return true: 成功；false: 失败。
    */
   public static boolean appendFile(String fileName, String content) {
     return saveToFile(fileName, content, false);
   }
 
   /**
-   * 写入文件内容
-   * @param fileName   文件名
-   * @param startIndex content 的起始位置
-   * @param content    起始位置
-   * @return -1 错误；>=0 写入的字节数
+   * 写入文件内容。
+   * @param fileName   文件名。
+   * @param startIndex content 的起始位置。
+   * @param content    写入字节内容。
+   * @return -1 错误；大于等于 0 为写入的字节数。
    */
   public static int writeFile(String fileName, long startIndex, byte[] content) {
     if (Tool.isNull(fileName)) {
@@ -251,10 +261,10 @@ public class ToolFile {
   }
 
   /**
-   * 写入文件内容
-   * @param fileName 文件名
-   * @param content  起始位置
-   * @return -1 错误；>=0 写入的字节数
+   * 写入文件内容。
+   * @param fileName 文件名。
+   * @param content  写入字节内容。
+   * @return -1 错误；大于等于 0 为写入的字节数。
    */
   public static int writeFile(String fileName, byte[] content) {
     return writeFile(fileName, 0, content);
@@ -337,6 +347,8 @@ public class ToolFile {
 
   /**
    * 判断文件是否存在
+   * @param fileName 文件名。
+   * @return true 存在，false 不存在。
    */
   public static boolean existFile(String fileName) {
     if (Tool.isNull(fileName)) {
@@ -353,6 +365,7 @@ public class ToolFile {
   /**
    * 判断文件夹是否存在
    * @param filePath 文件夹
+   * @return true 存在，false 不存在。
    */
   public static boolean existPath(String filePath) {
     if (Tool.isNull(filePath)) {
@@ -406,6 +419,7 @@ public class ToolFile {
   /**
    * 强制创建路径，如果文件路径不存在时，创建文件路径，路径可以是多级
    * @param filePath 文件路径，直接创建。
+   * @return true 成功，false 失败。
    */
   public static boolean forcePath(String filePath) {
     if (existPath(filePath)) {
@@ -418,6 +432,7 @@ public class ToolFile {
   /**
    * 强制创建文件所在的路径，如果文件路径不存在时，创建文件路径，路径可以是多级。
    * @param fileName 文件名称，创建的路径为文件的上一级路径。
+   * @return true 成功，false 失败。
    */
   public static boolean forceFilePath(String fileName) {
     String filePath = getFilePath(fileName);
@@ -493,6 +508,7 @@ public class ToolFile {
    * 获取父级的文件夹。
    * @param filePath   当前文件夹；
    * @param parentRank 父级级别。
+   * @return 返回文件夹。
    */
   public static String getParentPath(String filePath, int parentRank) {
     String curPath = filePath;
@@ -670,8 +686,8 @@ public class ToolFile {
 
   /**
    * 创建文件，如果文件已经存在，不创建；如果不存在，创建一个新的文件。
-   * @param fileName
-   * @return
+   * @param fileName 文件名。
+   * @return true 成功，false 失败。
    */
   public static boolean createFile(String fileName) {
     if (Tool.isNull(fileName)) {
@@ -860,9 +876,9 @@ public class ToolFile {
 
   /**
    * 将 sourceDir 内的文件或文件夹复制到 targetDir 内，不复制 sourceDir 本身。
-   * @param sourceDir
-   * @param targetDir
-   * @return
+   * @param sourceDir 源目录。
+   * @param targetDir 目标目录。
+   * @return true 成功，false 失败。
    */
   public static boolean copyPath(String sourceDir, String targetDir) {
     if (!existPath(sourceDir)) {
@@ -974,8 +990,8 @@ public class ToolFile {
 
   /**
    * 获取文件夹下的所有文件。
-   * @param path
-   * @param fileNames
+   * @param path      路径。
+   * @param fileNames 返回文件列表。
    */
   public static void getFiles(String path, List<String> fileNames) { //
     if (Tool.isNull(path) || fileNames == null) {
@@ -1003,8 +1019,8 @@ public class ToolFile {
 
   /**
    * 获取文件夹下的所有文件。
-   * @param path
-   * @param fileNames
+   * @param path      路径。
+   * @param fileNames 返回文件列表。
    */
   public static void getFiles(String path, List<String> fileNames, String ext) { //
     if (Tool.isNull(path) || fileNames == null) {
@@ -1039,8 +1055,8 @@ public class ToolFile {
 
   /**
    * 获取文件夹下的所有文件。
-   * @param path
-   * @param fileNames
+   * @param path      路径。
+   * @param fileNames 返回文件列表。
    */
   public static void getFiles(File path, List<File> fileNames, String ext) { //
     if (path == null || fileNames == null) {
@@ -1074,7 +1090,7 @@ public class ToolFile {
 
   /**
    * 获取文件夹下的所有子文件夹。
-   * @param path 路径。
+   * @param path        路径。
    * @param folderNames 只有文件夹名称，不包含路径。
    */
   public static void getFolders(String path, List<String> folderNames) { //
@@ -1138,7 +1154,7 @@ public class ToolFile {
    * 连接路径和文件。
    * @param filePath 路径，可以分隔符结尾，也可以没有；
    * @param fileName 文件名称，可以分隔符结尾，也可以没有。
-   * @return
+   * @return 返回拼接后的路径及文件名。
    */
   public static String joinFileName(String filePath, String fileName) {
     if (Tool.isNull(filePath)) {

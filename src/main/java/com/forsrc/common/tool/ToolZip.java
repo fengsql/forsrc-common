@@ -221,7 +221,10 @@ public class ToolZip {
   }
 
   /**
-   * 解压压缩包到指定目录
+   * 解压压缩包到指定目录。
+   * @param sourceZipFile 源压缩文件。
+   * @param outputPath 输出路径。
+   * @param rewriteOnExist 当存在时是否覆盖。
    */
   @SneakyThrows
   public static void unzip(String sourceZipFile, String outputPath, boolean rewriteOnExist) {

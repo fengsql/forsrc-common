@@ -18,7 +18,7 @@ import java.net.URLEncoder;
 @Component
 @Slf4j
 public class ToolBean implements ApplicationContextAware {
-  
+
   private static ConfigurableApplicationContext applicationContext;
 
   @Override
@@ -27,33 +27,37 @@ public class ToolBean implements ApplicationContextAware {
     log.info("init applicationContext ok.");
   }
 
-  //  public static void setApplicationContext(ApplicationContext context) {
-  //    applicationContext = context;
-  //  }
-
   /**
-   * 通过name获取 Bean.
+   * 通过name获取 Bean。
+   * @param name 名称。
+   * @return 返回Bean。
    */
   public static Object getBean(String name) {
     return applicationContext.getBean(name);
   }
 
   /**
-   * 通过class获取Bean.
+   * 通过class获取Bean。
+   * @param clazz 类。
+   * @return 返回Bean。
    */
   public static <T> T getBean(Class<T> clazz) {
     return applicationContext.getBean(clazz);
   }
 
   /**
-   * 通过name,以及Clazz返回指定的Bean
+   * 通过name,以及Clazz返回指定的Bean。
+   * @param name  名称。
+   * @param clazz 类。
+   * @return 返回Bean。
    */
   public static <T> T getBean(String name, Class<T> clazz) {
     return applicationContext.getBean(name, clazz);
   }
 
   /**
-   * 获取HttpServletRequest
+   * 获取HttpServletRequest。
+   * @return 返回HttpServletRequest。
    */
   public static HttpServletRequest getRequest() {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
@@ -61,7 +65,8 @@ public class ToolBean implements ApplicationContextAware {
   }
 
   /**
-   * 获取HttpSession
+   * 获取HttpSession。
+   * @return 返回HttpSession。
    */
   public static HttpSession getSession() {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
@@ -69,14 +74,17 @@ public class ToolBean implements ApplicationContextAware {
   }
 
   /**
-   * 获取完整的请求URL
+   * 获取完整的请求URL。
+   * @return 返回url。
    */
   public static String getRequestUrl() {
     return getRequestUrl(getRequest());
   }
 
   /**
-   * 获取完整的请求URL
+   * 获取完整的请求URL。
+   * @param request 请求。
+   * @return 返回url。
    */
   public static String getRequestUrl(HttpServletRequest request) {
     //当前请求路径
@@ -122,7 +130,9 @@ public class ToolBean implements ApplicationContextAware {
   }
 
   /**
-   * 获取请求的客户端IP
+   * 获取请求的客户端IP。
+   * @param request 请求。
+   * @return 返回客户端IP。
    */
   public static String getRequestIp(HttpServletRequest request) {
     String ip = request.getHeader("X-Forwarded-For");
@@ -143,7 +153,8 @@ public class ToolBean implements ApplicationContextAware {
   }
 
   /**
-   * 获取ApplicationContext对象
+   * 获取 ApplicationContext 对象。
+   * @return 返回 ApplicationContext 对象
    */
   public static ApplicationContext getApplicationContext() {
     return applicationContext;
