@@ -316,13 +316,7 @@ public class Tool {
   }
 
   /**
-   * 字符串替代。 <blockquote>
-   * <p>
-   * <pre>
-   * 如：System.out.println(strReplace("this is a test","is","was")); 输出：thwas was a test
-   * </pre>
-   * <p>
-   * </blockquote>
+   * 字符串替代。如：System.out.println(strReplace("this is a test","is","was")); 输出：thwas was a test
    * @param text         : 要进行替换操作的字符串
    * @param searchString : 被替换的子字符串
    * @param replacement  : 替换成的子字符串

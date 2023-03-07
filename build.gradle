@@ -121,3 +121,7 @@ dependencyManagement {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
 }
+
+if (project.file('publish.gradle').exists()) {
+    apply from: 'publish.gradle'
+}

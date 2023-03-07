@@ -13,9 +13,9 @@ import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
 
 /**
- * AES Coder<br/>
- * secret key length: 128bit, default: 128 bit<br/>
- * mode: ECB/CBC/PCBC/CTR/CTS/CFB/CFB8 to CFB128/OFB/OBF8 to OFB128<br/>
+ * AES Coder
+ * secret key length: 128bit, default: 128 bit
+ * mode: ECB/CBC/PCBC/CTR/CTS/CFB/CFB8 to CFB128/OFB/OBF8 to OFB128
  * padding: Nopadding/PKCS5Padding/ISO10126Padding/
  * @author fengsql
  */
