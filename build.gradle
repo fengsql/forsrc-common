@@ -17,13 +17,16 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    all*.exclude group: "org.slf4j", module: "slf4j-log4j12"
+    all*.exclude group: "org.apache.logging.log4j", module: "log4j-slf4j-impl"
 }
 
 repositories {
     maven {
+        allowInsecureProtocol = true
         url 'http://maven.aliyun.com/nexus/content/groups/public'
     }
-    maven{
+    maven {
         url 'https://mvnrepository.com/'
     }
     mavenCentral()
