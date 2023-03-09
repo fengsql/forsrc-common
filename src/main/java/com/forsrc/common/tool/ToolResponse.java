@@ -33,59 +33,37 @@ public class ToolResponse {
     toolResponse.responseHandler = this.responseHandler;
   }
 
+  public static void write(HttpServletResponse response, int status, Object data) {
+    writeObject(response, status, data);
+  }
+
   public static void writeData(HttpServletResponse response, Object data) {
     Object responseBody = getResponseSuccess(data);
     writeBody(response, responseBody);
   }
 
-  @SneakyThrows
-  public static void writeBody(HttpServletResponse response, int status, Object responseBody) {
-    String content = ToolJson.toJson(responseBody);
-    if (response == null) {
-      log.warn("response is null!");
-      return;
-    }
-    //    log.info("response content: " + content);
-    PrintWriter printWriter = null;
-    try {
-      response.setStatus(status);
-      response.setHeader("Cache-Control", "no-cache");
-      response.setHeader("content-type", "text/html;charset=UTF-8");
-      response.setContentType(contentType_default);
-      response.setCharacterEncoding(charset_default);
-      printWriter = response.getWriter();
-      //			content = java.net.URLEncoder.encode(content, "UTF-8");
-      printWriter.write(content);
-      printWriter.flush();
-    } finally {
-      if (printWriter != null) {
-        printWriter.close();
-      }
-    }
-  }
-
   public static void writeBody(HttpServletResponse response, Object responseBody) {
-    writeBody(response, HttpStatus.OK.value(), responseBody);
+    writeObject(response, HttpStatus.OK.value(), responseBody);
   }
 
   public static void error(HttpServletResponse response) {
     Object responseBody = getResponseError();
-    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
+    writeObject(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static void error(HttpServletResponse response, Exception exception) {
     Object responseBody = getResponseError(Code.FAIL.getCode(), exception.getMessage());
-    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
+    writeObject(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static void error(HttpServletResponse response, int code, String message) {
     Object responseBody = getResponseError(code, message);
-    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
+    writeObject(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static void error(HttpServletResponse response, Code code) {
     Object responseBody = getResponse(false, code.getCode(), code.getMsg(), null);
-    writeBody(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
+    writeObject(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody);
   }
 
   public static Object getResponse(Object data) {
@@ -114,6 +92,37 @@ public class ToolResponse {
 
   private static Object getResponseError(int code, String message) {
     return getResponse(false, code, message, null);
+  }
+
+  private static void writeObject(HttpServletResponse response, int status, Object responseBody) {
+    String content = ToolJson.toJson(responseBody);
+    writeString(response, status, content);
+  }
+
+  @SneakyThrows
+  private static void writeString(HttpServletResponse response, int status, String content) {
+    if (response == null) {
+      log.warn("response is null!");
+      return;
+    }
+    //    log.info("response content: " + content);
+    PrintWriter printWriter = null;
+    try {
+      response.setStatus(status);
+      response.setHeader("Cache-Control", "no-cache");
+      response.setHeader("content-type", "text/html;charset=UTF-8");
+      response.setContentType(contentType_default);
+      response.setCharacterEncoding(charset_default);
+      printWriter = response.getWriter();
+      if (content != null) {
+        printWriter.write(content);
+      }
+      printWriter.flush();
+    } finally {
+      if (printWriter != null) {
+        printWriter.close();
+      }
+    }
   }
 
 }
