@@ -23,9 +23,9 @@ public abstract class BaseEnumTypeHandler extends BaseTypeHandler<String> {
     preparedStatement.setInt(paramIndex, Tool.toInt(type));
   }
 
-  /**
-   * 通过字段名获取数据库值后，将数据库类型转换为 java 类型
-   */
+//  /**
+//   * 通过字段名获取数据库值后，将数据库类型转换为 java 类型
+//   */
 //  @Override
 //  public String getNullableResult(ResultSet resultSet, String fieldName) throws SQLException {
 //    return null;
