@@ -16,6 +16,7 @@ public class BCache {
   private String keyName;
 
   public void initialize(String keyName) {
+    
     this.keyName = keyName;
   }
 
