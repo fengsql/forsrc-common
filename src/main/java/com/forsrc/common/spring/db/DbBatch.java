@@ -46,7 +46,11 @@ public class DbBatch<T> {
         break;
       }
     }
-    log.info("runBatch ok. size: {}. success: {}. fail: {}", size, success, fail);
+    if (fail > 0) {
+      log.info("runBatch ok. size: {}. success: {}. fail: {}", size, success, fail);
+    } else {
+      log.info("runBatch ok. size: {}. success: {}", size, success);
+    }
     return count;
   }
 

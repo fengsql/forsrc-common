@@ -1,28 +1,17 @@
 package com.forsrc.common.cache.base;
 
+import com.forsrc.common.constant.ConfigCommon;
 import com.forsrc.common.tool.Tool;
 import com.forsrc.common.tool.ToolRedis;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
 @Slf4j
 public class BCache {
-  
-  @Value("${redis.key-prefix::}")
-  private String keyPrefix; //值
 
-  @Value("${redis.ttl:3600}")
-  private long ttl;   //
-
-  @Value("${redis.refresh:600}")
-  private long refresh;   //
-
-  @Value("${redis.cache-prefix:}")
-  private String cachePrefix;   //
+  private static final String project_seperator = ":";
+  private static final String keyPrefix = ":";
 
   private String keyName;
 
@@ -35,12 +24,15 @@ public class BCache {
   // <<<----------------------- getKey -----------------------
   //value
   protected String getKey(String name, String value) {
-    return cachePrefix + name + keyPrefix + Tool.toString(value);
+    return ConfigCommon.redis.cachePrefix + project_seperator + //
+      name + keyPrefix + Tool.toString(value);
   }
 
   //index
   protected String getKey(String name, String field, String value) {
-    return cachePrefix + name + keyPrefix + field + keyPrefix + Tool.toString(value);
+    return ConfigCommon.redis.cachePrefix + project_seperator + //
+      name + keyPrefix + //
+      field + keyPrefix + Tool.toString(value);
   }
 
   protected String getKey(String name, Map<String, String> map) {
@@ -50,11 +42,16 @@ public class BCache {
     StringBuilder stringBuilder = new StringBuilder();
     int index = 0;
     int size = map.size();
-    stringBuilder.append(cachePrefix).append(name).append(keyPrefix);
+    stringBuilder.append(ConfigCommon.redis.cachePrefix) //
+      .append(project_seperator) //
+      .append(name) //
+      .append(keyPrefix);
     for (Map.Entry<String, String> entry : map.entrySet()) {
       String key = entry.getKey();
       String val = entry.getValue();
-      stringBuilder.append(key).append(keyPrefix).append(val);
+      stringBuilder.append(key) //
+        .append(keyPrefix) //
+        .append(val);
       if (index < size - 1) {
         stringBuilder.append(keyPrefix);
       }
@@ -121,7 +118,7 @@ public class BCache {
       log.warn("key is null!");
       return;
     }
-    if (!ToolRedis.set(key, value, ttl)) {
+    if (!ToolRedis.set(key, value, ConfigCommon.redis.ttl)) {
       log.warn("setRedis fail. key: {}", key);
     }
     log.debug("setRedis ok. key: {}.", key);
@@ -152,15 +149,15 @@ public class BCache {
   }
 
   protected void refreshExpire(String key) {
-    if (refresh <= 0) {
+    if (ConfigCommon.redis.refresh <= 0) {
       return;
     }
     long time = ToolRedis.getExpire(key);
-    if (time <= 0 || time > refresh) {
+    if (time <= 0 || time > ConfigCommon.redis.refresh) {
       return;
     }
     synchronized (this) {
-      ToolRedis.setExpire(key, ttl);
+      ToolRedis.setExpire(key, ConfigCommon.redis.ttl);
     }
     log.debug("refreshExpire ok. key: {}.", key);
   }
