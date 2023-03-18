@@ -194,19 +194,131 @@ public class Tool {
     return stringBuilder.toString();
   }
 
+  /**
+   * 使用substring方式截取。
+   * @param source    源
+   * @param delimiter 分隔符
+   * @param list      结果
+   */
+  public static void split(String source, char delimiter, List<String> list) {
+    int pos = source.indexOf(delimiter);
+    int start = 0;
+    while (pos >= start) {
+      list.add(source.substring(start, pos).trim());
+      start = pos + 1;
+      pos = source.indexOf(delimiter, start);
+    }
+    if (start < source.length()) {
+      list.add(source.substring(start).trim());
+    } else {
+      list.add("");
+    }
+  }
+
+  /**
+   * 使用substring方式截取。
+   * @param source    源
+   * @param delimiter 分隔符
+   * @param list      结果
+   */
+  public static void split(String source, String delimiter, List<String> list) {
+    int pos = source.indexOf(delimiter);
+    int start = 0;
+    while (pos >= start) {
+      list.add(source.substring(start, pos).trim());
+      start = pos + delimiter.length();
+      pos = source.indexOf(delimiter, start);
+    }
+    if (start < source.length()) {
+      list.add(source.substring(start).trim());
+    } else {
+      list.add("");
+    }
+  }
+
+  /**
+   * 使用substring方式截取。
+   * @param source    源
+   * @param delimiter 分隔符
+   * @return 结果
+   */
+  public static List<String> splitList(String source, char delimiter) {
+    List<String> list = new ArrayList<>();
+    split(source, delimiter, list);
+    return list;
+  }
+
+  /**
+   * 使用substring方式截取。
+   * @param source    源
+   * @param delimiter 分隔符
+   * @return 结果
+   */
+  public static List<String> splitList(String source, String delimiter) {
+    List<String> list = new ArrayList<>();
+    split(source, delimiter, list);
+    return list;
+  }
+
+  /**
+   * 使用substring方式截取。
+   * @param source    源
+   * @param delimiter 分隔符
+   * @return 结果
+   */
+  public static String[] split(String source, char delimiter) {
+    List<String> list = new ArrayList<>();
+    split(source, delimiter, list);
+    return list.toArray(new String[0]);
+  }
+
+  /**
+   * 使用substring方式截取。
+   * @param source    源
+   * @param delimiter 分隔符
+   * @return 结果
+   */
   public static String[] split(String source, String delimiter) {
+    List<String> list = new ArrayList<>();
+    split(source, delimiter, list);
+    return list.toArray(new String[0]);
+  }
+
+//  /**
+//   * 此方法在连续出现分隔符时，会被当作一个分隔符。splitToken
+//   * @param source    源
+//   * @param delimiter 分隔符
+//   * @return 结果
+//   */
+//  public static String[] split(String source, String delimiter) {
+//    if (source == null) {
+//      return null;
+//    }
+//    String[] result = null;
+//    StringTokenizer stringTokenizer = new StringTokenizer(source, delimiter);
+//    result = new String[stringTokenizer.countTokens()];
+//    int i = 0;
+//    while (stringTokenizer.hasMoreTokens()) {
+//      result[i] = stringTokenizer.nextToken().trim();
+//      i++;
+//    }
+//    return result;
+//  }
+
+  /**
+   * 此方法在连续出现分隔符时，会被当作一个分隔符。
+   * @param source    源
+   * @param delimiter 分隔符
+   * @param list      结果
+   */
+  public static void splitToken(String source, String delimiter, List<String> list) {
     if (source == null) {
-      return null;
+      return;
     }
-    String[] result = null;
     StringTokenizer stringTokenizer = new StringTokenizer(source, delimiter);
-    result = new String[stringTokenizer.countTokens()];
-    int i = 0;
     while (stringTokenizer.hasMoreTokens()) {
-      result[i] = stringTokenizer.nextToken().trim();
-      i++;
+      list.add(stringTokenizer.nextToken().trim());
     }
-    return result;
   }
 
   public static String trimRight(String value) {
@@ -1262,6 +1374,18 @@ public class Tool {
   //    int code = response.getCode();
   //    return code == Code.SUCCESS.getCode() || code == Code.OK.getCode();
   //  }
+
+  public static void throwNull(String object, String name) {
+    if (isNull(object)) {
+      throw new CommonException(Code.OBJECT_NULL, name + " is null!");
+    }
+  }
+
+  public static void throwNull(String object) {
+    if (isNull(object)) {
+      throw new CommonException(Code.OBJECT_NULL);
+    }
+  }
 
   public static void throwNull(Object object, String name) {
     if (object == null) {

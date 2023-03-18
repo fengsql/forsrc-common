@@ -13,7 +13,7 @@ public class ToolEnum {
   private static final Map<String, EnumConverter> mapConverter = new HashMap<>();
 
   public static void loadEnum(String name, Class<? extends IEnumField> type) {
-    Assert.notNull(name, "name is null");
+    Assert.hasText(name, "name is null");
     EnumConverter converter = new EnumConverter(type);
     mapConverter.put(name, converter);
   }

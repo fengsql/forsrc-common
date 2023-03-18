@@ -176,9 +176,12 @@ public class ToolFile {
   }
 
   private static String doReadFile(String fileName, String charset) {
+    if (charset == null) {
+      charset = DEFAULT_CHARSET;
+    }
     StringWriter writer = new StringWriter();
     try {
-      Reader reader = new InputStreamReader(new FileInputStream(fileName), DEFAULT_CHARSET);
+      Reader reader = new InputStreamReader(new FileInputStream(fileName), charset);
       try {
         char[] chars = new char[8 * 1024];
         int len;

@@ -94,11 +94,12 @@ public abstract class BCacheTable<T> extends BCache {
       log.warn("t is null!");
       return false;
     }
-    if (getPrimaryId(t) == null) {
+    String id = getPrimaryId(t);
+    if (id == null) {
       log.warn("update fail! primaryId is null.");
       return false;
     }
-    T old = getCache(getPrimaryId(t));
+    T old = getCache(id);
     if (old != null) {
       updateCache(t, old);
       return true;
@@ -111,7 +112,7 @@ public abstract class BCacheTable<T> extends BCache {
     T t = create(id);
     if (!delete(t)) {
       log.warn("delete fail! t: " + ToolJson.toJson(t));
-//      return false;
+      //      return false;
     }
     deleteValue(id);
     return true;
@@ -134,11 +135,12 @@ public abstract class BCacheTable<T> extends BCache {
       log.warn("t is null!");
       return false;
     }
-    if (getPrimaryId(t) == null) {
+    String id = getPrimaryId(t);
+    if (id == null) {
       log.warn("update fail! primaryId is null.");
       return false;
     }
-    T old = getCache(getPrimaryId(t));
+    T old = getCache(id);
     if (old != null) {
       if (!update(t)) {
         log.warn("update fail! t: " + ToolJson.toJson(t));
@@ -147,7 +149,7 @@ public abstract class BCacheTable<T> extends BCache {
       updateCache(t, old);
       return true;
     }
-    old = select(getPrimaryId(t));
+    old = select(id);
     if (old == null) {
       if (!insert(t)) {
         log.warn("insert fail! t: " + ToolJson.toJson(t));
