@@ -43,9 +43,9 @@ public class ToolJson {
   }
 
   /**
-   * 转换对象。如 Map。
+   * 转换 Map 等对象。
    * @param json    json
-   * @param typeRef 如：new TypeToken<Map<String, String>>() {}.getType()
+   * @param typeRef 如：类型
    * @param <T>     泛型
    * @return map 对象
    */
