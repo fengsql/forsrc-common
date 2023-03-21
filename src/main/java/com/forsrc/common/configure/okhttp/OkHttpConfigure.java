@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.net.ssl.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -32,21 +34,32 @@ public class OkHttpConfigure {
   @Value("${okhttp.keep-alive-duration:300}")
   private Long keepAliveDuration;
 
+  @Value("${okhttp.proxy.enable:false}")
+  private Boolean proxyEnable;
+
+  @Value("${okhttp.proxy.host:}")
+  private String host;
+
+  @Value("${okhttp.proxy.port:}")
+  private Integer port;
+
   @Bean
   public OkHttpClient okHttpClient() {
-    return new OkHttpClient.Builder().sslSocketFactory(sslSocketFactory(), x509TrustManager())
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    builder.sslSocketFactory(sslSocketFactory(), x509TrustManager())
       // 是否开启缓存
-      .retryOnConnectionFailure(false)
-      .connectionPool(pool())
-      .connectTimeout(connectTimeout, TimeUnit.SECONDS)
-      .readTimeout(readTimeout, TimeUnit.SECONDS)
-      .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-      .hostnameVerifier(new CustomHostnameVerifier())
-      // 设置代理
-      //            	.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
-      // 拦截器
-      //                .addInterceptor()
-      .build();
+      .retryOnConnectionFailure(false) //
+      .connectionPool(pool()) //
+      .connectTimeout(connectTimeout, TimeUnit.SECONDS) //
+      .readTimeout(readTimeout, TimeUnit.SECONDS) //
+      .writeTimeout(writeTimeout, TimeUnit.SECONDS) //
+      .hostnameVerifier(new CustomHostnameVerifier());
+
+    if (proxyEnable) {
+      Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
+      builder.proxy(proxy);
+    }
+    return builder.build();
   }
 
   public class CustomHostnameVerifier implements HostnameVerifier {
