@@ -89,7 +89,7 @@ public class ExportExcel extends BService {
     if (Tool.isNull(condition)) {
       map = new HashMap();
     } else {
-      map = ToolJson.jsonToMap(condition);
+      map = ToolJson.toMap(condition);
     }
 
     List<Field> fields = reqExport.getFields();

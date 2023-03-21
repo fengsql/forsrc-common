@@ -3,6 +3,7 @@ package com.forsrc.common.tool;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.google.common.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Type;
@@ -95,10 +96,10 @@ public class ToolJson {
   //>>>---------------------------------------- toJson ----------------------------------------
 
   //<<<---------------------------------------- toMap ----------------------------------------
-//
-//  public static Map<Object, Object> toMap(String json) {
-//    return JSON.parseObject(json, new TypeToken<Map<Object, Object>>() {}.getType());
-//  }
+
+  public static Map<Object, Object> toMap(String json) {
+    return JSON.parseObject(json, new TypeToken<Map<Object, Object>>() {}.getType());
+  }
 
   //>>>---------------------------------------- toMap ----------------------------------------
 
