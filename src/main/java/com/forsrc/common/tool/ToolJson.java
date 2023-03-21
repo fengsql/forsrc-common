@@ -62,34 +62,6 @@ public class ToolJson {
     return JSON.parseArray(json, clazz);
   }
 
-  //  public static <T> T toBean(String bean, Class<T> clazz, String[] timeFields) {
-  //    if (Tool.isNull(bean)) {
-  //      return null;
-  //    }
-  //    if (Tool.isNull(timeFields)) {
-  //      return JSON.parseObject(bean, clazz);
-  //    }
-  //    JsonObject jsonObject = toJsonObject(bean);
-  //    for (String timeField : timeFields) {
-  //      String time = jsonObject.get(timeField).getAsString();
-  //      if (StringUtils.isNotBlank(time)) {
-  //        jsonObject.addProperty(timeField, Tool.getSecond(time));
-  //      }
-  //    }
-  //    return JSON.parseObject(jsonObject, clazz);
-  //  }
-  //
-  //  public static Map<String, String> paramToMap(String bean) {
-  //    Type type = new TypeToken<Map<String, String>>() {}.getType();
-  //    return gson.fromJson(bean, type);
-  //  }
-  //
-  //  public static <T> List<T> toList(String jsonData, Class<T> type) {
-  //    Gson gson = new Gson();
-  //    List<T> result = JSON.fromJson(jsonData, new TypeToken<List<T>>() {}.getType());
-  //    return result;
-  //  }
-
   //>>>---------------------------------------- toBean ----------------------------------------
 
   //<<<---------------------------------------- toJson ----------------------------------------
@@ -114,13 +86,6 @@ public class ToolJson {
     }
     return JSON.toJSONString(object, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
   }
-
-  //  public static JsonObject toJsonObject(String bean) {
-  //    if (Tool.isNull(bean)) {
-  //      return null;
-  //    }
-  //    return jsonParser.parse(bean).getAsJsonObject();
-  //  }
 
   public static String toSimpleText(Object object) {
     String source = toJson(object);
