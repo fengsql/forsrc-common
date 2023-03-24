@@ -1,6 +1,6 @@
 package com.forsrc.common.hadoop.handler;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.forsrc.common.tool.Tool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.Cell;

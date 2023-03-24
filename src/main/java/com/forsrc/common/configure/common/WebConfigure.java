@@ -1,9 +1,7 @@
 package com.forsrc.common.configure.common;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.alibaba.fastjson2.support.config.FastJsonConfig;
+import com.alibaba.fastjson2.support.spring.http.converter.FastJsonHttpMessageConverter;
 import com.forsrc.common.annotation.RequestSingleResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -61,15 +59,16 @@ public class WebConfigure implements WebMvcConfigurer {
     converter.setSupportedMediaTypes(supportedMediaTypes);
     converter.setDefaultCharset(StandardCharsets.UTF_8);
     FastJsonConfig config = new FastJsonConfig();
-    JSON.DEFFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    config.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat  //格式化时间
-      //      SerializerFeature.WriteNullBooleanAsFalse,  //
-      //      SerializerFeature.WriteNullNumberAsZero,  //
-      //      SerializerFeature.WriteNullStringAsEmpty,  //
-      //      SerializerFeature.WriteMapNullValue,  //
-      //      SerializerFeature.WriteNullListAsEmpty,  //
-      //      SerializerFeature.WriteBigDecimalAsPlain   //
-    );
+    config.setDateFormat("yyyy-MM-dd HH:mm:ss");
+    //    JSON.DEFFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    //    config.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat  //格式化时间
+    //      SerializerFeature.WriteNullBooleanAsFalse,  //
+    //      SerializerFeature.WriteNullNumberAsZero,  //
+    //      SerializerFeature.WriteNullStringAsEmpty,  //
+    //      SerializerFeature.WriteMapNullValue,  //
+    //      SerializerFeature.WriteNullListAsEmpty,  //
+    //      SerializerFeature.WriteBigDecimalAsPlain   //
+    //    );
     converter.setFastJsonConfig(config);
     converters.add(converter);
   }

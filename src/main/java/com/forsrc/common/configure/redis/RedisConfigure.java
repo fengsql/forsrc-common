@@ -99,18 +99,17 @@ public class RedisConfigure {
 
   @Bean
   @ConditionalOnMissingBean(name = "redisTemplate")
-  public RedisTemplate redisTemplate(RedisConnectionFactory localRedisConnectionFactory, RedisSerializer fastJsonRedisSerializer) {
-    RedisTemplate redisTemplate = new RedisTemplate();
-    redisTemplate.setConnectionFactory(localRedisConnectionFactory);
-    //redis开启事务
-    redisTemplate.setKeySerializer(new StringRedisSerializer());
-    redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-    redisTemplate.setDefaultSerializer(new StringRedisSerializer());
-    redisTemplate.setDefaultSerializer(new StringRedisSerializer());
-    redisTemplate.setValueSerializer(fastJsonRedisSerializer);
-    redisTemplate.setHashValueSerializer(fastJsonRedisSerializer);
-    redisTemplate.afterPropertiesSet();
-    return redisTemplate;
+  public RedisTemplate redisTemplate(RedisConnectionFactory factory, RedisSerializer serializer) {
+    RedisTemplate<Object, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(factory);
+    StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+    template.setKeySerializer(stringRedisSerializer);
+    template.setValueSerializer(serializer);
+    template.setHashKeySerializer(stringRedisSerializer);
+    template.setHashValueSerializer(serializer);
+
+    template.afterPropertiesSet();
+    return template;
   }
 
   @Bean
