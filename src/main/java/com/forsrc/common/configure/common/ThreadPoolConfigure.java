@@ -11,7 +11,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.Arrays;
-import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
 
 @Configuration
 @EnableAsync
@@ -20,10 +22,12 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
 
   @Value("${thread.pool.executor.corePoolSize:10}")
   private Integer corePoolSize;
-  @Value("${thread.pool.executor.maxPoolSize:50}")
+  @Value("${thread.pool.executor.maxPoolSize:100}")
   private Integer maxPoolSize;
-  @Value("${thread.pool.executor.queueCapacity:100}")
+  @Value("${thread.pool.executor.queueCapacity:50}")
   private Integer queueCapacity;
+  @Value("${thread.pool.executor.maxQueueSize:1000}")
+  private Integer maxQueueSize;
   @Value("${thread.pool.executor.keepAliveSeconds:300}")
   private Integer keepAliveSeconds;
   @Value("${thread.pool.executor.awaitTerminationSeconds:60}")
@@ -48,9 +52,27 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
     executor.setWaitForTasksToCompleteOnShutdown(true);  //设置线程池关闭的时候等待所有任务都完成再继续销毁其他的Bean
     executor.setAwaitTerminationSeconds(executorAawaitTerminationSeconds);  //设置线程池中任务的等待时间，如果超过这个时候还没有销毁就强制销毁，而不是阻塞住
     executor.setThreadNamePrefix(executorThreadNamePrefix);
-    executor.setRejectedExecutionHandler(new CallerRunsPolicy());
+    //    executor.setRejectedExecutionHandler(new CallerRunsPolicy());
+    executor.setRejectedExecutionHandler(rejectedExecutionHandler());
     executor.initialize();
     return executor;
+  }
+
+  /**
+   * 这个策略就是忽略缓冲队列限制，继续往里边塞，当达到 maxQueueSize 时，抛出异常
+   */
+  private RejectedExecutionHandler rejectedExecutionHandler() {
+    return (runnable, executor) -> {
+      BlockingQueue<Runnable> queue = executor.getQueue();
+      if (maxQueueSize > 0 && queue.size() > maxQueueSize) {
+        throw new RejectedExecutionException("Task " + runnable.toString() + " rejected from " + executor.toString());
+      }
+      try {
+        queue.put(runnable);
+      } catch (InterruptedException e) {
+        log.error("put task into queue error!", e);
+      }
+    };
   }
 
   @Bean
