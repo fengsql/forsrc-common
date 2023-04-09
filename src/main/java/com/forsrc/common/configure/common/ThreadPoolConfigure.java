@@ -52,9 +52,10 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
     executor.setWaitForTasksToCompleteOnShutdown(true);  //设置线程池关闭的时候等待所有任务都完成再继续销毁其他的Bean
     executor.setAwaitTerminationSeconds(executorAawaitTerminationSeconds);  //设置线程池中任务的等待时间，如果超过这个时候还没有销毁就强制销毁，而不是阻塞住
     executor.setThreadNamePrefix(executorThreadNamePrefix);
-    //    executor.setRejectedExecutionHandler(new CallerRunsPolicy());
+    //        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
     executor.setRejectedExecutionHandler(rejectedExecutionHandler());
     executor.initialize();
+    log.info("ThreadPoolTaskExecutor initialize ok.");
     return executor;
   }
 
@@ -64,11 +65,19 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
   private RejectedExecutionHandler rejectedExecutionHandler() {
     return (runnable, executor) -> {
       BlockingQueue<Runnable> queue = executor.getQueue();
+      //      log.info("maxQueueSize: {}. queue: {}", maxQueueSize, queue.size());
       if (maxQueueSize > 0 && queue.size() > maxQueueSize) {
         throw new RejectedExecutionException("Task " + runnable.toString() + " rejected from " + executor.toString());
       }
       try {
         queue.put(runnable);
+        int active = executor.getActiveCount();
+        long task = executor.getTaskCount();
+        long completed = executor.getCompletedTaskCount();
+        int size = queue.size();
+        if (active >= maxPoolSize) {
+          log.info("put ok. active: {}. queue: {}. max: {}. task: {}", active, size, maxQueueSize, task);
+        }
       } catch (InterruptedException e) {
         log.error("put task into queue error!", e);
       }

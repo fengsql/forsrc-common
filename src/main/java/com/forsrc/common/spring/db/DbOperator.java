@@ -88,6 +88,10 @@ public class DbOperator<T> {
     add(dbEntity);
   }
 
+  public int size() {
+    return entitys.size();
+  }
+
   //>>>---------------------------------------- service ----------------------------------------
 
   //<<<---------------------------------------- normal ----------------------------------------
@@ -102,6 +106,7 @@ public class DbOperator<T> {
   }
 
   public int exec() {
+//    log.info("exec");
     return save(0);
   }
 
