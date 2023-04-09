@@ -376,6 +376,10 @@ public class Tool {
     return toBytes(value, charset_default);
   }
 
+  public static int length(final CharSequence cs) {
+    return cs == null ? 0 : cs.length();
+  }
+
   /**
    * 从索引位置截取指定长度的字符串。
    * @param source     源字符串。
@@ -416,6 +420,14 @@ public class Tool {
 
   public static int lastIndexOf(String subString, String source) {
     return source == null ? -1 : source.lastIndexOf(subString);
+  }
+
+  public static int indexOf(String subString, String source) {
+    return StringUtils.indexOf(source, subString);
+  }
+
+  public static int indexOf(String subString, String source, int fromIndex) {
+    return StringUtils.indexOf(source, subString, fromIndex);
   }
 
   public static String getSimpleText(String source) {
@@ -778,11 +790,11 @@ public class Tool {
   // <<<----------------------- int -----------------------
 
   public static boolean isNull(int value) {
-    return value <= 0;
+    return value < 0;
   }
 
   public static boolean isNull(Integer value) {
-    return value == null || value <= 0;
+    return value == null; // || value <= 0;
   }
 
   public static boolean equal(Integer value1, Integer value2) {
