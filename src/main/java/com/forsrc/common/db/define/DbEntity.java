@@ -1,4 +1,4 @@
-package com.forsrc.common.spring.db;
+package com.forsrc.common.db.define;
 
 import com.forsrc.common.spring.base.IDao;
 import com.forsrc.common.spring.base.IService;

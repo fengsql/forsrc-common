@@ -1,10 +1,10 @@
-package com.forsrc.common.spring.db;
+package com.forsrc.common.db.batch;
 
 import com.forsrc.common.constant.ConstDB;
-import com.forsrc.common.db.define.DbEntity;
-import com.forsrc.common.db.run.DbRun;
 import com.forsrc.common.spring.base.IDao;
 import com.forsrc.common.spring.base.IService;
+import com.forsrc.common.db.define.DbEntity;
+import com.forsrc.common.db.run.DbRun;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +13,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * 此类已废弃，使用下面的替换。
- * {@link com.forsrc.common.db.batch.DbBatch}
- * @param <T>
- */
-@Deprecated
 @Component
 @Slf4j
-public class DbOperator<T> {
+public class DbBatch<T> {
 
   private List<DbEntity<T>> entitys = Collections.synchronizedList(new LinkedList<>());
 
@@ -29,7 +23,7 @@ public class DbOperator<T> {
   private DbRun dbRun;
 
   //<<---------------------------------------- initialize ----------------------------------------
-  public DbOperator() {
+  public DbBatch() {
 
   }
   //>>---------------------------------------- initialize ----------------------------------------
@@ -114,7 +108,7 @@ public class DbOperator<T> {
   }
 
   public int exec() {
-    //    log.info("exec");
+//    log.info("exec");
     return save(0);
   }
 

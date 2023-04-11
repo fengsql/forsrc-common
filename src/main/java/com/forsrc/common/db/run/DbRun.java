@@ -1,6 +1,7 @@
-package com.forsrc.common.spring.db;
+package com.forsrc.common.db.run;
 
 import com.forsrc.common.constant.ConstDB;
+import com.forsrc.common.db.define.DbEntity;
 import com.forsrc.common.tool.ToolJson;
 import com.forsrc.common.spring.base.IDao;
 import com.forsrc.common.spring.base.IService;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class DbBatch<T> {
+public class DbRun<T> {
   private static final int default_batchRow = 500;//每批commit的个数
   private static final int max_retry_times = 10;//重试次数，总次数，包含首次
   private static final int retry_second = 10;//每次重试的间隔时间，s

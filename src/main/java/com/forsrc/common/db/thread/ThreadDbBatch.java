@@ -1,6 +1,6 @@
-package com.forsrc.common.spring.thread;
+package com.forsrc.common.db.thread;
 
-import com.forsrc.common.spring.db.DbOperator;
+import com.forsrc.common.db.batch.DbBatch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -9,21 +9,21 @@ import javax.annotation.Resource;
 
 @Component
 @Slf4j
-public class ThreadDbOperator implements Runnable {
+public class ThreadDbBatch implements Runnable {
 
   @Resource
   private ThreadPoolTaskExecutor localTaskExecutor;
   @Resource
-  private DbOperator<?> dbOperator;
+  private DbBatch<?> dbBatch;
 
   @Override
   public void run() {
-    runOperator();
+    runBatch();
   }
 
-  private void runOperator() {
+  private void runBatch() {
     localTaskExecutor.execute(() -> {
-      dbOperator.exec();
+      dbBatch.exec();
     });
   }
 }
