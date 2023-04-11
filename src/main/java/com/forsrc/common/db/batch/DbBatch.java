@@ -90,10 +90,6 @@ public class DbBatch<T> {
     add(dbEntity);
   }
 
-  public int size() {
-    return entitys.size();
-  }
-
   //>>>---------------------------------------- service ----------------------------------------
 
   //<<<---------------------------------------- normal ----------------------------------------
@@ -108,8 +104,12 @@ public class DbBatch<T> {
   }
 
   public int exec() {
-//    log.info("exec");
+    //    log.info("exec");
     return save(0);
+  }
+
+  public int size() {
+    return entitys.size();
   }
 
   //>>>---------------------------------------- normal ----------------------------------------
