@@ -6,6 +6,7 @@ import com.forsrc.common.exception.CommonException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -284,26 +285,26 @@ public class Tool {
     return list.toArray(new String[0]);
   }
 
-//  /**
-//   * 此方法在连续出现分隔符时，会被当作一个分隔符。splitToken
-//   * @param source    源
-//   * @param delimiter 分隔符
-//   * @return 结果
-//   */
-//  public static String[] split(String source, String delimiter) {
-//    if (source == null) {
-//      return null;
-//    }
-//    String[] result = null;
-//    StringTokenizer stringTokenizer = new StringTokenizer(source, delimiter);
-//    result = new String[stringTokenizer.countTokens()];
-//    int i = 0;
-//    while (stringTokenizer.hasMoreTokens()) {
-//      result[i] = stringTokenizer.nextToken().trim();
-//      i++;
-//    }
-//    return result;
-//  }
+  //  /**
+  //   * 此方法在连续出现分隔符时，会被当作一个分隔符。splitToken
+  //   * @param source    源
+  //   * @param delimiter 分隔符
+  //   * @return 结果
+  //   */
+  //  public static String[] split(String source, String delimiter) {
+  //    if (source == null) {
+  //      return null;
+  //    }
+  //    String[] result = null;
+  //    StringTokenizer stringTokenizer = new StringTokenizer(source, delimiter);
+  //    result = new String[stringTokenizer.countTokens()];
+  //    int i = 0;
+  //    while (stringTokenizer.hasMoreTokens()) {
+  //      result[i] = stringTokenizer.nextToken().trim();
+  //      i++;
+  //    }
+  //    return result;
+  //  }
 
   /**
    * 此方法在连续出现分隔符时，会被当作一个分隔符。
@@ -836,6 +837,10 @@ public class Tool {
   }
 
   public static int toInteger(String value) {
+    return toInt(value);
+  }
+
+  public static int toInteger(Integer value) {
     return toInt(value);
   }
 
@@ -1377,7 +1382,7 @@ public class Tool {
 
   // >>----------------------- stream -----------------------
 
-  // <<<----------------------- tool -----------------------
+  // <<<----------------------- check -----------------------
 
   //  public static boolean isSuccess(BResponse response) {
   //    if (response == null || !response.getSuccess()) {
@@ -1411,7 +1416,45 @@ public class Tool {
     }
   }
 
-  // >>>----------------------- tool -----------------------
+  public static void notNull(Object object, String message) {
+    Assert.notNull(object, message);
+  }
+
+  public static void notNull(String value, String message) {
+    Assert.hasText(value, message);
+  }
+
+  public static void notNull(Integer value, String message) {
+    Assert.notNull(value, message);
+    if (toInt(value) <= 0) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  public static void notNull(Long value, String message) {
+    Assert.notNull(value, message);
+    if (toLong(value) <= 0) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  public static void notNull(Object object) {
+    notNull(object, "object is null!");
+  }
+
+  public static void notNull(String value) {
+    notNull(value, "value is null!");
+  }
+
+  public static void notNull(Integer value) {
+    notNull(value, "value is null!");
+  }
+
+  public static void notNull(Long value) {
+    notNull(value, "value is null!");
+  }
+
+  // >>>----------------------- check -----------------------
 
   // >>----------------------- public -----------------------
 
