@@ -17,7 +17,7 @@ import javax.servlet.Servlet;
 @ConditionalOnProperty(name = "spring.datasource.druid.filter.stat.enabled", havingValue = "true")
 public class DruidConfigure {
 
-  @Value("${spring.datasource.druid.stat-view-servlet.url-pattern}")
+  @Value("${spring.datasource.druid.stat-view-servlet.url-pattern:}")
   private String urlPattern;
   @Value("${spring.datasource.druid.stat-view-servlet.allow:}")
   private String allow;

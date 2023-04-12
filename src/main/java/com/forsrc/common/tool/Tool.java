@@ -1426,14 +1426,21 @@ public class Tool {
 
   public static void notNull(Integer value, String message) {
     Assert.notNull(value, message);
-    if (toInt(value) <= 0) {
+    if (toInt(value) < 0) {
       throw new IllegalArgumentException(message);
     }
   }
 
   public static void notNull(Long value, String message) {
     Assert.notNull(value, message);
-    if (toLong(value) <= 0) {
+    if (toLong(value) < 0) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  public static void notNull(List<?> value, String message) {
+    Assert.notNull(value, message);
+    if (value.size() == 0) {
       throw new IllegalArgumentException(message);
     }
   }
@@ -1451,6 +1458,10 @@ public class Tool {
   }
 
   public static void notNull(Long value) {
+    notNull(value, "value is null!");
+  }
+
+  public static void notNull(List<?> value) {
     notNull(value, "value is null!");
   }
 

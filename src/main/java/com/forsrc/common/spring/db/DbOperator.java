@@ -15,8 +15,7 @@ import java.util.List;
 
 /**
  * 此类已废弃，使用下面的替换。
- * {@link com.forsrc.common.db.batch.DbBatch}
- * @param <T>
+ * @deprecated Use {@link com.forsrc.common.db.batch.DbBatch}
  */
 @Deprecated
 @Component
