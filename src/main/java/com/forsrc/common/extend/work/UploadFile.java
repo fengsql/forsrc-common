@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class UploadFile extends BService {
@@ -23,88 +25,113 @@ public class UploadFile extends BService {
 
   }
 
-  // <<----------------------- initialize -----------------------
-
-  // >>----------------------- initialize -----------------------
-
-  // <<----------------------- abstract -----------------------
-
-  // >>----------------------- abstract -----------------------
-
   // <<----------------------- public -----------------------
 
   // <<<----------------------- normal -----------------------
 
   /**
-   * 上传文件，返回保存后的路径和文件名，相对路径。
-   * @param file 上传文件。
-   * @param request 请求。
+   * 上传文件，返回保存后的路径和文件名，相对路径，扩展名与原扩展名一致，文件名随机生成。
+   * @param file     上传文件。
+   * @param request  请求。
    * @param response 响应。
    * @return 返回保存后的路径和文件名，相对路径。
    */
-  public String work(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
-    return doWork(request, response, file);
+  public String save(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+    Tool.notNull(file);
+    return saveWeb(request, file);
+  }
+
+  public List<String> save(HttpServletRequest request, HttpServletResponse response, MultipartFile[] files) {
+    Tool.notNull(files);
+    return saveWeb(request, files);
   }
 
   /**
-   * 上传文件，返回保存后的路径和文件名，绝对路径。
-   * @param file 上传文件。
-   * @param request 请求。
-   * @param response 响应。
+   * 上传文件，返回保存后的路径和文件名，绝对路径，文件名和扩展名与原文件名一致。
+   * @param file       上传文件。
+   * @param uploadPath 上传路径，绝对路径。
    * @return 返回保存后的路径和文件名，绝对路径。
    */
-  public String save(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
-    return saveFile(request, response, file);
+  public String save(MultipartFile file, String uploadPath) {
+    Tool.notNull(file);
+    Tool.notNull(uploadPath);
+    return saveAbs(file, uploadPath);
+  }
+
+  public List<String> save(MultipartFile[] files, String uploadPath) {
+    Tool.notNull(files);
+    Tool.notNull(uploadPath);
+    return saveAbs(files, uploadPath);
   }
 
   // >>>----------------------- normal -----------------------
 
-  // <<<----------------------- tool -----------------------
-
-  // >>>----------------------- tool -----------------------
-
   // >>----------------------- public -----------------------
-
-  // <<----------------------- protected -----------------------
-
-  // >>----------------------- protected -----------------------
 
   // <<----------------------- private -----------------------
 
-  // <<<----------------------- normal -----------------------
+  // <<<----------------------- saveWeb -----------------------
 
-  // >>>----------------------- normal -----------------------
+  private List<String> saveWeb(HttpServletRequest request, MultipartFile[] files) {
+    String contextPath = getContextPath(request);
+    String uploadPath = getUploadPath(contextPath);
+    List<String> list = new ArrayList<>();
+    for (MultipartFile file : files) {
+      list.add(saveWeb(file, contextPath, uploadPath));
+    }
+    return list;
+  }
 
-  // <<<----------------------- upload -----------------------
+  private String saveWeb(HttpServletRequest request, MultipartFile file) {
+    String contextPath = getContextPath(request);
+    String uploadPath = getUploadPath(contextPath);
+    return saveWeb(file, contextPath, uploadPath);
+  }
 
-  private String doWork(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
-    String saveFile = saveFile(request, response, file);
-    //获取tomcat容器目录
-    String path = request.getSession().getServletContext().getRealPath("");
-    String url = Tool.subString(saveFile, path.length());
+  private String saveWeb(MultipartFile file, String contextPath, String uploadPath) {
+    String saveFile = saveFile(file, uploadPath, true);
+    String url = Tool.subString(saveFile, contextPath.length());
     url = Tool.toUrlPath(url);
     return url;
   }
 
-  private String saveFile(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+  // >>>----------------------- saveWeb -----------------------
+
+  // <<<----------------------- saveAbs -----------------------
+
+  private List<String> saveAbs(MultipartFile[] files, String uploadPath) {
+    List<String> list = new ArrayList<>();
+    for (MultipartFile file : files) {
+      list.add(saveAbs(file, uploadPath));
+    }
+    return list;
+  }
+
+  private String saveAbs(MultipartFile file, String uploadPath) {
+    return saveFile(file, uploadPath, false);
+  }
+
+  // >>>----------------------- saveAbs -----------------------
+
+  // <<<----------------------- saveFile -----------------------
+
+  private String saveFile(MultipartFile file, String uploadPath, boolean isRandomName) {
     if (file == null) {
       throw new CommonException(Code.PARAM_EMPTY);
     }
-    //获取tomcat容器目录
-    String path = request.getSession().getServletContext().getRealPath("");
-    //获取classes目录绝对路径
-    //    String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-    //    String path = ResourceUtils.getURL("classpath:").getPath();
-    //获取当前项目路径的地址
-    //    String path = System.getProperty("user.dir");
-
-    String uploadPath = ToolFile.joinFileName(path, uploadFolder);
-    //    log.info("uploadPath: " + uploadPath);
     ToolFile.forcePath(uploadPath);
+    if (!ToolFile.existPath(uploadPath)) {
+      throw new CommonException("uploadPath not exist! path: " + uploadPath);
+    }
 
     String originFile = file.getOriginalFilename();
-    String fileExt = ToolFile.getFileExt(originFile); // 扩展名
-    String saveFile = ToolFile.getRandomFile(uploadPath, fileExt);
+    String saveFile;
+    if (!isRandomName) {
+      saveFile = ToolFile.joinFileName(uploadPath, originFile);
+    } else {
+      String fileExt = ToolFile.getFileExt(originFile);
+      saveFile = ToolFile.getRandomFile(uploadPath, fileExt);
+    }
     File targetFile = new File(saveFile);
     try {
       file.transferTo(targetFile);
@@ -116,24 +143,20 @@ public class UploadFile extends BService {
     }
   }
 
-  // >>>----------------------- upload -----------------------
+  // >>>----------------------- saveFile -----------------------
 
   // <<<----------------------- tool -----------------------
+
+  private String getContextPath(HttpServletRequest request) {
+    return request.getSession().getServletContext().getRealPath("");  //获取tomcat容器目录
+  }
+
+  private String getUploadPath(String contextPath) {
+    return ToolFile.joinFileName(contextPath, uploadFolder);
+  }
 
   // >>>----------------------- tool -----------------------
 
   // >>----------------------- private -----------------------
-
-  // <<<----------------------- get -----------------------
-
-  // >>>----------------------- get -----------------------
-
-  // <<<----------------------- set -----------------------
-
-  // >>>----------------------- set -----------------------
-
-  // <<----------------------- get set -----------------------
-
-  // >>----------------------- get set -----------------------
 
 }
