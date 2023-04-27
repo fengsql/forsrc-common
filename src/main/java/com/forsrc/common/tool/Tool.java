@@ -1224,6 +1224,20 @@ public class Tool {
    */
   public static String getRandomString(int length) {
     String source = upperStr + lowerStr + numStr;
+    return getRandomString(source, length);
+  }
+
+  /**
+   * 随机生成字符串，包含数字。
+   * @param length 长度。
+   * @return 返回随机字符串。
+   */
+  public static String getRandomDigit(int length) {
+    String source = numStr;
+    return getRandomString(source, length);
+  }
+
+  private static String getRandomString(String source, int length) {
     if (length < 1) {
       length = 1;
     }
@@ -1425,22 +1439,19 @@ public class Tool {
   }
 
   public static void notNull(Integer value, String message) {
-    Assert.notNull(value, message);
-    if (toInt(value) < 0) {
+    if (value == null || toInt(value) < 0) {
       throw new IllegalArgumentException(message);
     }
   }
 
   public static void notNull(Long value, String message) {
-    Assert.notNull(value, message);
-    if (toLong(value) < 0) {
+    if (value == null || toLong(value) < 0) {
       throw new IllegalArgumentException(message);
     }
   }
 
   public static void notNull(List<?> value, String message) {
-    Assert.notNull(value, message);
-    if (value.size() == 0) {
+    if (value == null || value.size() == 0) {
       throw new IllegalArgumentException(message);
     }
   }

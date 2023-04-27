@@ -175,24 +175,21 @@ public class ToolFile {
     return false;
   }
 
+  @SneakyThrows
   private static String doReadFile(String fileName, String charset) {
     if (charset == null) {
       charset = DEFAULT_CHARSET;
     }
     StringWriter writer = new StringWriter();
+    Reader reader = new InputStreamReader(new FileInputStream(fileName), charset);
     try {
-      Reader reader = new InputStreamReader(new FileInputStream(fileName), charset);
-      try {
-        char[] chars = new char[8 * 1024];
-        int len;
-        while ((len = reader.read(chars)) > 0) {
-          writer.write(chars, 0, len);
-        }
-      } finally {
-        reader.close();
+      char[] chars = new char[8 * 1024];
+      int len;
+      while ((len = reader.read(chars)) > 0) {
+        writer.write(chars, 0, len);
       }
-    } catch (IOException e) {
-      log.error(ExceptionUtils.getStackTrace(e));
+    } finally {
+      reader.close();
     }
     return writer.toString();
   }
@@ -1218,6 +1215,7 @@ public class ToolFile {
 
   // <<----------------------------- crc32 -----------------------------
 
+  @SneakyThrows
   public static String getCrc32(File file) {
     CRC32 crc32 = new CRC32();
     FileInputStream fileinputstream = null;
@@ -1233,8 +1231,6 @@ public class ToolFile {
       }
       crc = Long.toHexString(crc32.getValue()).toUpperCase();
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
       e.printStackTrace();
     } finally {
       if (fileinputstream != null) {

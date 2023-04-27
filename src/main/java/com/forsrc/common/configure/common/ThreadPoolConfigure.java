@@ -35,8 +35,10 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
   @Value("${thread.pool.executor.threadNamePrefix:taskExecutor-}")
   private String executorThreadNamePrefix;
 
-  @Value("${thread.pool.scheduler.poolSize:300}")
+  @Value("${thread.pool.scheduler.poolSize:50}")
   private Integer poolSize;
+  @Value("${thread.pool.scheduler.maxQueueSize:1000}")
+  private Integer schedulerMaxQueueSize;
   @Value("${thread.pool.scheduler.awaitTerminationSeconds:60}")
   private Integer schedulerAawaitTerminationSeconds;
   @Value("${thread.pool.scheduler.threadNamePrefix:taskScheduler-}")
@@ -53,16 +55,39 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
     executor.setAwaitTerminationSeconds(executorAawaitTerminationSeconds);  //设置线程池中任务的等待时间，如果超过这个时候还没有销毁就强制销毁，而不是阻塞住
     executor.setThreadNamePrefix(executorThreadNamePrefix);
     //        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-    executor.setRejectedExecutionHandler(rejectedExecutionHandler());
+    executor.setRejectedExecutionHandler(rejectedExecutionHandler(maxQueueSize, maxPoolSize));
     executor.initialize();
     log.info("ThreadPoolTaskExecutor initialize ok.");
     return executor;
   }
 
+  @Bean
+  public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+    ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
+    executor.setPoolSize(poolSize);
+    executor.setWaitForTasksToCompleteOnShutdown(true);
+    executor.setAwaitTerminationSeconds(schedulerAawaitTerminationSeconds);
+    executor.setThreadNamePrefix(schedulerThreadNamePrefix);
+    executor.setRejectedExecutionHandler(rejectedExecutionHandler(schedulerMaxQueueSize, 0));
+    return executor;
+  }
+
+  @Override
+  public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+    StringBuilder params = new StringBuilder();
+    return (throwable, method, objects) -> {
+      Arrays.stream(objects).forEachOrdered((param) -> {
+        params.append(param).append(",");
+      });
+      log.info("Thread Pool Exception message: {}, Method name: {}, bean: {}", //
+        new Object[]{throwable.getMessage(), method.getName(), params});
+    };
+  }
+
   /**
    * 这个策略就是忽略缓冲队列限制，继续往里边塞，当达到 maxQueueSize 时，抛出异常
    */
-  private RejectedExecutionHandler rejectedExecutionHandler() {
+  private RejectedExecutionHandler rejectedExecutionHandler(int maxQueueSize, int maxPoolSize) {
     return (runnable, executor) -> {
       BlockingQueue<Runnable> queue = executor.getQueue();
       //      log.info("maxQueueSize: {}. queue: {}", maxQueueSize, queue.size());
@@ -75,33 +100,12 @@ public class ThreadPoolConfigure implements AsyncConfigurer {
         long task = executor.getTaskCount();
         long completed = executor.getCompletedTaskCount();
         int size = queue.size();
-        if (active >= maxPoolSize) {
+        if (maxPoolSize > 0 && active >= maxPoolSize) {
           log.info("put ok. active: {}. queue: {}. max: {}. task: {}", active, size, maxQueueSize, task);
         }
       } catch (InterruptedException e) {
         log.error("put task into queue error!", e);
       }
-    };
-  }
-
-  @Bean
-  public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-    ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
-    executor.setPoolSize(poolSize);
-    executor.setWaitForTasksToCompleteOnShutdown(true);
-    executor.setAwaitTerminationSeconds(schedulerAawaitTerminationSeconds);
-    executor.setThreadNamePrefix(schedulerThreadNamePrefix);
-    return executor;
-  }
-
-  public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-    StringBuilder params = new StringBuilder();
-    return (throwable, method, objects) -> {
-      Arrays.stream(objects).forEachOrdered((param) -> {
-        params.append(param).append(",");
-      });
-      log.info("Thread Pool Exception message: {}, Method name: {}, bean: {}", //
-        new Object[]{throwable.getMessage(), method.getName(), params});
     };
   }
 }
