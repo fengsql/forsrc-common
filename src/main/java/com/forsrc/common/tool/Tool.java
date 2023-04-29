@@ -54,7 +54,7 @@ public class Tool {
   // <<----------------------- String -----------------------
 
   public static boolean isNull(String value) {
-    return value == null || value.trim().length() <= 0;
+    return StringUtils.isBlank(value);
   }
 
   public static boolean equal(String value1, String value2, boolean ignoreCase) {
@@ -155,12 +155,16 @@ public class Tool {
     return new String(chars);
   }
 
+  /**
+   * 转换为驼峰命名，如果最后一位是下划线，保留这个下划线。
+   */
   public static String toCamel(String source) {
     if (isNull(source)) {
       return null;
     }
     boolean isFind = false;
     int size = source.length();
+    boolean lastIsUnderline = source.charAt(size - 1) == Const._underline;
     StringBuilder stringBuilder = new StringBuilder(size);
     for (int i = 0; i < size; i++) {
       char ch = source.charAt(i);
@@ -174,6 +178,9 @@ public class Tool {
       } else {
         stringBuilder.append(ch);
       }
+    }
+    if (lastIsUnderline) {
+      stringBuilder.append(Const._underline);
     }
     return stringBuilder.toString();
   }
