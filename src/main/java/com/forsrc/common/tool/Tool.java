@@ -164,6 +164,8 @@ public class Tool {
 
   /**
    * 转换为驼峰命名，如果最后一位是下划线，保留这个下划线。
+   * @param source 转换字符串
+   * @return 返回驼峰格式
    */
   public static String toCamel(String source) {
     if (isNull(source)) {
