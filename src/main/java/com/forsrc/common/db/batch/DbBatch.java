@@ -20,7 +20,7 @@ public class DbBatch<T> {
   private List<DbEntity<T>> entitys = Collections.synchronizedList(new LinkedList<>());
 
   @Resource
-  private DbRun dbRun;
+  private DbRun<T> dbRun;
 
   //<<---------------------------------------- initialize ----------------------------------------
   public DbBatch() {

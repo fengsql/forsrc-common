@@ -48,6 +48,13 @@ public class Tool {
   private static final String upperStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   private static final String lowerStr = "abcdefghijklmnopqrstuvwxyz";
   private static final String numStr = "1234567890";
+  //time
+  //  private static final char char_year = 'y';
+  //  private static final char char_month = 'n';
+  private static final char char_day = 'd';
+  private static final char char_hour = 'h';
+  private static final char char_minute = 'm';
+  private static final char char_second = 's';
 
   // <<----------------------- public -----------------------
 
@@ -1171,6 +1178,40 @@ public class Tool {
       costTime = (cost / 1000) + " s " + (cost % 1000) + " ms";
     }
     return costTime;
+  }
+
+  /**
+   * 获取秒数，格式：1s, 1m, 1h, 1d，默认为秒。
+   * @param value 格式：1s, 1m, 1h, 1d，默认为秒。
+   * @return 秒数，格式错误返回 0。
+   */
+  public static long getSeconds(String value) {
+    value = toString(value);
+    int size = value.length();
+    if (size == 0) {
+      return 0L;
+    }
+    if (isInt(value)) {
+      return toInt(value);
+    }
+    char unit = value.charAt(size - 1);
+    String tmp = toString(value.substring(0, size - 1));
+    int val = toInt(tmp);
+    if (val == 0) {
+      return 0L;
+    }
+    switch (unit) {
+      case char_second:
+        return val;
+      case char_minute:
+        return val * 60;
+      case char_hour:
+        return val * 60 * 60;
+      case char_day:
+        return val * 60 * 60 * 24;
+      default:
+        return 0L;
+    }
   }
 
   // >>>----------------------- datetime -----------------------

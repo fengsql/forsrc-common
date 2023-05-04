@@ -2,10 +2,11 @@ package com.forsrc.common.db.run;
 
 import com.forsrc.common.constant.ConstDB;
 import com.forsrc.common.db.define.DbEntity;
-import com.forsrc.common.tool.ToolJson;
 import com.forsrc.common.spring.base.IDao;
 import com.forsrc.common.spring.base.IService;
+import com.forsrc.common.tool.ToolJson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Component
 public class DbRun<T> {
   private static final int default_batchRow = 500;//每批commit的个数
-  private static final int max_retry_times = 10;//重试次数，总次数，包含首次
+  private static final int max_retry_times = -1;//重试次数，总次数，包含首次
   private static final int retry_second = 10;//每次重试的间隔时间，s
 
   /**
@@ -56,25 +57,30 @@ public class DbRun<T> {
   }
 
   private boolean runEntity(List<DbEntity<T>> entitys, DbEntity<T> dbEntity) {
+    boolean retry = false;
     boolean ok = false;
     try {
       int layerType = dbEntity.getLayerType();
       switch (layerType) {
         case ConstDB.layerType.dao:
-          ok = runDaoEntity(dbEntity);
+          runDaoEntity(dbEntity);
           break;
         case ConstDB.layerType.service:
-          ok = runServiceEntity(dbEntity);
+          runServiceEntity(dbEntity);
           break;
-
         default:
           log.warn("runEntity unknow layerType! layerType: " + layerType);
           break;
       }
+      ok = true;
+    } catch (DataAccessException e) {
+      log.error("runEntity DataAccessException!", e);
+      retry = false;
     } catch (Exception e) {
       log.error("runEntity error!", e);
+      retry = true;
     }
-    if (!ok) {
+    if (!retry) {
       retry(entitys, dbEntity);
     }
     return ok;
@@ -82,111 +88,101 @@ public class DbRun<T> {
 
   //<<---------------------------------------- dao ----------------------------------------
 
-  private boolean runDaoEntity(DbEntity<T> dbEntity) {
+  private void runDaoEntity(DbEntity<T> dbEntity) {
     int sqlType = dbEntity.getSqlType();
-    try {
-      switch (sqlType) {
-        case ConstDB.sqlType.insert:
-          return runDaoInsert(dbEntity);
-        case ConstDB.sqlType.update:
-          return runDaoUpdate(dbEntity);
-        case ConstDB.sqlType.delete:
-          return runDaoDelete(dbEntity);
-        default:
-          log.warn("runEntityDao unknow sqlType! sqlType: " + sqlType);
-          return false;
-      }
-    } catch (Exception e) {
-      log.error("runEntityDao error!", e);
-      return false;
+    switch (sqlType) {
+      case ConstDB.sqlType.insert:
+        runDaoInsert(dbEntity);
+        break;
+      case ConstDB.sqlType.update:
+        runDaoUpdate(dbEntity);
+        break;
+      case ConstDB.sqlType.delete:
+        runDaoDelete(dbEntity);
+        break;
+      default:
+        log.warn("runEntityDao unknow sqlType! sqlType: " + sqlType);
+        break;
     }
   }
 
-  private boolean runDaoInsert(DbEntity<T> dbEntity) {
+  private void runDaoInsert(DbEntity<T> dbEntity) {
     IDao<T> dao = dbEntity.getDao();
     T t = dbEntity.getVo();
     int count = dao.insert(t);
     if (count <= 0) {
       log.warn("runDaoInsert fail! vo: " + ToolJson.toJson(t));
     }
-    return count > 0;
   }
 
-  private boolean runDaoUpdate(DbEntity<T> dbEntity) {
+  private void runDaoUpdate(DbEntity<T> dbEntity) {
     IDao<T> dao = dbEntity.getDao();
     T t = dbEntity.getVo();
     int count = dao.update(t);
     if (count <= 0) {
       log.warn("runDaoUpdate fail! vo: " + ToolJson.toJson(t));
     }
-    return count > 0;
   }
 
-  private boolean runDaoDelete(DbEntity<T> dbEntity) {
+  private void runDaoDelete(DbEntity<T> dbEntity) {
     IDao<T> dao = dbEntity.getDao();
     T t = dbEntity.getVo();
     int count = dao.delete(t);
     if (count <= 0) {
       log.warn("runDaoDelete fail! vo: " + ToolJson.toJson(t));
     }
-    return count > 0;
   }
 
   //>>---------------------------------------- dao ----------------------------------------
 
   //<<---------------------------------------- service ----------------------------------------
 
-  private boolean runServiceEntity(DbEntity<T> dbEntity) {
+  private void runServiceEntity(DbEntity<T> dbEntity) {
     if (dbEntity == null) {
-      return false;
+      return;
     }
     int sqlType = dbEntity.getSqlType();
-    try {
-      switch (sqlType) {
-        case ConstDB.sqlType.insert:
-          return runServiceInsert(dbEntity);
-        case ConstDB.sqlType.update:
-          return runServiceUpdate(dbEntity);
-        case ConstDB.sqlType.delete:
-          return runServiceDelete(dbEntity);
-        default:
-          log.warn("runEntityService unknow sqlType! sqlType: " + sqlType);
-          return false;
-      }
-    } catch (Exception e) {
-      log.error("runEntityService error!", e);
-      return false;
+    switch (sqlType) {
+      case ConstDB.sqlType.insert:
+        runServiceInsert(dbEntity);
+        break;
+      case ConstDB.sqlType.update:
+        runServiceUpdate(dbEntity);
+        break;
+      case ConstDB.sqlType.delete:
+        runServiceDelete(dbEntity);
+        break;
+      default:
+        log.warn("runEntityService unknow sqlType! sqlType: " + sqlType);
+        break;
     }
   }
 
-  private boolean runServiceInsert(DbEntity<T> dbEntity) {
+  private void runServiceInsert(DbEntity<T> dbEntity) {
     IService<T> service = dbEntity.getService();
     T t = dbEntity.getVo();
     T result = service.insert(null, null, t);
     if (result == null) {
       log.warn("runServiceInsert fail! vo: " + ToolJson.toJson(t));
     }
-    return result != null;
   }
 
-  private boolean runServiceUpdate(DbEntity<T> dbEntity) {
+  private void runServiceUpdate(DbEntity<T> dbEntity) {
     IService<T> service = dbEntity.getService();
     T t = dbEntity.getVo();
     int count = service.update(null, null, t);
     if (count <= 0) {
       log.warn("runServiceUpdate fail! vo: " + ToolJson.toJson(t));
     }
-    return count > 0;
   }
 
-  private boolean runServiceDelete(DbEntity<T> dbEntity) {
+  private void runServiceDelete(DbEntity<T> dbEntity) {
     IService<T> service = dbEntity.getService();
     T t = dbEntity.getVo();
     int count = service.delete(null, null, t);
     if (count <= 0) {
       log.warn("runServiceDelete fail! vo: " + ToolJson.toJson(t));
     }
-    return count > 0;
   }
 
   //>>---------------------------------------- service ----------------------------------------
@@ -222,6 +218,9 @@ public class DbRun<T> {
   }
 
   private void retry(List<DbEntity<T>> entitys, DbEntity<T> dbEntity) {
+    if (max_retry_times < 0) {
+      return;
+    }
     int times = dbEntity.getTimes();
     times++;
     if (times >= max_retry_times) {
