@@ -19,7 +19,7 @@ public enum Code {
   USER_LOGIN_FAIL(1011, "登录失败"), //
   USER_NOT_LOGIN(1012, "用户未登录"), //
   USER_ACCOUNT_EXPIRED(1013, "账号已过期"), //
-  USER_CREDENTIALS_ERROR(1014, "密码错误"), //
+  USER_CREDENTIALS_ERROR(1014, "用户不存在或密码错误"), //
   USER_CREDENTIALS_EXPIRED(1015, "密码过期"), //
   USER_ACCOUNT_DISABLE(1016, "账号不可用"), //
   USER_ACCOUNT_LOCKED(1017, "账号被锁定"), //
