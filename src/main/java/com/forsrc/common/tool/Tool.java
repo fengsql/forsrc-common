@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Tool {
@@ -1408,6 +1409,48 @@ public class Tool {
   }
 
   // >>----------------------- path -----------------------
+
+  // <<----------------------- map -----------------------
+
+  public static <K, V> K getKeyFirst(Map<K, V> map) {
+    if (map == null) {
+      return null;
+    }
+    Iterator<K> iterator = map.keySet().iterator();
+    K key = null;
+    if (iterator.hasNext()) {
+      key = iterator.next();
+    }
+    return key;
+  }
+
+  public static <K, V> K getKeyLast(Map<K, V> map) {
+    if (map == null) {
+      return null;
+    }
+    Iterator<K> iterator = map.keySet().iterator();
+    K key = null;
+    while (iterator.hasNext()) {
+      key = iterator.next();
+    }
+    return key;
+  }
+
+  /**
+   * Map 排序
+   * @param map        需要排序的 map
+   * @param comparator 比较器，如：Comparator<Map.Entry<K, V>> comparator = (o1, o2) -> o1.getKey() - o2.getKey();
+   * @param <K>        键
+   * @param <V>        值
+   * @return 排序后重新生成的 LinkedHashMap
+   */
+  public static <K, V> LinkedHashMap<K, V> sortMap(Map<K, V> map, Comparator<Map.Entry<K, V>> comparator) {
+    LinkedHashMap<K, V> result = map.entrySet().stream().sorted(comparator)  //
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (m1, m2) -> m1, LinkedHashMap::new));
+    return result;
+  }
+
+  // >>----------------------- map -----------------------
 
   // <<----------------------- stream -----------------------
 
