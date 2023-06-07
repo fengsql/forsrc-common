@@ -219,6 +219,14 @@ public class Tool {
    * @param list      结果
    */
   public static void split(String source, char delimiter, List<String> list) {
+    if (source == null) {
+      log.warn("source is null!");
+      return;
+    }
+    if (list == null) {
+      log.warn("list is null!");
+      return;
+    }
     int pos = source.indexOf(delimiter);
     int start = 0;
     while (pos >= start) {
@@ -240,6 +248,14 @@ public class Tool {
    * @param list      结果
    */
   public static void split(String source, String delimiter, List<String> list) {
+    if (source == null) {
+      log.warn("source is null!");
+      return;
+    }
+    if (list == null) {
+      log.warn("list is null!");
+      return;
+    }
     int pos = source.indexOf(delimiter);
     int start = 0;
     while (pos >= start) {
@@ -261,6 +277,10 @@ public class Tool {
    * @return 结果
    */
   public static List<String> splitList(String source, char delimiter) {
+    if (source == null) {
+      log.warn("source is null!");
+      return null;
+    }
     List<String> list = new ArrayList<>();
     split(source, delimiter, list);
     return list;
@@ -273,6 +293,10 @@ public class Tool {
    * @return 结果
    */
   public static List<String> splitList(String source, String delimiter) {
+    if (source == null) {
+      log.warn("source is null!");
+      return null;
+    }
     List<String> list = new ArrayList<>();
     split(source, delimiter, list);
     return list;
@@ -285,6 +309,10 @@ public class Tool {
    * @return 结果
    */
   public static String[] split(String source, char delimiter) {
+    if (source == null) {
+      log.warn("source is null!");
+      return null;
+    }
     List<String> list = new ArrayList<>();
     split(source, delimiter, list);
     return list.toArray(new String[0]);
@@ -297,6 +325,10 @@ public class Tool {
    * @return 结果
    */
   public static String[] split(String source, String delimiter) {
+    if (source == null) {
+      log.warn("source is null!");
+      return null;
+    }
     List<String> list = new ArrayList<>();
     split(source, delimiter, list);
     return list.toArray(new String[0]);
@@ -331,6 +363,7 @@ public class Tool {
    */
   public static void splitToken(String source, String delimiter, List<String> list) {
     if (source == null) {
+      log.warn("source is null!");
       return;
     }
     StringTokenizer stringTokenizer = new StringTokenizer(source, delimiter);
@@ -1439,7 +1472,7 @@ public class Tool {
   /**
    * Map 排序
    * @param map        需要排序的 map
-   * @param comparator 比较器，如：Comparator<Map.Entry<K, V>> comparator = (o1, o2) -> o1.getKey() - o2.getKey();
+   * @param comparator 比较器，如：Comparator comparator = (o1, o2) -> o1.getKey() - o2.getKey();
    * @param <K>        键
    * @param <V>        值
    * @return 排序后重新生成的 LinkedHashMap

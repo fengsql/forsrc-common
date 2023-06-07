@@ -6,7 +6,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.BindException;
@@ -39,7 +38,7 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
 
   @ExceptionHandler(Exception.class)
   @org.springframework.web.bind.annotation.ResponseBody
-  protected ResponseEntity<?> handleException(Exception exception) throws Exception {
+  protected Object handleException(Exception exception) throws Exception {
     log.error(ExceptionUtils.getStackTrace(exception));
     if (exception instanceof CommonException) {
       return handleCommon(exception);  //500
@@ -59,39 +58,39 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
     return handleUncaught(exception);   //raw or 500
   }
 
-  private ResponseEntity<?> handleCommon(Exception exception) {
+  private Object handleCommon(Exception exception) {
 //    log.info("handleCommon.");
     CommonException commonException = (CommonException) exception;
     String message = getMessage(exception, commonException.getMessage());
     return createResponseBody(HttpStatus.INTERNAL_SERVER_ERROR, commonException.getCode(), message);
   }
 
-  private ResponseEntity<?> handleRaw(Exception exception) {
+  private Object handleRaw(Exception exception) {
 //    log.info("handleRaw.");
     RawException rawException = (RawException) exception;
     HttpStatus httpStatus = rawException.getHttpStatus();
     return createResponseBody(exception, httpStatus);
   }
 
-  private ResponseEntity<?> handleSQL(Exception exception) {
+  private Object handleSQL(Exception exception) {
 //    log.info("handleSQL.");
     return createResponseBody("SQL error!");
   }
 
-  private ResponseEntity<?> handleIllegalArgument(Exception exception) {
+  private Object handleIllegalArgument(Exception exception) {
 //    log.info("handleIllegalArgument.");
     String message = getMessage(exception);
-    return createResponseBody(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), message);
+    return createResponseBody(HttpStatus.BAD_REQUEST, null, message);
   }
 
-  private ResponseEntity<?> handleResponseStatus(Exception exception) {
+  private Object handleResponseStatus(Exception exception) {
 //    log.info("handleResponseStatus.");
     ResponseStatusException responseStatusException = (ResponseStatusException) exception;
     HttpStatus httpStatus = responseStatusException.getStatus();
     return createResponseBody(exception, httpStatus);
   }
 
-  private ResponseEntity<?> handleUncaught(Exception exception) {
+  private Object handleUncaught(Exception exception) {
 //    log.info("handleUncaught.");
     String msg = getMessage(exception);
     HttpStatus httpStatus = getHttpStatus(exception);
@@ -101,22 +100,23 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
     return createResponseBody(msg);
   }
 
-  protected ResponseEntity<?> createResponseBody(HttpStatus httpStatus, Integer code, String message) {
-    Object responseBody = getResposeBody(httpStatus, code, message);
-    //    log.info("createResponseBody. msg: {}. body: {}", message, responseBody);
-    return new ResponseEntity<>(responseBody, httpStatus);
-  }
-
-  protected ResponseEntity<?> createResponseBody(Exception exception, HttpStatus httpStatus) {
+  protected Object createResponseBody(Exception exception, HttpStatus httpStatus) {
     return createResponseBody(httpStatus, getMessage(exception));
   }
 
-  protected ResponseEntity<?> createResponseBody(HttpStatus httpStatus, String message) {
+  protected Object createResponseBody(HttpStatus httpStatus, String message) {
     return createResponseBody(httpStatus, null, message);
   }
 
-  protected ResponseEntity<?> createResponseBody(String message) {
+  protected Object createResponseBody(String message) {
     return createResponseBody(HttpStatus.INTERNAL_SERVER_ERROR, null, message);
+  }
+
+  protected Object createResponseBody(HttpStatus httpStatus, Integer code, String message) {
+    Object responseBody = getResposeBody(httpStatus, code, message);
+    //    log.info("createResponseBody. msg: {}. body: {}", message, responseBody);
+//    return new ResponseEntity<>(responseBody, httpStatus);
+    return responseBody;
   }
 
   private Object getResposeBody(HttpStatus httpStatus, Integer code, String message) {
@@ -180,45 +180,5 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
     }
     return status;
   }
-
-  //  private ModelAndView getView(Exception exception, Integer code, String message) {
-  //    message = getMessage(exception, message);
-  //    FastJsonJsonView jsonView = new FastJsonJsonView();
-  //    Map<String, Object> attributes = new HashMap<>();
-  //    attributes.put("code", code);
-  //    attributes.put("message", message);
-  //    attributes.put("success", false);
-  //    jsonView.setAttributesMap(attributes);
-  //    return new ModelAndView(jsonView);
-  //  }
-  //
-  //  private ModelAndView getView(Exception exception, String message) {
-  //    return getView(exception, Code.FAIL.getCode(), message);
-  //  }
-  //
-  //  private ModelAndView getView(Exception exception) {
-  //    return getView(exception, Code.FAIL.getCode(), null);
-  //  }
-
-  //  @ExceptionHandler(Exception.class)
-  //  private ModelAndView handleException1(Exception exception) throws Exception {
-  //    log.error(ExceptionUtils.getStackTrace(exception));
-  //    if (exception instanceof CommonException) {
-  //      return getView(exception, ((CommonException) exception).getCode(), ((CommonException) exception).getMessage());
-  //    }
-  //    if (exception instanceof MissingServletRequestParameterException) {
-  //      return getView(exception, "MissingServletRequestParameterException");
-  //    }
-  //    if (exception instanceof IllegalArgumentException) {
-  //      return getView(exception, "IllegalArgumentException");
-  //    }
-  //    if (exception instanceof HttpMessageNotReadableException) {
-  //      return getView(exception, "HttpMessageNotReadableException");
-  //    }
-  //    if (exception instanceof ResponseStatusException) {
-  //      throw exception;
-  //    }
-  //    return getView(exception);
-  //  }
 
 }
