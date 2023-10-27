@@ -1,6 +1,7 @@
 package com.forsrc.common.exception;
 
 import com.forsrc.common.reponse.IResponseHandler;
+import com.forsrc.common.tool.Tool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -59,39 +60,39 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
   }
 
   private Object handleCommon(Exception exception) {
-//    log.info("handleCommon.");
+    //    log.info("handleCommon.");
     CommonException commonException = (CommonException) exception;
     String message = getMessage(exception, commonException.getMessage());
     return createResponseBody(HttpStatus.INTERNAL_SERVER_ERROR, commonException.getCode(), message);
   }
 
   private Object handleRaw(Exception exception) {
-//    log.info("handleRaw.");
+    //    log.info("handleRaw.");
     RawException rawException = (RawException) exception;
     HttpStatus httpStatus = rawException.getHttpStatus();
     return createResponseBody(exception, httpStatus);
   }
 
   private Object handleSQL(Exception exception) {
-//    log.info("handleSQL.");
+    //    log.info("handleSQL.");
     return createResponseBody("SQL error!");
   }
 
   private Object handleIllegalArgument(Exception exception) {
-//    log.info("handleIllegalArgument.");
+    //    log.info("handleIllegalArgument.");
     String message = getMessage(exception);
     return createResponseBody(HttpStatus.BAD_REQUEST, null, message);
   }
 
   private Object handleResponseStatus(Exception exception) {
-//    log.info("handleResponseStatus.");
+    //    log.info("handleResponseStatus.");
     ResponseStatusException responseStatusException = (ResponseStatusException) exception;
     HttpStatus httpStatus = responseStatusException.getStatus();
     return createResponseBody(exception, httpStatus);
   }
 
   private Object handleUncaught(Exception exception) {
-//    log.info("handleUncaught.");
+    //    log.info("handleUncaught.");
     String msg = getMessage(exception);
     HttpStatus httpStatus = getHttpStatus(exception);
     if (httpStatus != null) {
@@ -115,7 +116,7 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
   protected Object createResponseBody(HttpStatus httpStatus, Integer code, String message) {
     Object responseBody = getResposeBody(httpStatus, code, message);
     //    log.info("createResponseBody. msg: {}. body: {}", message, responseBody);
-//    return new ResponseEntity<>(responseBody, httpStatus);
+    //    return new ResponseEntity<>(responseBody, httpStatus);
     return responseBody;
   }
 
@@ -130,18 +131,19 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
     if (message != null) {
       return message;
     }
-    return getMessage(exception);
+    return getStackTrace(exception);
   }
 
   private String getMessage(Exception exception) {
-    String msg = exception.getMessage();
-    if (msg != null && msg.length() <= msg_length) {
-      return msg;
-    }
-    return msg_error;
+    //    String msg = exception.getMessage();
+    //    if (msg != null && msg.length() <= msg_length) {
+    //      return msg;
+    //    }
+    //    return msg_error;
+    return ExceptionUtils.getStackTrace(exception);
   }
 
-  private final HttpStatus getHttpStatus(Exception ex) {
+  private HttpStatus getHttpStatus(Exception ex) {
     HttpStatus status;
     if (ex instanceof HttpRequestMethodNotSupportedException) {
       status = HttpStatus.METHOD_NOT_ALLOWED;
@@ -179,6 +181,16 @@ public class BaseExceptionHandler { //extends ResponseEntityExceptionHandler
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return status;
+  }
+
+  private static String getStackTrace(Throwable throwable) {
+    StringBuilder stringBuilder = new StringBuilder("\n").append(throwable);
+    for (StackTraceElement traceElement : throwable.getStackTrace()) {
+      String msg = traceElement.toString();
+      msg = Tool.getSimpleText(msg);
+      stringBuilder.append("\n\tat ").append(msg);
+    }
+    return stringBuilder.toString();
   }
 
 }

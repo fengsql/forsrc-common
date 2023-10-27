@@ -1,5 +1,7 @@
 package com.forsrc.common.reponse;
 
+import com.forsrc.common.exception.CommonException;
+import com.forsrc.common.tool.Tool;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,7 +45,18 @@ public class ResponseProcessor extends RequestResponseBodyMethodProcessor implem
     //    log.info("handleReturnValue returnValue: {}", returnValue);
     Object responseBody = getResposeBody(returnValue);
     //    ResponseBody responseBody = ToolResponse.getResponse(returnValue);
-    super.handleReturnValue(responseBody, returnType, mavContainer, webRequest);
+    try {
+      super.handleReturnValue(responseBody, returnType, mavContainer, webRequest);
+    } catch (IOException e) {
+      log.error("IOException! {}", Tool.getStackTraceSimple(e));
+      throw new CommonException("error!");
+    } catch (HttpMediaTypeNotAcceptableException e) {
+      log.error("HttpMediaTypeNotAcceptableException! {}", Tool.getStackTraceSimple(e));
+      throw new CommonException("error!");
+    } catch (HttpMessageNotWritableException e) {
+      log.error("HttpMessageNotWritableException! {}", Tool.getStackTraceSimple(e));
+      throw new CommonException("error!");
+    }
   }
 
   private Object getResposeBody(Object returnValue) {

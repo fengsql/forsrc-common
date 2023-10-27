@@ -9,9 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 @EqualsAndHashCode(callSuper = false)
 public class ParamSelect {
 
-  private int primaryId;
+  private Integer primaryId;
 
-  private int tableType;
+  private Integer tableType;
 
   private String fieldName;
 

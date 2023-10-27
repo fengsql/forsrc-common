@@ -146,6 +146,16 @@ public class BeanOkHttp {
     return down(url, json, null);
   }
 
+  public byte[] downGet(String url, Map<String, String> headers) {
+    log.info("down get url: {}.", url);
+    Request request = getRequest(url, headers);
+    return requestBytes(request);
+  }
+
+  public byte[] downGet(String url) {
+    return downGet(url, null);
+  }
+
   // >>>----------------------- down -----------------------
 
   // >>----------------------- public -----------------------

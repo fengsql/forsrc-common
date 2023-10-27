@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @EqualsAndHashCode(callSuper = false)
 public class ParamUpdate {
 
-  private int primaryId;
+  private Integer primaryId;
   
 	private String updatePair;
 

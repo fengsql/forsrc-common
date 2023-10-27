@@ -6,6 +6,7 @@ import com.forsrc.common.exception.CommonException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.Assert;
 
 import java.io.*;
@@ -1472,7 +1473,7 @@ public class Tool {
   /**
    * Map 排序
    * @param map        需要排序的 map
-   * @param comparator 比较器，如：Comparator comparator = (o1, o2) -> o1.getKey() - o2.getKey();
+   * @param comparator 比较器，如："Comparator comparator = (o1, o2) -> o1.getKey() - o2.getKey();"
    * @param <K>        键
    * @param <V>        值
    * @return 排序后重新生成的 LinkedHashMap
@@ -1521,6 +1522,24 @@ public class Tool {
   }
 
   // >>----------------------- stream -----------------------
+
+  // <<<----------------------- throwable -----------------------
+
+  public static String getStackTrace(Throwable throwable) {
+    return ExceptionUtils.getStackTrace(throwable);
+  }
+
+  public static String getStackTraceSimple(Throwable throwable) {
+    StringBuilder stringBuilder = new StringBuilder("\n").append(throwable);
+    for (StackTraceElement traceElement : throwable.getStackTrace()) {
+      String msg = traceElement.toString();
+      msg = getSimpleText(msg);
+      stringBuilder.append("\n\tat ").append(msg);
+    }
+    return stringBuilder.toString();
+  }
+
+  // >>>----------------------- throwable -----------------------
 
   // <<<----------------------- check -----------------------
 
