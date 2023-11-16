@@ -22,6 +22,13 @@ public class BCache {
   // <<----------------------- protected -----------------------
 
   // <<<----------------------- getKey -----------------------
+
+  //name
+  protected String getKeyAll(String name) {
+    return ConfigCommon.redis.cachePrefix + project_seperator + //
+      name + keyPrefix + "*";
+  }
+
   //value
   protected String getKey(String name, String value) {
     return ConfigCommon.redis.cachePrefix + project_seperator + //
@@ -160,6 +167,10 @@ public class BCache {
       ToolRedis.setExpire(key, ConfigCommon.redis.ttl);
     }
     log.debug("refreshExpire ok. key: {}.", key);
+  }
+
+  protected long delByPrefix(String prefixKey) {
+    return ToolRedis.delByPrefix(prefixKey);
   }
 
   // >>>----------------------- redis -----------------------

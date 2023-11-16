@@ -122,6 +122,11 @@ public abstract class BCacheTable<T> extends BCache {
     deleteValue(id);
   }
 
+  protected long removeAll() {
+    String key = getKeyAll(keyName);
+    return delByPrefix(key);
+  }
+
   // >>>----------------------- normal -----------------------
 
   // >>----------------------- protected -----------------------

@@ -595,6 +595,19 @@ public final class ToolRedis {
 
   // >>----------------------- list -----------------------
 
+  // >>----------------------- prefix -----------------------
+  
+  public static long delByPrefix(final String prefixKey){
+    Set<String> keys = toolRedis.redisTemplate.keys(prefixKey);
+    if(!CollectionUtils.isEmpty(keys)) {
+      Long num = toolRedis.redisTemplate.delete(keys);
+      return num == null ? 0 : num;
+    }
+    return 0;
+  }
+
+  // >>----------------------- prefix -----------------------
+
   // >>----------------------- tool -----------------------
 
   private static long toLong(Long val) {
